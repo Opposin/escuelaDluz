@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmls:th="http://www.thymeleaf.org">
+
+</html>
+
+<head th:insert="~{layouts/head}">
+	
+</head>
+
+<body>
+	<header th:insert="~{layouts/header}"></header>
+	<script>
+		       // Función para validar si se seleccionó una fecha
+		       function validateFecha() {
+		           var fechaInput = document.getElementById("appointmentDate");
+		           var fecha = fechaInput.value;
+
+		           if (!fecha) {
+		               // Si no hay fecha seleccionada, mostrar un mensaje y evitar el envío
+		               alert("Por favor, selecciona una fecha.");
+		               return false; // No se envía el formulario
+		           }
+
+		           // Si hay fecha seleccionada, el formulario se envía
+		           return true;
+		       }
+		   </script>
+	<div class="container">
+		<h2 th:text="${titulo}" class="py-4"></h2>
+<!--		<form th:action="@{/appointment/}" th:object="${appointment}" method="post" class="col-md-8 offset-md-2"-->
+		<form th:action="@{/appointment/}" method="post" class="col-md-8 offset-md-2"
+			enctype="multipart/form-data" onsubmit="return validateFecha()">
+
+			<div class="row mb-3">
+				<label for="appointmentDate" class="col-sm-2 col-form-label">Fecha del turno</label>
+				<div class="col-sm-10">
+					<input type="date" class="form-control" id="appointmentDate" name="appointmentDate">
+<!--					<input type="date" class="form-control" id="appointmentDate" th:field="*{appointmentDate}" name="appointmentDate">-->
+				</div>
+<!--				<div th:if="${#fields.hasErrors('appointmentDate')}" class="d-block">-->
+<!--					<p class="text-danger">Error Aqui, debe ser una fecha valida</p>-->
+<!--				</div>-->
+			</div>
+
+			<label for="divMiSelect" class="col-sm-2 col-form-label">Selecciona un día:</label>
+			<div id="divMiSelect">
+				<select id="fechaSelect" size="14" class="form-select form-select-lg mb-3" style='overflow:hidden' multiple>
+				</select>
+			</div>
+
+			<!--			<label for="divMiSelect" class="col-sm-2 col-form-label">Selecciona un día:</label>-->
+			<!--			<div id="divMiSelect" class="col-sm-10">-->
+			<!--				<select id="miSelect" class="form-select form-select-lg mb-3" onchange="cargarFechaDesdeSelect()"-->
+			<!--					multiple>-->
+			<!--					 Las opciones se agregarán aquí dinámicamente -->
+			<!--				</select>-->
+	</div>
+	<br><br>
+<!--	<input id="id" name="id" type="text" th:value="${student.id}">-->
+	<input id="id" name="id" type="hidden" th:value="${student.id}">
+
+	<button type="submit" class="btn btn-primary float-end">Guardar</button>
+
+	</form>
+	</div>
+	<script>
+	   function obtenerFechaFormateada(fecha) {
+	     const dia = fecha.getDate().toString().padStart(2, '0');
+	     const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+	     const anio = fecha.getFullYear();
+	     return `${dia}-${mes}-${anio}`;
+	   }
+
+	   function generarFechas() {
+	     const select = document.getElementById('fechaSelect');
+	     const input = document.getElementById('appointmentDate');
+	     const hoy = new Date();
+	     let diasGenerados = 0;
+
+	     while (diasGenerados < 14) {
+	       if (hoy.getDay() !== 6 && hoy.getDay() !== 0) { // Excluye sábado (6) y domingo (0)
+	         const nombreDia = hoy.toLocaleDateString('es-ES', { weekday: 'long' });
+	         const fechaFormateada = obtenerFechaFormateada(hoy);
+	         const option = document.createElement('option');
+	         option.value = fechaFormateada;
+	         option.textContent = `${nombreDia} - ${fechaFormateada}`;
+	         select.appendChild(option);
+	         diasGenerados++;
+	       }
+	       hoy.setDate(hoy.getDate() + 1); // Avanza un día
+	     }
+	   }
+
+	   // Cuando se seleccione una opción, actualizar el input de tipo date
+	   document.getElementById('fechaSelect').addEventListener('change', function() {
+	     const fechaSeleccionada = this.value;
+	     document.getElementById('appointmentDate').value = fechaSeleccionada.split('-').reverse().join('-');
+	   });
+
+	   // Ejecutar la función para generar las fechas
+	   generarFechas();
+	 </script>
+</body>
+<!--<script>
+	$(function () {
+		let ids = $("#ids").val();
+		let arr = ids.split(",");
+		$("#ids").val("");
+
+		arr.forEach(id => {
+			$("#protagonistas").val(id);
+			actorSelected($("#protagonistas")[0]);
+		})
+	})
+</script>-->
+
+</html>

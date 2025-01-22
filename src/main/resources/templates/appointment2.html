@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmls:th="http://www.thymeleaf.org">
+
+</html>
+
+<head th:insert="~{layouts/head}"></head>
+
+<body>
+<!--	<script src="/js/appointment.js"></script>-->
+	<header th:insert="~{layouts/header}"></header>
+	<div class="container">
+		<h2 th:text="${titulo}" class="py-4"></h2>
+<!--		<form th:action="@{/appointment2}" th:object="${appointment}" method="post" class="col-md-8 offset-md-2"-->
+		<form th:action="@{/appointment2}" method="post" class="col-md-8 offset-md-2"
+			enctype="multipart/form-data">
+			<div class="row mb-3">
+				<label for="genero" class="col-sm-2 col-form-label">Hora</label>
+				<div class="col-sm-10">
+					<select class="form-select" name="time" id="time">
+<!--						<select class="form-select" th:field="*{appointmentTime}" id="appointmentTime">-->
+						<option th:each="hora : ${horarios}" th:text="${hora}" th:value="${hora}">
+						</option>
+					</select>
+				</div>
+<!--				<div th:errorclass="error" th:if="${#fields.hasErrors('appointmentTime')}" th:errors="*{appointmentTime}" class="d-block">-->
+<!--					<p>Error Aqui</p>-->
+<!--				</div>-->
+			</div>
+
+			<br><br>
+<!--			<input id="appointmentDate" name="appointmentDate" type="date" th:field="*{appointmentDate}">-->
+			<input id="appointmentDate" name="appointmentDate" type="hidden" th:value="*{appointmentDate}">
+<!--			<input id="student" name="student" type="text" th:value="*{student} ?: *{id}">-->
+			<input id="id" name="id" type="hidden" th:value="*{student} ?: *{id}">
+
+			<button type="submit" class="btn btn-primary float-end">Guardar</button>
+
+		</form>
+	</div>
+</body>
+<!--<script>
+	$(function () {
+		let ids = $("#ids").val();
+		let arr = ids.split(",");
+		$("#ids").val("");
+
+		arr.forEach(id => {
+			$("#protagonistas").val(id);
+			actorSelected($("#protagonistas")[0]);
+		})
+	})
+</script>-->
+
+</html>

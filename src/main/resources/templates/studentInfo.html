@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmls:th="http://www.thymeleaf.org">
+
+</html>
+
+<head th:insert="~{layouts/head}">
+
+</head>
+
+<body>
+	<header th:insert="~{layouts/header}"></header>
+	<h1>Detalles del Estudiante</h1>
+
+	<div>
+		<label for="firstName">Primer Nombre:</label>
+		<span th:text="${student.fistName}"></span>
+	</div>
+
+	<div>
+		<label for="lastName">Apellido:</label>
+		<span th:text="${student.lastName}"></span>
+	</div>
+
+	<div>
+		<label for="studentAddress">Dirección:</label>
+		<span th:text="${student.studentAddress}"></span>
+	</div>
+
+	<div>
+		<label for="studentPartido">Partido:</label>
+		<span th:text="${student.studentPartido}"></span>
+	</div>
+
+	<div>
+		<label for="studentRecomen">Recomendación:</label>
+		<span th:text="${student.studentRecomen}"></span>
+	</div>
+
+	<div>
+		<label for="studentComment">Comentario:</label>
+		<span th:text="${student.studentComment}"></span>
+	</div>
+
+	<div>
+		<label for="studentCourseBegg">Fecha de inicio del curso:</label>
+		<span th:text="${#dates.format(student.studentCourseBegg, 'dd/MM/yyyy')}"></span>
+	</div>
+
+	<div>
+		<label for="studentDNI">DNI:</label>
+		<span th:text="${student.studentDNI}"></span>
+	</div>
+
+	<div>
+		<label for="studentTel">Teléfono:</label>
+		<span th:text="${student.studentTel}"></span>
+	</div>
+
+	<div>
+		<label for="studentAge">Edad:</label>
+		<span th:text="${student.studentAge}"></span>
+	</div>
+
+	<div>
+		<label for="studentNonAtten">No Asistencias:</label>
+		<span th:text="${student.studentNonAtten}"></span>
+	</div>
+
+	<div>
+		<label for="studentPdf">PDF:</label>
+		<span th:text="${student.studentPdf ? 'Sí' : 'No'}"></span>
+	</div>
+
+	<div>
+		<label for="studentZigZag">ZigZag:</label>
+		<span th:text="${student.studentZigZag ? 'Sí' : 'No'}"></span>
+	</div>
+
+	<div>
+		<label for="studentEstacionar">Estacionar:</label>
+		<span th:text="${student.studentEstacionar ? 'Sí' : 'No'}"></span>
+	</div>
+
+	<div>
+		<label for="studentGiroU">Giro U:</label>
+		<span th:text="${student.studentGiroU ? 'Sí' : 'No'}"></span>
+	</div>
+
+	<div>
+		<label for="studentVideoPista">Video Pista:</label>
+		<span th:text="${student.studentVideoPista ? 'Sí' : 'No'}"></span>
+	</div>
+
+	<div>
+		<label for="studentGraduate">Graduado:</label>
+		<span th:text="${student.studentGraduate ? 'Sí' : 'No'}"></span>
+	</div>
+
+	<h2>Detalles de las Turnos</h2>
+	<div>
+		<div th:unless="${#lists.isEmpty(student.studentAppointments)}">
+			<div th:each="appointment : ${student.studentAppointments}">
+				<div>
+					<p>Cita: <span th:text="${#dates.format(appointment.appointmentDate, 'EEEE, dd/mm/yyyy')}"></span>
+					</p>
+					<p>Cita: <span th:text="${appointment.appointmentTime}"></span></p>
+				</div>
+			</div>
+		</div>
+		<div th:if="${#lists.isEmpty(student.studentAppointments)}">
+			<p>El Alumno no tiene turnos asignados...</p>
+		</div>
+	</div>
+	<!--	<div th:if="${student. == 'F'}">-->
+
+	<!--	</div>-->
+
+</body>
+
+</html>

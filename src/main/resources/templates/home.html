@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmls:th="http://www.thymeleaf.org">
+
+</html>
+
+<head th:insert="~{layouts/head}"></head>
+
+<body>
+	<script>
+		function confirmarRedireccion(event) {
+			// Prevenimos la acción por defecto del enlace
+			event.preventDefault();
+
+			// Obtenemos la URL generada por Thymeleaf
+			var url = event.target.getAttribute('href');
+
+			// Primera confirmación
+			var confirmacion1 = confirm("¿Seguro? Si confirmas, el alumno sera graduado.");
+
+			if (confirmacion1) {
+				// Si la primera confirmación es aceptada, mostramos la segunda confirmación
+				window.location.href = url;
+
+			}
+		}
+	</script>
+	<header th:insert="~{layouts/header}"></header>
+	<div class="container">
+		<h1 th:text="${titulo}"></h1>
+		<div class="row row-cols-1 row-cols-md-2 g-4">
+			<div id="containter-form">
+				<form th:action="@{/filter}" method="get" enctype="multipart/form-data">
+					<div class="col mb-3">
+						<label for="filter" id="filterLabel">Filtrar</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="filter" name="filter">
+						</div>
+					</div>
+					<label for="studentRecomen">Filtrar por:</label>
+					<div class="col-sm-10">
+						<select class="form-select" id="filterType" name="filterType">
+							<option value="name" selected="selected">
+								Nombre/apellido.</option>
+							<option value="DNI">
+								Documeno Identificatorio.</option>
+							<option value="Age">
+								Edad (mostrara alumnos con igual o mayor
+								edad
+								al numero introducido)</option>
+							<option value="nonAtten">numero de inasistencias (mostrara alumnos con igual o mas
+								inasistencias
+								al numero introducido)</option>
+							<option value="appointmentDate">Fecha de turno.</option>
+						</select>
+					</div>
+					<div style="display:none;" id="hide-div" class="mt-1 mb-1 pt-1 pb">
+						<br>
+						<input type="date" id="appointmentDate" name="appointmentDate">
+						<br>
+					</div>
+					<br>
+					<div class="div-buton-submit">
+						
+						<button type="submit" class="btn btn-outline-primary boton-submit">Buscar</button>
+					</div>
+				</form>
+			</div>
+			<div>
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Nombre/s</th>
+							<th scope="col">Apellido</th>
+							<th scope="col">Documento</th>
+							<th scope="col">Edad</th>
+							<th scope="col">Partido</th>
+							<th scope="col">Inasistencias</th>
+							<th scope="col">Proximo turno</th>
+							<th scope="col">Acciones</th>
+						</tr>
+					</thead>
+					<tbody class="table-group-divider">
+						<div th:each="studentAppointment : ${students}">
+							<th th:text="${studentAppointment.studentName}"></th>
+							<td th:text="${studentAppointment.studentLastName}"></td>
+							<td th:text="${studentAppointment.studentDNI}"></td>
+							<td th:text="${studentAppointment.studentAge}"></td>
+							<td th:text="${studentAppointment.studentPartido}"></td>
+							<td th:text="${studentAppointment.studentNonAtten} " style="padding-left: 50px;"></td>
+							<td>
+								<div class="d-flex flex-row div-mover">
+									<ul class="ul-style d-flex flex-row">
+										<li th:text="${studentAppointment.appointmentDate != null ?
+									#dates.format(studentAppointment.appointmentDate, 'EEEE dd/MM/yyyy') : 'Sin turno asignado'}" class="ul-style">
+
+										<li th:text="${studentAppointment.appointmentTime != null ?
+									studentAppointment.appointmentTime : ''}" class="ul-style time-style">
+									</ul>
+								</div>
+							</td>
+
+							<td id="acciones" class="d-flex flex-row">
+								<a th:href="@{'/student/' + ${studentAppointment.studentId}}" class="btn-href"> Editar
+								</a>
+								<a th:href="@{'/appointment/' + ${studentAppointment.studentId}}" class="btn-href">
+									Agregar
+									turno </a>
+								<a href="#" th:href="@{'student/graduate/' + ${studentAppointment.studentId}}"
+									class="btn-grd" onclick="confirmarRedireccion(event)">Graduar estudiante</a>
+							</td>
+							</tr>
+						</div>
+					</tbody>
+				</table>
+				<div th:if="${#strings.equalsIgnoreCase(students, 'Page 1 of 1 containing UNKNOWN instances')}">
+					<!-- El contenido que quieres renderizar si la condición es verdadera -->
+					<p>Parece que no hay alumnos que concuerden con los parametros deseados...</p>
+					<a href="/home">Limpiar Filtros</a>
+				</div>
+			</div>
+		</div>
+
+
+
+		<nav aria-label="Page navigation example" class="mt-4">
+			<ul class="pagination justify-content-center">
+				<li class="page-item" th:each="pagina : ${paginas}"
+					th:classappend="${pagina == actual ? 'active' : ''}">
+					<a class="page-link" th:href="@{'/home?pagina=' + ${pagina-1}}" th:text="${pagina}"></a>
+				</li>
+			</ul>
+		</nav>
+		<!--		Y esto lo vamos a habilitar una vez tengamos hecho el controlador del home-->
+	</div>
+	<script>
+		// Función para transferir el valor del input de tipo date al input de tipo text
+		document.getElementById('appointmentDate').addEventListener('input', function () {
+			var dateValue = this.value; // Obtener el valor del input de tipo date
+			document.getElementById('filter').value = dateValue; // Asignarlo al input de tipo text
+		});
+
+		document.getElementById('filterType').addEventListener('change', function () {
+			var filterType = this.value;
+			var filterLabel = document.getElementById('filterLabel')
+			var filterInput = document.getElementById('filter');
+			var appointmentDateInput = document.getElementById('hide-div');
+
+			filterInput.value = '';
+
+			if (filterType === 'appointmentDate') {
+				appointmentDateInput.style.display = 'inline';
+				 filterInput.style.display = 'none';
+				 filterLabel.style.display = 'none';
+			} else {
+				appointmentDateInput.style.display = 'none';
+				filterInput.style.display = 'inline';
+				filterLabel.style.display = 'inline';
+			}
+
+			if (filterType === 'DNI' || filterType === 'Age' || filterType === 'nonAtten') {
+			       filterInput.setAttribute('type', 'number');
+			       filterInput.addEventListener('input', restrictToNumbers);
+			   } else {
+			       filterInput.setAttribute('type', 'text');
+			       filterInput.removeEventListener('input', restrictToNumbers);
+			   }
+		});
+
+		// Función para restringir solo números
+		function restrictToNumbers(event) {
+			this.value = this.value.replace(/[^0-9]/g, ''); // Elimina caracteres no numéricos
+		}
+	</script>
+</body>
+
+</html>
