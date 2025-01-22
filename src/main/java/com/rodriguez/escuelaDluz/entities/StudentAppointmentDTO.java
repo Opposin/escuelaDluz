@@ -11,6 +11,7 @@ public class StudentAppointmentDTO {
 	private Long StudentDNI;
 	private Long studentAge;
 	private Long studentNonAtten;
+//	private Appointment nextAppointment;
 	private Date appointmentDate;
 	private String appointmentTime;
 
@@ -105,9 +106,19 @@ public class StudentAppointmentDTO {
 		this.appointmentTime = appointmentTime;
 	}
 
+	
+	
 	public String getStudentPartido() {
 		return studentPartido;
 	}
+
+//	public Appointment getNextAppointment() {
+//		return nextAppointment;
+//	}
+//
+//	public void setNextAppointment(Appointment nextAppointment) {
+//		this.nextAppointment = nextAppointment;
+//	}
 
 	public void setStudentPartido(String studentPartido) {
 		this.studentPartido = studentPartido;

@@ -126,13 +126,14 @@
 
 
 		<nav aria-label="Page navigation example" class="mt-4">
-			<p th:text="${paginas}"></p>
-			<ul class="pagination justify-content-center">
-				<li class="page-item" th:each="pagina : ${paginas}"
-					th:classappend="${pagina == actual ? 'active' : ''}">
-					<a class="page-link" th:href="@{'/home?pagina=' + ${pagina-1}}" th:text="${pagina}"></a>
-				</li>
-			</ul>
+		    <ul class="pagination justify-content-center">
+		        <li class="page-item" th:each="pagina : ${paginas}" th:classappend="${pagina == actual ? 'active' : ''}">
+		            <a class="page-link" 
+		               th:href="@{'/homeFilter?pagina=' + ${pagina-1} + '&filter=' + ${filter} + '&filterType=' + ${filterType}}">
+		               <span th:text="${pagina}"></span>
+		            </a>
+		        </li>
+		    </ul>
 		</nav>
 	</div>
 	<script>

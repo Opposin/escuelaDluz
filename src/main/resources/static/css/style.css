@@ -217,9 +217,9 @@ a:active {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	padding-top: 21px;
 	
 }
 
 #containter-form{
-	width: 400px;
 }
