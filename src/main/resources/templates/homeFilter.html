@@ -60,7 +60,6 @@
 							<label>Fecha: </label>
 							<input type="date" id="appointmentDate" class="form-control" name="appointmentDate">
 						</div>
-
 						<div class="div-buton-submit col-sm">
 							<button type="submit" class="btn btn-outline-primary boton-submit">Buscar</button>
 						</div>
@@ -74,6 +73,7 @@
 								<label for="value-2">No</label>
 							</div>
 						</div>
+
 					</div>
 				</div>
 			</form>
@@ -106,8 +106,10 @@
 									#dates.format(studentAppointment.appointmentDate, 'EEEE dd/MM/yyyy') : 'Sin turno asignado'}"
 											class="ul-style">
 
+											<!--										<li th:text="${studentAppointment.appointmentTime != null ?-->
+											<!--									studentAppointment.appointmentTime : ''}" class="ul-style time-style">-->
 										<li th:text="${studentAppointment.appointmentTime != null ?
-									studentAppointment.appointmentTime : ''}" class="ul-style time-style">
+																		studentAppointment.appointmentId : ''}" class="ul-style time-style">
 									</ul>
 								</div>
 							</td>
@@ -118,7 +120,8 @@
 								<a th:href="@{'/student/' + ${studentAppointment.studentId}}" class="btn-href"> Editar
 								</a>
 								<a th:href="@{'/appointment/' + ${studentAppointment.studentId}}" class="btn-href">
-									Agregar turno </a>
+									Agregar
+									turno </a>
 								<a href="#" th:href="@{'student/graduate/' + ${studentAppointment.studentId}}"
 									class="btn-grd" onclick="confirmarRedireccion(event)">Graduar</a>
 							</td>
@@ -137,11 +140,13 @@
 
 
 		<nav aria-label="Page navigation example" class="mt-4">
-			<p th:text="${paginas}"></p>
 			<ul class="pagination justify-content-center">
 				<li class="page-item" th:each="pagina : ${paginas}"
 					th:classappend="${pagina == actual ? 'active' : ''}">
-					<a class="page-link" th:href="@{'/home?pagina=' + ${pagina-1}}" th:text="${pagina}"></a>
+					<a class="page-link"
+						th:href="@{'/homeFilter?pagina=' + ${pagina-1} + '&filter=' + ${filter} + '&filterType=' + ${filterType}}">
+						<span th:text="${pagina}"></span>
+					</a>
 				</li>
 			</ul>
 		</nav>

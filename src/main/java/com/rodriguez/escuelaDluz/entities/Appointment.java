@@ -21,9 +21,6 @@ import jakarta.validation.constraints.NotNull;
 public class Appointment implements Serializable{
 
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5887162995685314463L;
 	
 	@Id
@@ -32,9 +29,9 @@ public class Appointment implements Serializable{
 	
 	@Column(name = "fecha")
 	@Temporal(TemporalType.DATE)
-	//@DateTimeFormat(pattern = "yyyy-mm-dd") me tiro un error esto por alguna razon, por mas que la conversion es correcta
 	@NotNull(message = "Fecha Invalida")
 	private Date appointmentDate;
+	
 	
 	private String appointmentTime;
 	
@@ -42,7 +39,8 @@ public class Appointment implements Serializable{
 	@JoinColumn(name = "student_id")
 	private Student student;
 	
-	private Boolean appointmentComplete;
+	private String appointmentComplete;
+	
 	
 	@Version
     private Long version;
@@ -71,11 +69,11 @@ public class Appointment implements Serializable{
 		this.appointmentTime = appointmentTime;
 	}
 
-	public Boolean getAppointmentComplete() {
+	public String getAppointmentComplete() {
 		return appointmentComplete;
 	}
 
-	public void setAppointmentComplete(Boolean appointmentComplete) {
+	public void setAppointmentComplete(String appointmentComplete) {
 		this.appointmentComplete = appointmentComplete;
 	}
 

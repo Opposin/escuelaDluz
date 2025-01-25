@@ -49,6 +49,8 @@ public class Student implements Serializable {
 
 	@NotNull(message = "Debe ser una fecha valida.")
 	private Date studentCourseBegg;
+	
+	private Date studentCourseEnd;
 
 	@Column(name = "DNI", unique = true)
 	@NotNull(message = "El DNI debe estar vacio.")
@@ -56,8 +58,14 @@ public class Student implements Serializable {
 
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Appointment> studentAppointments;
-
+	
+	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Payment> studentPayments;
+	
 	private Long studentTel;
+	
+	@NotNull(message = "Se debe definir cuantas clases tendra el alumno")
+	private Long studentClasses;
 
 	@Column(name = "studentAge", nullable = false)
 //	@NotNull(message = "No debe estar vacio.")
@@ -161,6 +169,14 @@ public class Student implements Serializable {
 		this.studentAppointments = appointments;
 	}
 
+	public List<Payment> getStudentPayments() {
+		return studentPayments;
+	}
+
+	public void setStudentPayments(List<Payment> studentPayments) {
+		this.studentPayments = studentPayments;
+	}
+
 	public Long getStudentTel() {
 		return studentTel;
 	}
@@ -241,6 +257,24 @@ public class Student implements Serializable {
 		this.studentAppointments = studentAppointments;
 	}
 
+	public Date getStudentCourseEnd() {
+		return studentCourseEnd;
+	}
+
+	public void setStudentCourseEnd(Date studentCourseEnd) {
+		this.studentCourseEnd = studentCourseEnd;
+	}
+
+	public Long getStudentClasses() {
+		return studentClasses;
+	}
+
+	public void setStudentClasses(Long studentClasses) {
+		this.studentClasses = studentClasses;
+	}
+	
+	
+}
 //	public Long getVersion() {
 //		return version;
 //	}
@@ -251,4 +285,4 @@ public class Student implements Serializable {
 //	
 	
 
-}
+

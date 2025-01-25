@@ -29,10 +29,9 @@
 	<div class="container">
 		<h1 th:text="${titulo}"></h1>
 		<div class="col row-cols-1">
-			<form th:action="@{/filter}" method="get" enctype="multipart/form-data" class="">
+			<form th:action="@{/filter/graduate}" method="get" enctype="multipart/form-data" class="">
 				<div class="cointainer">
 					<div class="row">
-
 
 						<div class="col-sm">
 							<label id="filterLabel">Filtrar</label>
@@ -56,13 +55,24 @@
 								<option value="appointmentDate">Fecha de turno.</option>
 							</select>
 						</div>
+
 						<div style="display:none;" id="hide-div" class="col-sm">
 							<label>Fecha: </label>
 							<input type="date" id="appointmentDate" class="form-control" name="appointmentDate">
 						</div>
-						<div class="div-buton-submit col-sm">
 
+						<div class="div-buton-submit col-sm">
 							<button type="submit" class="btn btn-outline-primary boton-submit">Buscar</button>
+						</div>
+
+						<label for="showGraduates">Mostrar estudiantes graduados</label>
+						<div id="showGraduates">
+							<div class="radio-input">
+								<input value="/home/graduate" name="value-1" id="value-1" type="radio" checked>
+								<label for="value-1">Si</label>
+								<input value="/home" name="value-1" id="value-2" type="radio">
+								<label for="value-2">No</label>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -103,13 +113,18 @@
 							</td>
 
 							<td id="acciones" class="d-flex flex-row">
+								<a th:href="@{'/student/info/' + ${studentAppointment.studentId}}" class="btn-href"> Ver
+								</a>
 								<a th:href="@{'/student/' + ${studentAppointment.studentId}}" class="btn-href"> Editar
 								</a>
 								<a th:href="@{'/appointment/' + ${studentAppointment.studentId}}" class="btn-href">
 									Agregar
 									turno </a>
 								<a href="#" th:href="@{'student/graduate/' + ${studentAppointment.studentId}}"
-									class="btn-grd" onclick="confirmarRedireccion(event)">Graduar</a>
+									th:if="${!studentAppointment.studentGraduate}" class="btn-grd"
+									onclick="confirmarRedireccion(event)">
+									Graduar
+								</a>
 							</td>
 							</tr>
 						</div>
@@ -126,14 +141,13 @@
 
 
 		<nav aria-label="Page navigation example" class="mt-4">
-		    <ul class="pagination justify-content-center">
-		        <li class="page-item" th:each="pagina : ${paginas}" th:classappend="${pagina == actual ? 'active' : ''}">
-		            <a class="page-link" 
-		               th:href="@{'/homeFilter?pagina=' + ${pagina-1} + '&filter=' + ${filter} + '&filterType=' + ${filterType}}">
-		               <span th:text="${pagina}"></span>
-		            </a>
-		        </li>
-		    </ul>
+			<p th:text="${paginas}"></p>
+			<ul class="pagination justify-content-center">
+				<li class="page-item" th:each="pagina : ${paginas}"
+					th:classappend="${pagina == actual ? 'active' : ''}">
+					<a class="page-link" th:href="@{'/home?pagina=' + ${pagina-1}}" th:text="${pagina}"></a>
+				</li>
+			</ul>
 		</nav>
 	</div>
 	<script>
@@ -174,6 +188,10 @@
 		function restrictToNumbers(event) {
 			this.value = this.value.replace(/[^0-9]/g, ''); // Elimina caracteres no numéricos
 		}
+
+		$('input[type="radio"]').on('click', function () {
+			window.location = $(this).val();
+		});
 	</script>
 </body>
 

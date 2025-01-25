@@ -11,6 +11,8 @@ public class StudentAppointmentDTO {
 	private Long StudentDNI;
 	private Long studentAge;
 	private Long studentNonAtten;
+	private Boolean studentGraduate;
+	private Long appointmentId;
 //	private Appointment nextAppointment;
 	private Date appointmentDate;
 	private String appointmentTime;
@@ -25,10 +27,13 @@ public class StudentAppointmentDTO {
 	        this.StudentDNI = student.getStudentDNI();
 	        this.studentAge = student.getStudentAge();
 	        this.studentNonAtten = student.getStudentNonAtten();
+	        this.studentGraduate = student.getStudentGraduate();
 	        if (appointment != null) {
 	            this.appointmentDate = appointment.getAppointmentDate();
 	            this.appointmentTime = appointment.getAppointmentTime();
+	            this.appointmentId = appointment.getId();
 	        } else {
+	        	this.appointmentId = null;
 	            this.appointmentDate = null;
 	            this.appointmentTime = "";  // Mensaje para cuando no hay turno
 	        }
@@ -105,25 +110,30 @@ public class StudentAppointmentDTO {
 	public void setAppointmentTime(String appointmentTime) {
 		this.appointmentTime = appointmentTime;
 	}
+	
+	public Long getAppointmentId() {
+		return appointmentId;
+	}
 
-	
-	
+	public void setAppointmentId(Long appointmentId) {
+		this.appointmentId = appointmentId;
+	}
+
 	public String getStudentPartido() {
 		return studentPartido;
 	}
-
-//	public Appointment getNextAppointment() {
-//		return nextAppointment;
-//	}
-//
-//	public void setNextAppointment(Appointment nextAppointment) {
-//		this.nextAppointment = nextAppointment;
-//	}
 
 	public void setStudentPartido(String studentPartido) {
 		this.studentPartido = studentPartido;
 	}
 
+	public Boolean getStudentGraduate() {
+		return studentGraduate;
+	}
+
+	public void setStudentGraduate(Boolean studentGraduate) {
+		this.studentGraduate = studentGraduate;
+	}
 	
 	
 }

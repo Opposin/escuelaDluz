@@ -13,7 +13,7 @@
 	<h1>Detalles del Estudiante</h1>
 
 	<div>
-		<label for="firstName">Primer Nombre:</label>
+		<label for="firstName">Nombre/s:</label>
 		<span th:text="${student.fistName}"></span>
 	</div>
 
@@ -23,12 +23,12 @@
 	</div>
 
 	<div>
-		<label for="studentAddress">Dirección:</label>
+		<label for="studentAddress">Dirección del estudiante:</label>
 		<span th:text="${student.studentAddress}"></span>
 	</div>
 
 	<div>
-		<label for="studentPartido">Partido:</label>
+		<label for="studentPartido">Partido del estudiante:</label>
 		<span th:text="${student.studentPartido}"></span>
 	</div>
 
@@ -38,7 +38,7 @@
 	</div>
 
 	<div>
-		<label for="studentComment">Comentario:</label>
+		<label for="studentComment">Comentario sobre el estudiante:</label>
 		<span th:text="${student.studentComment}"></span>
 	</div>
 
@@ -48,73 +48,89 @@
 	</div>
 
 	<div>
-		<label for="studentDNI">DNI:</label>
+		<label for="studentDNI">DNI del estudiante:</label>
 		<span th:text="${student.studentDNI}"></span>
 	</div>
 
 	<div>
-		<label for="studentTel">Teléfono:</label>
+		<label for="studentTel">Teléfono del estudiante:</label>
 		<span th:text="${student.studentTel}"></span>
 	</div>
 
 	<div>
-		<label for="studentAge">Edad:</label>
+		<label for="studentAge">Edad del estudiante:</label>
 		<span th:text="${student.studentAge}"></span>
 	</div>
 
 	<div>
-		<label for="studentNonAtten">No Asistencias:</label>
+		<label for="studentNonAtten">Faltas del estudiante:</label>
 		<span th:text="${student.studentNonAtten}"></span>
 	</div>
 
 	<div>
-		<label for="studentPdf">PDF:</label>
+		<label for="studentPdf">Vio el estudiante el PDF:</label>
 		<span th:text="${student.studentPdf ? 'Sí' : 'No'}"></span>
 	</div>
 
 	<div>
-		<label for="studentZigZag">ZigZag:</label>
+		<label for="studentZigZag">Practico el estudiante el ZigZag:</label>
 		<span th:text="${student.studentZigZag ? 'Sí' : 'No'}"></span>
 	</div>
 
 	<div>
-		<label for="studentEstacionar">Estacionar:</label>
+		<label for="studentEstacionar">Practico el estudiante el Estacionamiento:</label>
 		<span th:text="${student.studentEstacionar ? 'Sí' : 'No'}"></span>
 	</div>
 
 	<div>
-		<label for="studentGiroU">Giro U:</label>
+		<label for="studentGiroU">Practico el estudiante el Giro en U:</label>
 		<span th:text="${student.studentGiroU ? 'Sí' : 'No'}"></span>
 	</div>
 
 	<div>
-		<label for="studentVideoPista">Video Pista:</label>
+		<label for="studentVideoPista">Vio el estudiante el video de la pista:</label>
 		<span th:text="${student.studentVideoPista ? 'Sí' : 'No'}"></span>
 	</div>
 
 	<div>
-		<label for="studentGraduate">Graduado:</label>
+		<label for="studentGraduate">Esta graduado el estudiante:</label>
 		<span th:text="${student.studentGraduate ? 'Sí' : 'No'}"></span>
 	</div>
 
-	<h2>Detalles de las Turnos</h2>
-	<div>
-		<div th:unless="${#lists.isEmpty(student.studentAppointments)}">
-			<div th:each="appointment : ${student.studentAppointments}">
-				<div>
-					<p>Cita: <span th:text="${#dates.format(appointment.appointmentDate, 'EEEE, dd/mm/yyyy')}"></span>
-					</p>
-					<p>Cita: <span th:text="${appointment.appointmentTime}"></span></p>
-				</div>
+	<div class="d-flex flex-row">
+		<div th:if="${#lists.isEmpty(pastAppointments)}">
+			<h3>Citas Pasadas</h3>
+			<ul>
+				<li th:each="appointment : ${pastAppointments}">
+					Fecha: <span th:text="${appointment.appointmentDate}"></span>
+					Hora: <span th:text="${appointment.appointmentTime}"></span>
+					<a th:href="@{'/appointment/edit/' + ${student.id}} + '/' + ${appointment.id}" class="btn-href">-->
+						Editar Turno </a>
+
+				</li>
+			</ul>
+		</div>
+
+		
+		<div>
+			<div>
+			<h3>Próximas Citas</h3>
+			<ul>
+				<li th:each="appointment : ${upcomingAppointments}">
+					Fecha: <span th:text="${appointment.appointmentDate}"></span>
+					Hora: <span th:text="${appointment.appointmentTime}"></span>
+					<a th:href="@{'/appointment/edit/' + ${student.id}} + '/' + ${appointment.id}" class="btn-href">-->
+						Editar Turno </a>
+				</li>
+			</ul>
+			<div th:if="${#lists.isEmpty(upcomingAppointments)}">-->
+				<p>El Alumno no tiene turnos asignados...</p>
+				<a th:href="@{'/appointment/' + ${student.id}}" class="btn-href">
+					Agregar
+					turno </a>
 			</div>
 		</div>
-		<div th:if="${#lists.isEmpty(student.studentAppointments)}">
-			<p>El Alumno no tiene turnos asignados...</p>
-		</div>
 	</div>
-	<!--	<div th:if="${student. == 'F'}">-->
-
-	<!--	</div>-->
 
 </body>
 

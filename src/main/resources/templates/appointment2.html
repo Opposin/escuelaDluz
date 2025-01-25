@@ -4,52 +4,105 @@
 
 </html>
 
-<head th:insert="~{layouts/head}"></head>
+<head th:insert="~{layouts/head}">
+
+</head>
 
 <body>
-<!--	<script src="/js/appointment.js"></script>-->
 	<header th:insert="~{layouts/header}"></header>
-	<div class="container">
-		<h2 th:text="${titulo}" class="py-4"></h2>
-<!--		<form th:action="@{/appointment2}" th:object="${appointment}" method="post" class="col-md-8 offset-md-2"-->
-		<form th:action="@{/appointment2}" method="post" class="col-md-8 offset-md-2"
-			enctype="multipart/form-data">
-			<div class="row mb-3">
-				<label for="genero" class="col-sm-2 col-form-label">Hora</label>
-				<div class="col-sm-10">
-					<select class="form-select" name="time" id="time">
-<!--						<select class="form-select" th:field="*{appointmentTime}" id="appointmentTime">-->
-						<option th:each="hora : ${horarios}" th:text="${hora}" th:value="${hora}">
-						</option>
-					</select>
-				</div>
-<!--				<div th:errorclass="error" th:if="${#fields.hasErrors('appointmentTime')}" th:errors="*{appointmentTime}" class="d-block">-->
-<!--					<p>Error Aqui</p>-->
-<!--				</div>-->
-			</div>
+	<script>
+		document.addEventListener("DOMContentLoaded", () => {
+			// Al cargar la página, verifica si el campo de fecha tiene un valor
+			const inputFecha = document.getElementById("appointmentDate");
+			if (inputFecha && inputFecha.value) {
+				obtenerHorarios(); // Llama a obtenerHorarios si ya hay una fecha seleccionada
+			}
+		});
 
-			<br><br>
-<!--			<input id="appointmentDate" name="appointmentDate" type="date" th:field="*{appointmentDate}">-->
-			<input id="appointmentDate" name="appointmentDate" type="hidden" th:value="*{appointmentDate}">
-<!--			<input id="student" name="student" type="text" th:value="*{student} ?: *{id}">-->
-			<input id="id" name="id" type="hidden" th:value="*{student} ?: *{id}">
+		function actualizarInputFecha() {
+			const selectFecha = document.getElementById("fecha");
+			const inputFecha = document.getElementById("appointmentDate");
+			const fechaSeleccionada = selectFecha.value; // Valor en formato YYYY-MM-DD
+			inputFecha.value = fechaSeleccionada;
+			obtenerHorarios(); // Asigna la fecha seleccionada al input
+		}
 
-			<button type="submit" class="btn btn-primary float-end">Guardar</button>
+		function obtenerHorarios() {
+			const fechaSeleccionada = document.getElementById("appointmentDate").value; // Fecha en formato yyyy-MM-dd
+			const horariosSelect = document.getElementById("appointmentTime");
+			const horarioLabel = document.getElementById("appointmentTimeLabel");
 
-		</form>
-	</div>
+			// Limpiar horarios previos y ocultar el select mientras se realiza la búsqueda
+			horariosSelect.innerHTML = "";
+			horariosSelect.style.display = "none";
+			horarioLabel.style.display = "none";
+
+			if (fechaSeleccionada) {
+				fetch(`/horarios-disponibles?fecha=${fechaSeleccionada}`)
+					.then(response => {
+						if (!response.ok) {
+							throw new Error(`Error en la respuesta: ${response.status}`);
+						}
+						return response.json();
+					})
+					.then(horarios => {
+						if (horarios.length > 0) {
+							horarios.forEach(horario => {
+								const option = document.createElement("option");
+								option.value = horario;
+								option.textContent = horario;
+								horariosSelect.appendChild(option);
+							});
+
+							// Mostrar el select y su label si hay horarios disponibles
+							horariosSelect.style.display = "block";
+							horarioLabel.style.display = "block";
+						} else {
+							const option = document.createElement("option");
+							option.value = "";
+							option.textContent = "No hay horarios disponibles";
+							horariosSelect.appendChild(option);
+
+							// Mostrar el select con la opción de "No hay horarios disponibles"
+							horariosSelect.style.display = "block";
+							horarioLabel.style.display = "block";
+						}
+					})
+					.catch(error => {
+						console.error("Error al obtener los horarios:", error);
+					});
+			}
+		}
+	</script>
+
+	<h1>Seleccionar Turno</h1>
+	<form th:action="@{/save/appointment}" th:object="${appointment}" method="post" class="col-md-8 offset-md-2">
+
+		<label for="fecha">Fecha:</label>
+		<input class="form-select" type="date" th:field="*{appointmentDate}" th:value="appointmentDate"
+			id="appointmentDate" name="appointmentDate" onchange="obtenerHorarios()">
+
+		<select class="form-select" id="fecha" name="fecha" onchange="actualizarInputFecha()" multiple>
+			<option value="" disabled selected>Seleccione una fecha</option>
+			<option th:each="fecha : ${fechasDisponibles}" th:value="${fecha.fechaISO}" th:text="${fecha.fecha}">
+
+		</select>
+
+		<!-- Select de Horarios -->
+		<label for="horario" id="appointmentTimeLabel">Horario:</label>
+		<select class="form-select" id="appointmentTime" th:field="*{appointmentTime}" th:value="appointmentTime"
+			name="appointmentTime" multiple>
+		</select>
+
+		<input id="id" name="id" type="text" th:value="${student != null ? student.id : id}">
+		<input id="appointmentId" name="appointmentId" type="text" th:value="${appointment.id}">
+		
+
+		<!-- Botón de Enviar -->
+		<button type="submit">Reservar</button>
+
+
+	</form>
 </body>
-<!--<script>
-	$(function () {
-		let ids = $("#ids").val();
-		let arr = ids.split(",");
-		$("#ids").val("");
-
-		arr.forEach(id => {
-			$("#protagonistas").val(id);
-			actorSelected($("#protagonistas")[0]);
-		})
-	})
-</script>-->
 
 </html>

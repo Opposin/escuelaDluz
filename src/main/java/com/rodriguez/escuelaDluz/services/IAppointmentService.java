@@ -1,6 +1,9 @@
 package com.rodriguez.escuelaDluz.services;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,8 +20,15 @@ public interface IAppointmentService {
 	public void delete(Long id);
 	
 	public List<Appointment> findAll();
-	
 
 	Page<StudentAppointmentDTO> getStudentsWithNextAppointment(Pageable pageable);
+	
+	Page<StudentAppointmentDTO> getStudentsWithNextAppointmentGraduate(Pageable pageable);
+	
+	public List<Map<String, Object>> generarFechasDisponibles();
+	
+	public List<String> obtenerHorariosDisponiblesPorFecha(LocalDate fecha);
+
+//	Appointment saveOrUpdateAppointment(Appointment appointment, Long studentId);
 	
 }
