@@ -32,7 +32,6 @@
 			<form th:action="@{/filter}" method="get" enctype="multipart/form-data" class="">
 				<div class="cointainer">
 					<div class="row">
-
 						<div class="col-sm">
 							<label id="filterLabel">Filtrar</label>
 							<input type="text" class="form-control" id="filter" name="filter">
@@ -77,6 +76,22 @@
 					</div>
 				</div>
 			</form>
+			<div th:if="${!#lists.isEmpty(pastAppointments)}">
+				<h3> Los siguentes turnos ya pasaron la fecha de hoy, se debe </h3>
+				<ul th:each="pastAppointment : ${pastAppointments}" class="ul-style d-flex flex-row">
+					<li th:text="${pastAppointment.appointmentDate}"></li>
+					<form th:action="@{'/appointment/Complete/' + ${pastAppointment.id}}" method="post"
+						enctype="multipart/form-data">
+						<select id="completedType" name="completedType">
+							<option th:value="Completado" selected="selected"> Completado con exito </option>
+							<option th:value="Inasistencia"> Inasistencia del alumno </option>
+							<option th:value="CanceladoA"> Cancelado por alumno </option>
+							<option th:value="CanceladoB"> Cancelado por instructor </option>
+						</select>
+						<button type="submit" class="btn btn-outline-primary boton-submit">Buscar</button>
+					</form>
+				</ul>
+			</div>
 			<div>
 				<table class="table">
 					<thead>
@@ -102,23 +117,33 @@
 							<td>
 								<div class="d-flex flex-row div-mover">
 									<ul class="ul-style d-flex flex-row">
-										<li th:text="${studentAppointment.appointmentDate != null ?
-									#dates.format(studentAppointment.appointmentDate, 'EEEE dd/MM/yyyy') : 'Sin turno asignado'}"
-											class="ul-style">
+										<!--										<li th:text="${studentAppointment.appointmentDate != null ?-->
+										<!--									#dates.format(studentAppointment.appointmentDate, 'EEEE dd/MM/yyyy') : 'Sin turno asignado'}"-->
+										<!--											class="ul-style"></li>-->
 
-										<li th:text="${studentAppointment.appointmentTime != null ?
-									studentAppointment.appointmentTime : ''}" class="ul-style time-style">
+										<!--										<li th:text="${studentAppointment.appointmentTime != null ?-->
+										<!--									studentAppointment.appointmentTime : ''}" class="ul-style time-style"></li>-->
+										<li th:text="${studentAppointment.paymentDate != null ?
+									#dates.format(studentAppointment.paymentDate, 'dd/MM/yyyy') : 'Sin turno asignado'}"
+											class="ul-style"></li>
+
+										<li th:text="${studentAppointment.paymentTime != null ?
+									studentAppointment.paymentTime : ''}" class="ul-style time-style"></li>
 									</ul>
 								</div>
 							</td>
 
 							<td id="acciones" class="d-flex flex-row">
+
 								<a th:href="@{'/student/info/' + ${studentAppointment.studentId}}" class="btn-href"> Ver
 								</a>
 								<a th:href="@{'/student/' + ${studentAppointment.studentId}}" class="btn-href"> Editar
 								</a>
 								<a th:href="@{'/appointment/' + ${studentAppointment.studentId}}" class="btn-href">
 									Agregar turno </a>
+								<a th:href="@{'/payment/' + ${studentAppointment.studentId}}" class="btn-href"> Agregar
+									pago
+								</a>
 								<a href="#" th:href="@{'student/graduate/' + ${studentAppointment.studentId}}"
 									class="btn-grd" onclick="confirmarRedireccion(event)">Graduar</a>
 							</td>
@@ -127,7 +152,6 @@
 					</tbody>
 				</table>
 				<div th:if="${#strings.equalsIgnoreCase(students, 'Page 1 of 1 containing UNKNOWN instances')}">
-					<!-- El contenido que quieres renderizar si la condición es verdadera -->
 					<p>Parece que no hay alumnos que concuerden con los parametros deseados...</p>
 					<a href="/home">Limpiar Filtros</a>
 				</div>

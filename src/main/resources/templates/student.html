@@ -168,6 +168,14 @@
 						<p>Error Aqui</p>
 					</div>
 				</div>
+
+				<div>
+					<label for="studentClasses">Numero de clases que ha tomado el alumno</label>
+					<div class="col-sm-10">
+						<input type="number" class="form-control" id="studentClass" th:value="0" th:field="*{studentClass}"
+							name="studentClass" placeholder="ejemplo: 0" onkeypress="return isNumberKey(event)">
+					</div>
+				</div>
 			</div>
 
 

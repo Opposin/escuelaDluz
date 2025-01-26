@@ -29,6 +29,8 @@ public interface IAppointmentService {
 	
 	public List<String> obtenerHorariosDisponiblesPorFecha(LocalDate fecha);
 
+    public List<Appointment> getPastAppointments();
+
 //	Appointment saveOrUpdateAppointment(Appointment appointment, Long studentId);
 	
 }

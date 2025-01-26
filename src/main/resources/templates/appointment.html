@@ -65,6 +65,24 @@
 					});
 			}
 		}
+
+		function setTodayDate(inputId) {
+			// Obtiene la fecha de hoy
+			const today = new Date();
+
+			// Formatea la fecha en el formato 'YYYY-MM-DD' requerido por los inputs de tipo date
+			const formattedDate = today.toISOString().split('T')[0];
+
+			// Busca el input por su ID y establece el valor
+			const dateInput = document.getElementById(inputId);
+			if (dateInput) {
+				dateInput.value = formattedDate;
+			} else {
+				console.error(`Input con id '${inputId}' no encontrado.`);
+			}
+		}
+
+		// Llamada a la función con el ID del input
 	</script>
 
 	<h1>Seleccionar Turno</h1>
@@ -76,13 +94,23 @@
 		<select class="form-select" id="fecha" name="fecha" onchange="actualizarInputFecha()" multiple>
 			<option value="" disabled selected>Seleccione una fecha</option>
 			<option th:each="fecha : ${fechasDisponibles}" th:value="${fecha.fechaISO}" th:text="${fecha.fecha}">
-
 		</select>
+
+		<div class="col-sm-10">
+			<select class="form-select" name="appointmentType" id="appointmentType">
+				<option th:value="'Practica' + ' ' + 'regular'" selected="selected">Practica regular</option>
+				<option th:value="'Giro'+ ' ' + 'en' + ' ' +'U'">Redes Sociales</option>
+				<option th:value="Conos">Conos</option>
+			</select>
+		</div>
 
 		<!-- Select de Horarios -->
 		<label for="horario" id="appointmentTimeLabel" style="display: none;">Horario:</label>
 		<select class="form-select" id="appointmentTime" name="appointmentTime" style="display: none;" multiple>
 		</select>
+
+		<label for="appointmentType">Tipo de turno:</label>
+
 
 		<input id="id" name="id" type="text" th:value="${student != null ? student.id : id}">
 
@@ -91,6 +119,18 @@
 
 
 	</form>
+
+	<script>
+		setTodayDate('appointmentDate');
+
+		document.addEventListener("DOMContentLoaded", () => {
+			// Al cargar la página, verifica si el campo de fecha tiene un valor
+			const inputFecha = document.getElementById("appointmentDate");
+			if (inputFecha && inputFecha.value) {
+				obtenerHorarios(); // Llama a obtenerHorarios si ya hay una fecha seleccionada
+			}
+		});
+	</script>
 </body>
 
 </html>

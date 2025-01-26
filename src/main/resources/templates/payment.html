@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmls:th="http://www.thymeleaf.org">
+
+</html>
+
+<head th:insert="~{layouts/head}">
+
+</head>
+
+<body>
+	<header th:insert="~{layouts/header}"></header>
+	<script>
+		
+		function setTodayDate(inputId) {
+			// Obtiene la fecha de hoy
+			const today = new Date();
+
+			// Formatea la fecha en el formato 'YYYY-MM-DD' requerido por los inputs de tipo date
+			const formattedDate = today.toISOString().split('T')[0];
+
+			// Busca el input por su ID y establece el valor
+			const dateInput = document.getElementById(inputId);
+			if (dateInput) {
+				dateInput.value = formattedDate;
+			} else {
+				console.error(`Input con id '${inputId}' no encontrado.`);
+			}
+		}
+
+		// Llamada a la función con el ID del input
+	</script>
+
+	<h1>Seleccionar Turno</h1>
+	<form th:action="@{/payment/save}" method="post" class="col-md-8 offset-md-2">
+
+		<label for="fecha">Fecha del pago:</label>
+		<input class="form-select" type="date" id="paymentDate" name="paymentDate">
+
+		<div class="col-sm-10">
+			<select class="form-select" name="paymentType" id="paymentType">
+				<option th:value="Efectivo" selected="selected">Efectivo</option>
+				<option th:value="Transferencia">Transferencia</option>>
+			</select>
+		</div>
+
+		<!-- Select de Horarios -->
+		
+		<label for="horario" id="PaymentTimeLabel">Hora del pago:</label>
+		<input class="form-select" type="time" id="paymentTime" name="paymentTime">
+		
+		<input class="form-select" type="number" id="paymentQuantity" name="paymentQuantity" onkeypress="return isNumberKey(event)">
+
+
+		<input id="id" name="id" type="text" th:value="${student != null ? student.id : id}">
+
+		<!-- Botón de Enviar -->
+		<button type="submit">Reservar</button>
+
+
+	</form>
+
+	<script>
+		function setCurrentTime() {
+		            const now = new Date(); // Obtiene la fecha y hora actual
+		            const hours = String(now.getHours()).padStart(2, '0'); // Asegura 2 dígitos para la hora
+		            const minutes = String(now.getMinutes()).padStart(2, '0'); // Asegura 2 dígitos para los minutos
+		            const currentTime = `${hours}:${minutes}`; // Formatea la hora como HH:mm
+		            const timeInput = document.getElementById("paymentTime");
+		            timeInput.value = currentTime; // Asigna el valor al input de tipo time
+		        }
+
+		        // Ejecuta la función automáticamente al cargar la página
+		        window.onload = setCurrentTime;
+		
+		setTodayDate('paymentDate');
+	</script>
+</body>
+
+</html>

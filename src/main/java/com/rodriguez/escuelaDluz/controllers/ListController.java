@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.rodriguez.escuelaDluz.entities.Appointment;
 import com.rodriguez.escuelaDluz.entities.StudentAppointmentDTO;
 import com.rodriguez.escuelaDluz.services.IAppointmentService;
 import com.rodriguez.escuelaDluz.services.IStudentService;
@@ -43,9 +44,12 @@ public class ListController {
 	    // Obtener la página de estudiantes con sus turnos
 	    Page<StudentAppointmentDTO> studentsWithAppointments = appointmentService
 	            .getStudentsWithNextAppointment(pageable);
+	    
+	    List<Appointment> pastAppointments = appointmentService.getPastAppointments();
 
 	    // Agregar la lista de estudiantes al modelo
 	    model.addAttribute("students", studentsWithAppointments.getContent());
+	    model.addAttribute("pastAppointments", pastAppointments);
 	    model.addAttribute("actual", pagina + 1);
 	    model.addAttribute("titulo", "Listado de Alumnos");
 

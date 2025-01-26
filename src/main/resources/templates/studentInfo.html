@@ -99,7 +99,7 @@
 
 	<div class="d-flex flex-row">
 		<div th:if="${#lists.isEmpty(pastAppointments)}">
-			<h3>Citas Pasadas</h3>
+			<h3>Turnos pasados</h3>
 			<ul>
 				<li th:each="appointment : ${pastAppointments}">
 					Fecha: <span th:text="${appointment.appointmentDate}"></span>
@@ -114,7 +114,7 @@
 		
 		<div>
 			<div>
-			<h3>Próximas Citas</h3>
+			<h3>Próximas turnos</h3>
 			<ul>
 				<li th:each="appointment : ${upcomingAppointments}">
 					Fecha: <span th:text="${appointment.appointmentDate}"></span>

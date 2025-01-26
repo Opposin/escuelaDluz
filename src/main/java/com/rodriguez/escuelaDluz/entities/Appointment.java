@@ -41,6 +41,9 @@ public class Appointment implements Serializable{
 	
 	private String appointmentComplete;
 	
+	private String appointmentType;
+	
+	private Long appointmentClassNumber;
 	
 	@Version
     private Long version;
@@ -92,4 +95,22 @@ public class Appointment implements Serializable{
 	public void setStudent(Student student) {
 		this.student = student;
 	}
+
+	public String getAppointmentType() {
+		return appointmentType;
+	}
+
+	public void setAppointmentType(String appointmentType) {
+		this.appointmentType = appointmentType;
+	}
+
+	public Long getAppointmentClassNumber() {
+		return appointmentClassNumber;
+	}
+
+	public void setAppointmentClassNumber(Long appointmentClassNumber) {
+		this.appointmentClassNumber = appointmentClassNumber;
+	}
+	
+	
 }

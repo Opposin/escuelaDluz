@@ -12,13 +12,19 @@ public class StudentAppointmentDTO {
 	private Long studentAge;
 	private Long studentNonAtten;
 	private Boolean studentGraduate;
+	
 	private Long appointmentId;
-//	private Appointment nextAppointment;
 	private Date appointmentDate;
 	private String appointmentTime;
+	private Long appointmentClassNumber;
+	
+	private Long paymentId;
+	private Date paymentDate;
+	private String paymentTime;
+	private Long paymentNumber;
 
 	// Constructor
-	public StudentAppointmentDTO(Student student, Appointment appointment) {
+	public StudentAppointmentDTO(Student student, Appointment appointment, Payment payment) {
 	        this.studentId = student.getId();
 	        this.studentName = student.getFistName();
 	        this.studentLastName = student.getLastName();
@@ -32,10 +38,23 @@ public class StudentAppointmentDTO {
 	            this.appointmentDate = appointment.getAppointmentDate();
 	            this.appointmentTime = appointment.getAppointmentTime();
 	            this.appointmentId = appointment.getId();
+	            this.appointmentId = appointment.getAppointmentClassNumber();
 	        } else {
 	        	this.appointmentId = null;
 	            this.appointmentDate = null;
 	            this.appointmentTime = "";  // Mensaje para cuando no hay turno
+	            this.appointmentClassNumber = null;
+	        }
+	        if (payment != null) {
+	        	this.paymentId = payment.getId();
+	        	this.paymentDate = payment.getPaymentDate();
+	        	this.paymentTime = payment.getPaymentTime();
+	        	this.paymentNumber = payment.getPaymentNumber();
+	        } else {
+	        	this.paymentId = null;
+	        	this.paymentDate = null;
+	        	this.paymentTime = "";
+	        	this.paymentNumber = null;
 	        }
 	    }
 
@@ -133,6 +152,46 @@ public class StudentAppointmentDTO {
 
 	public void setStudentGraduate(Boolean studentGraduate) {
 		this.studentGraduate = studentGraduate;
+	}
+
+	public Long getAppointmentClassNumber() {
+		return appointmentClassNumber;
+	}
+
+	public void setAppointmentClassNumber(Long appointmentClassNumber) {
+		this.appointmentClassNumber = appointmentClassNumber;
+	}
+
+	public Long getPaymentId() {
+		return paymentId;
+	}
+
+	public void setPaymentId(Long paymentId) {
+		this.paymentId = paymentId;
+	}
+
+	public Date getPaymentDate() {
+		return paymentDate;
+	}
+
+	public void setPaymentDate(Date paymentDate) {
+		this.paymentDate = paymentDate;
+	}
+
+	public String getPaymentTime() {
+		return paymentTime;
+	}
+
+	public void setPaymentTime(String paymentTime) {
+		this.paymentTime = paymentTime;
+	}
+
+	public Long getPaymentNumber() {
+		return paymentNumber;
+	}
+
+	public void setPaymentNumber(Long paymentNumber) {
+		this.paymentNumber = paymentNumber;
 	}
 	
 	

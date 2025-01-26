@@ -64,6 +64,8 @@ public class Student implements Serializable {
 	
 	private Long studentTel;
 	
+	private Long studentClass;
+	
 	@NotNull(message = "Se debe definir cuantas clases tendra el alumno")
 	private Long studentClasses;
 
@@ -272,7 +274,14 @@ public class Student implements Serializable {
 	public void setStudentClasses(Long studentClasses) {
 		this.studentClasses = studentClasses;
 	}
-	
+
+	public Long getStudentClass() {
+		return studentClass;
+	}
+
+	public void setStudentClass(Long studentClass) {
+		this.studentClass = studentClass;
+	}
 	
 }
 //	public Long getVersion() {

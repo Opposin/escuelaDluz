@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 
+import com.rodriguez.escuelaDluz.entities.Appointment;
 import com.rodriguez.escuelaDluz.entities.Student;
 
 public interface IStudentService {
@@ -18,4 +20,5 @@ public interface IStudentService {
 	public List<Student> findAll();
 	
 	public Page<Student> findAll(Pageable pageable);
+
 }

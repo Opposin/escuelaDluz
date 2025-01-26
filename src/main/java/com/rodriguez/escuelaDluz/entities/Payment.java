@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -30,15 +31,20 @@ public class Payment implements Serializable{
 	@NotEmpty(message = "Debe tener tipo de pago.")
 	private String paymentType;
 	
+	private String paymentTime;
+	
 	private Long paymentNumber;
 
-	private Double paymentQuantity;
+	private Long paymentQuantity;
 	
 	private String paymentFile;
 	
 	@ManyToOne
 	@JoinColumn(name = "student_id")
 	private Student student;
+	
+	@Version
+    private Long version;
 
 	public Long getId() {
 		return id;
@@ -72,11 +78,11 @@ public class Payment implements Serializable{
 		this.paymentNumber = paymentNumber;
 	}
 
-	public Double getPaymentQuantity() {
+	public Long getPaymentQuantity() {
 		return paymentQuantity;
 	}
 
-	public void setPaymentQuantity(Double paymentQuantity) {
+	public void setPaymentQuantity(Long paymentQuantity) {
 		this.paymentQuantity = paymentQuantity;
 	}
 
@@ -94,6 +100,22 @@ public class Payment implements Serializable{
 
 	public void setStudent(Student student) {
 		this.student = student;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public String getPaymentTime() {
+		return paymentTime;
+	}
+
+	public void setPaymentTime(String paymentTime) {
+		this.paymentTime = paymentTime;
 	}
 	
 	
