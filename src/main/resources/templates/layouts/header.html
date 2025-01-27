@@ -12,16 +12,20 @@
 						<a class="nav-link active" aria-current="page" href="/home">Listado</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="/student">Nuevo estudiante</a>
+						<a class="nav-link" href="/appointments/view">Administrar Turnos</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="/list">Administrar Alumnos</a>
+						<a class="nav-link" href="/student">Administrar Pagos</a>
 					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/student">Nuevo estudiante</a>
+					</li>
+
 				</ul>
 			</div>
 		</div>
 	</nav>
 	<div th:if="${msj != null}" th:text="${msj}" th:class="${tipoMsj != null ? 'alert alert-' + tipoMsj : 'alert'}">
-		
+
 	</div>
 </header>

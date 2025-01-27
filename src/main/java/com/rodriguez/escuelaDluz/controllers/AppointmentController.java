@@ -26,12 +26,12 @@ import com.rodriguez.escuelaDluz.services.IStudentService;
 import jakarta.validation.Valid;
 
 @Controller
-public class AppoinmentController {
+public class AppointmentController {
 
 	private IStudentService studentService;
 	private IAppointmentService appointmentService;
 
-	public AppoinmentController(IStudentService studentService, IAppointmentService appointmentService) {
+	public AppointmentController(IStudentService studentService, IAppointmentService appointmentService) {
 		this.studentService = studentService;
 		this.appointmentService = appointmentService;
 	}
@@ -80,6 +80,41 @@ public class AppoinmentController {
 		
 		appointment = appointmentService.findById(appointmentId);
 		Student student = appointment.getStudent();
+		
+		
+		if (completedType.equals("Completado")) {
+			appointment.setAppointmentComplete(completedType);
+			appointmentService.save(appointment);
+		} else if (completedType.equals("Inasistencia")) {
+			Long variable = student.getStudentNonAtten();
+			System.out.println(variable);
+			variable++;
+			System.out.println(variable);
+			student.setStudentNonAtten(variable);
+			appointment.setAppointmentComplete(completedType);
+			studentService.save(student);
+			appointmentService.save(appointment);
+		} else {
+			appointment.setAppointmentComplete(completedType);
+			
+		}
+		redirectAttributes.addFlashAttribute("msj", "Turno completado exitosamente.");
+		redirectAttributes.addFlashAttribute("tipoMsj", "success");
+		System.out.println(appointmentId);
+		return "redirect:/home";
+	}
+	
+	@PostMapping("/appointment/Complete/view/{id}")
+	public String completeAppointmentsView(@PathVariable(name = "id") Long appointmentId, @RequestParam(name = "completedType") String completedType,
+			Model model, RedirectAttributes redirectAttributes) {
+
+
+		// Agregar la lista de horarios al modelo
+		Appointment appointment;
+		
+		appointment = appointmentService.findById(appointmentId);
+		Student student = appointment.getStudent();
+		
 		
 		if (completedType.equals("Completado")) {
 			appointment.setAppointmentComplete(completedType);
@@ -162,36 +197,14 @@ public class AppoinmentController {
 // Guardar en la base de datos
 			appointmentService.save(appointment);
 
-// Mensaje de éxito
 			redirectAttributes.addFlashAttribute("msj", "Turno guardado exitosamente.");
 			redirectAttributes.addFlashAttribute("tipoMsj", "success");
 		} catch (Exception e) {
-// Mensaje de error
 			redirectAttributes.addFlashAttribute("msj", "Error al guardar el Appointment: " + e.getMessage());
 		}
 
-// Redirigir a una página de lista o formulario
 
 		return "redirect:/home";
 	}
 
-//	@PostMapping("/appointment2")
-//	public String saveAppointment(@RequestParam(name = "appointmentDate") Date date, @RequestParam(name = "id") Long id,
-//			@RequestParam(name = "time") String time, Model model) {
-//
-//		Student student = studentService.findById(id);
-//		System.out.println(studentService.findById(id));
-//		Appointment appointment = new Appointment();
-//
-//		System.out.println(appointment.getStudent());
-//		appointment.setStudent(student);
-//		appointment.setAppointmentDate(date);
-//		appointment.setAppointmentTime(time);
-//
-//		System.out.println(appointment.getStudent());
-//		appointmentService.save(appointment);
-//
-//		return "redirect:home";
-//
-//	}
 }

@@ -85,40 +85,45 @@
 		// Llamada a la función con el ID del input
 	</script>
 
-	<h1>Seleccionar Turno</h1>
-	<form th:action="@{/save/appointment}" method="post" class="col-md-8 offset-md-2">
+	<div class="d-flex justify-content-center">
+		<div class="container-page">
+			<h1>Seleccionar Turno</h1>
+			<form th:action="@{/save/appointment}" method="post" class="col-md-8 offset-md-2">
 
-		<label for="fecha">Fecha:</label>
-		<input class="form-select" type="date" id="appointmentDate" name="appointmentDate" onchange="obtenerHorarios()">
+				<label for="fecha">Fecha:</label>
+				<input class="form-select" type="date" id="appointmentDate" name="appointmentDate"
+					onchange="obtenerHorarios()">
 
-		<select class="form-select" id="fecha" name="fecha" onchange="actualizarInputFecha()" multiple>
-			<option value="" disabled selected>Seleccione una fecha</option>
-			<option th:each="fecha : ${fechasDisponibles}" th:value="${fecha.fechaISO}" th:text="${fecha.fecha}">
-		</select>
+				<select class="form-select" id="fecha" name="fecha" onchange="actualizarInputFecha()" multiple>
+					<option value="" disabled selected>Seleccione una fecha</option>
+					<option th:each="fecha : ${fechasDisponibles}" th:value="${fecha.fechaISO}"
+						th:text="${fecha.fecha}">
+				</select>
 
-		<div class="col-sm-10">
-			<select class="form-select" name="appointmentType" id="appointmentType">
-				<option th:value="'Practica' + ' ' + 'regular'" selected="selected">Practica regular</option>
-				<option th:value="'Giro'+ ' ' + 'en' + ' ' +'U'">Redes Sociales</option>
-				<option th:value="Conos">Conos</option>
-			</select>
+				<div class="col-sm-10">
+					<select class="form-select" name="appointmentType" id="appointmentType">
+						<option th:value="'Practica' + ' ' + 'regular'" selected="selected">Practica regular</option>
+						<option th:value="'Giro'+ ' ' + 'en' + ' ' +'U'">Redes Sociales</option>
+						<option th:value="Conos">Conos</option>
+					</select>
+				</div>
+
+				<!-- Select de Horarios -->
+				<label for="horario" id="appointmentTimeLabel" style="display: none;">Horario:</label>
+				<select class="form-select" id="appointmentTime" name="appointmentTime" style="display: none;" multiple>
+				</select>
+
+				<label for="appointmentType">Tipo de turno:</label>
+
+
+				<input id="id" name="id" type="text" th:value="${student != null ? student.id : id}">
+
+				<!-- Botón de Enviar -->
+				<button type="submit">Reservar</button>
+
+			</form>
 		</div>
-
-		<!-- Select de Horarios -->
-		<label for="horario" id="appointmentTimeLabel" style="display: none;">Horario:</label>
-		<select class="form-select" id="appointmentTime" name="appointmentTime" style="display: none;" multiple>
-		</select>
-
-		<label for="appointmentType">Tipo de turno:</label>
-
-
-		<input id="id" name="id" type="text" th:value="${student != null ? student.id : id}">
-
-		<!-- Botón de Enviar -->
-		<button type="submit">Reservar</button>
-
-
-	</form>
+	</div>
 
 	<script>
 		setTodayDate('appointmentDate');

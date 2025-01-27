@@ -53,7 +53,7 @@
 	animation: radio-translate 0.5s ease-in-out;
 }
 
-.radio-input{
+.radio-input {
 	display: flex;
 	flex-direction: row;
 }
@@ -140,7 +140,7 @@ a:active {
 }
 
 .btn-href {
-	background-color: darkblue;
+	background-color: royalblue;
 	color: white;
 	padding: 5px 15px;
 	text-align: center;
@@ -148,14 +148,35 @@ a:active {
 	display: inline-block;
 	border-radius: 5%;
 }
-.btn-grd{
+
+.btn-href:hover {
+	background-color: blue;
+	color: white;
+	padding: 5px 15px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	border-radius: 5%;
+}
+
+.btn-grd {
 	background-color: darkred;
-		color: white;
-		padding: 5px 15px;
-		text-align: center;
-		text-decoration: none;
-		display: inline-block;
-		border-radius: 5%;
+	color: white;
+	padding: 5px 15px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	border-radius: 5%;
+}
+
+.btn-grd:hover {
+	background-color: red;
+	color: white;
+	padding: 5px 15px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	border-radius: 5%;
 }
 
 #container-no-graduate {
@@ -189,37 +210,45 @@ a:active {
 	padding-top: 0.5rem;
 }
 
-#miModal{
+#miModal {
 	padding-top: 10px;
 }
 
-#divMiSelect{
+#divMiSelect {
 	height: 400px;
 }
 
-.ul-style{
+.ul-style {
 	list-style-type: none;
 }
 
-.time-style{
+.time-style {
 	padding-left: 5px;
 }
 
-.div-mover{
+.div-mover {
 	margin-left: -30px;
 }
 
-.boton-submit{
+.boton-submit {
 	width: 250px;
 }
-.div-buton-submit{
+
+.div-buton-submit {
 	width: 100%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	padding-top: 21px;
-	
+
 }
 
-#containter-form{
+.container-page {
+	width: 90%;
+}
+
+@media(max-width:1300px) {
+	.hide-width {
+		display: none;
+	}
 }

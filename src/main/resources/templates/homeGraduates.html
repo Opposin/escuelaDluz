@@ -6,7 +6,7 @@
 
 <head th:insert="~{layouts/head}"></head>
 
-<body>
+<divbody>
 	<script>
 		function confirmarRedireccion(event) {
 			// Prevenimos la acción por defecto del enlace
@@ -26,129 +26,240 @@
 		}
 	</script>
 	<header th:insert="~{layouts/header}"></header>
-	<div class="container">
-		<h1 th:text="${titulo}"></h1>
-		<div class="col row-cols-1">
-			<form th:action="@{/filter/graduate}" method="get" enctype="multipart/form-data" class="">
-				<div class="cointainer">
-					<div class="row">
+	<div class="d-flex justify-content-center">
+		<div class="container-page">
+			<h1 th:text="${titulo}" class="py-4 text-center"></h1>
+			<div class="col row-cols-1">
+				<form th:action="@{/filter/graduate}" method="get" enctype="multipart/form-data" class="">
+					<div class="cointainer">
+						<div class="row">
+							<div class="col-sm">
+								<label id="filterLabel">Filtrar</label>
+								<input type="text" class="form-control" id="filter" name="filter">
+							</div>
 
-						<div class="col-sm">
-							<label id="filterLabel">Filtrar</label>
-							<input type="text" class="form-control" id="filter" name="filter">
-						</div>
+							<div class="col-sm">
+								<label>Filtrar por:</label>
+								<select class="form-select" id="filterType" name="filterType">
+									<option value="name" selected="selected">
+										Nombre/apellido.</option>
+									<option value="DNI">
+										Documeno Identificatorio.</option>
+									<option value="Age">
+										Edad (mostrara alumnos con igual o mayor
+										edad
+										al numero introducido)</option>
+									<option value="nonAtten">numero de inasistencias (mostrara alumnos con igual o mas
+										inasistencias
+										al numero introducido)</option>
+									<option value="appointmentDate">Fecha de turno.</option>
+								</select>
+							</div>
 
-						<div class="col-sm">
-							<label>Filtrar por:</label>
-							<select class="form-select" id="filterType" name="filterType">
-								<option value="name" selected="selected">
-									Nombre/apellido.</option>
-								<option value="DNI">
-									Documeno Identificatorio.</option>
-								<option value="Age">
-									Edad (mostrara alumnos con igual o mayor
-									edad
-									al numero introducido)</option>
-								<option value="nonAtten">numero de inasistencias (mostrara alumnos con igual o mas
-									inasistencias
-									al numero introducido)</option>
-								<option value="appointmentDate">Fecha de turno.</option>
-							</select>
-						</div>
+							<div style="display:none;" id="hide-div" class="col-sm">
+								<label>Fecha: </label>
+								<input type="date" id="appointmentDate" class="form-control" name="appointmentDate">
+							</div>
 
-						<div style="display:none;" id="hide-div" class="col-sm">
-							<label>Fecha: </label>
-							<input type="date" id="appointmentDate" class="form-control" name="appointmentDate">
-						</div>
+							<div>
+								<label>Ordenar por: </label>
+								<select class="form-select" id="orderType" name="orderType">
+									<option value="date" selected="selected">
+										Fecha del proximo turno</option>
+									<option value="name">
+										Nombre alfabeticamente</option>
+									<option value="nameReverse">
+										Nombre alfabeticamente reversa</option>
+									<option value="lastName">
+										Apellido alfabeticamente</option>
+									<option value="lastNameReverse">
+										Apellido Alfabeticamente reversa</option>
+									<option value="Age">
+										Edad de menor a mayor</option>
+									<option value="AgeMM">
+										Edad de mayor a menor</option>
+									<option value="nonAtten">Inasistencias del alumno mayor a menor</option>
+									<option value="nonAttenReverse">Inasistencias del alumno menor a mayor</option>
+									<option value="class">Numero de clase del proximo turno menor a mayor</option>
+									<option value="classReverse">Numero de clase del proximo turno mayor a menor
+									</option>
+									<option value="payment">Fecha del ultimo pago (empezando mas carcana a fecha
+										actual)
+									</option>
+									<option value="paymentReverse">Fecha del ultimo pago (empezando mas lejana a
+										fecha
+										actual)</option>
+								</select>
+							</div>
 
-						<div class="div-buton-submit col-sm">
-							<button type="submit" class="btn btn-outline-primary boton-submit">Buscar</button>
-						</div>
+							<div class="div-buton-submit col-sm">
+								<button type="submit" class="btn btn-outline-primary boton-submit">Filtra</button>
+							</div>
 
-						<label for="showGraduates">Mostrar estudiantes graduados</label>
-						<div id="showGraduates">
-							<div class="radio-input">
-								<input value="/home/graduate" name="value-1" id="value-1" type="radio" checked>
-								<label for="value-1">Si</label>
-								<input value="/home" name="value-1" id="value-2" type="radio">
-								<label for="value-2">No</label>
+							<label for="showGraduates">Mostrar estudiantes graduados</label>
+							<div id="showGraduates" class="mt-2">
+								<div class="radio-input">
+									<input value="/home/graduate" name="value-1" id="value-1" type="radio" checked>
+									<label for="value-1">Si</label>
+									<input value="/home" name="value-1" id="value-2" type="radio">
+									<label for="value-2">No</label>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			</form>
-			<div>
-				<table class="table">
-					<thead>
-						<tr>
-							<th scope="col">Nombre/s</th>
-							<th scope="col">Apellido</th>
-							<th scope="col">Documento</th>
-							<th scope="col">Edad</th>
-							<th scope="col">Partido</th>
-							<th scope="col">Inasistencias</th>
-							<th scope="col">Proximo turno</th>
-							<th scope="col">Acciones</th>
-						</tr>
-					</thead>
-					<tbody class="table-group-divider">
-						<div th:each="studentAppointment : ${students}">
-							<th th:text="${studentAppointment.studentName}"></th>
-							<td th:text="${studentAppointment.studentLastName}"></td>
-							<td th:text="${studentAppointment.studentDNI}"></td>
-							<td th:text="${studentAppointment.studentAge}"></td>
-							<td th:text="${studentAppointment.studentPartido}"></td>
-							<td th:text="${studentAppointment.studentNonAtten} " style="padding-left: 50px;"></td>
-							<td>
-								<div class="d-flex flex-row div-mover">
-									<ul class="ul-style d-flex flex-row">
-										<li th:text="${studentAppointment.appointmentDate != null ?
-									#dates.format(studentAppointment.appointmentDate, 'EEEE dd/MM/yyyy') : 'Sin turno asignado'}"
-											class="ul-style">
+				</form>
+				<div th:if="${!#lists.isEmpty(pastAppointments)}" class="mt-5 mb-5">
+					<h3> Los siguentes turnos ya pasaron la fecha actual, se debe completarlos</h3>
 
-										<li th:text="${studentAppointment.appointmentTime != null ?
-									studentAppointment.appointmentTime : ''}" class="ul-style time-style">
-									</ul>
-								</div>
-							</td>
-
-							<td id="acciones" class="d-flex flex-row">
-								<a th:href="@{'/student/info/' + ${studentAppointment.studentId}}" class="btn-href"> Ver
-								</a>
-								<a th:href="@{'/student/' + ${studentAppointment.studentId}}" class="btn-href"> Editar
-								</a>
-								<a th:href="@{'/appointment/' + ${studentAppointment.studentId}}" class="btn-href">
-									Agregar
-									turno </a>
-								<a href="#" th:href="@{'student/graduate/' + ${studentAppointment.studentId}}"
-									th:if="${!studentAppointment.studentGraduate}" class="btn-grd"
-									onclick="confirmarRedireccion(event)">
-									Graduar
-								</a>
-							</td>
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col"> Nombre/s </th>
+								<th scope="col"> Apellido </th>
+								<th scope="col"> Fecha del turno </th>
+								<th scope="col"> Hora del turno </th>
+								<th scope="col"> Completar </th>
 							</tr>
-						</div>
-					</tbody>
-				</table>
-				<div th:if="${#strings.equalsIgnoreCase(students, 'Page 1 of 1 containing UNKNOWN instances')}">
-					<!-- El contenido que quieres renderizar si la condición es verdadera -->
-					<p>Parece que no hay alumnos que concuerden con los parametros deseados...</p>
-					<a href="/home">Limpiar Filtros</a>
+						</thead>
+						<tbody class="table-group-divider">
+							<tr th:each="pastAppointment : ${pastAppointments}">
+								<th th:text="${pastAppointment.student.fistName}"></th>
+								<th th:text="${pastAppointment.student.lastName}"></th>
+								<th th:text="${pastAppointment.appointmentDate}"></th>
+								<th th:text="${pastAppointment.appointmentTime}"></th>
+								<th>
+									<form th:action="@{'/appointment/Complete/' + ${pastAppointment.id}}" method="post"
+										enctype="multipart/form-data">
+										<div class="d-flex flex-row">
+											<select id="completedType" name="completedType" class="form-control">
+												<option th:value="Completado" selected="selected"> Completado con exito
+												</option>
+												<option th:value="Inasistencia"> Inasistencia del alumno </option>
+												<option th:value="CanceladoB"> Cancelado por instructor </option>
+											</select>
+											<div class="ml-7">
+												<button type="submit"
+													class="btn btn-outline-primary boton-submit">Completar
+													turno</button>
+											</div>
+										</div>
+									</form>
+								</th>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div>
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">Nombre/s</th>
+								<th scope="col">Apellido</th>
+								<th class="hide-width" scope="col">Documento</th>
+								<th class="hide-width" scope="col">Edad</th>
+								<th class="hide-width" scope="col">Partido</th>
+								<th class="hide-width" scope="col">Inasistencias</th>
+								<th scope="col">Proximo turno</th>
+								<th scope="col">ultimo pago</th>
+								<th scope="col">Acciones</th>
+							</tr>
+						</thead>
+						<tbody class="table-group-divider">
+							<tr th:each="studentAppointment : ${students}">
+								<th th:text="${studentAppointment.studentName}"></th>
+								<td th:text="${studentAppointment.studentLastName}"></td>
+								<td class="hide-width" th:text="${studentAppointment.studentDNI}"></td>
+								<td class="hide-width" th:text="${studentAppointment.studentAge}"></td>
+								<td class="hide-width" th:text="${studentAppointment.studentPartido}"></td>
+								<td class="hide-width" th:text="${studentAppointment.studentNonAtten} "
+									style="padding-left: 50px;"></td>
+								<td>
+									<div class="d-flex flex-row div-mover">
+										<ul class="ul-style d-flex flex-row">
+											<li th:text="${studentAppointment.appointmentDate != null ?
+																							#dates.format(studentAppointment.appointmentDate, 'EEEE dd/MM/yyyy') : 'Sin turno asignado'}"
+												class="ul-style"></li>
+
+											<li th:text="${studentAppointment.appointmentTime != null ?
+																							studentAppointment.appointmentTime : ''}" class="ul-style time-style"></li>
+										</ul>
+									</div>
+								</td>
+								<td>
+									<div class="d-flex flex-col div-mover">
+										<ul class="ul-style d-flex flex-row">
+											<li th:text="${studentAppointment.paymentDate != null ?
+																					#dates.format(studentAppointment.paymentDate, 'dd/MM/yyyy') : 'Sin pagos realizados'}"
+												class="ul-style"></li>
+
+											<li th:text="${studentAppointment.paymentTime != null ?
+																					studentAppointment.paymentTime : ''}" class="ul-style time-style"></li>
+										</ul>
+									</div>
+									<div class="d-flex flex-col div-mover">
+										<ul class="ul-style d-flex flex-row">
+											<li class="ul-style"
+												th:text="${studentAppointment.paymentNumber != null ? 'Pago numero:  ' : ''}">
+											</li>
+											<li class="ul-style time-style"
+												th:text="${studentAppointment.paymentNumber != null ? studentAppointment.paymentNumber : ''}">
+											</li>
+										</ul>
+									</div>
+								</td>
+
+								<td id="acciones">
+									<div class="d-flex flex-column div-mover">
+										<div class="ul-style d-flex flex-row">
+											<a th:href="@{'/student/info/' + ${studentAppointment.studentId}}"
+												class="btn-href">
+												Ver
+											</a>
+											<a th:href="@{'/student/' + ${studentAppointment.studentId}}"
+												class="btn-href">
+												Editar
+											</a>
+											<a th:if="${!studentAppointment.studentGraduate}"
+												th:href="@{'student/graduate/' + ${studentAppointment.studentId}}"
+												class="btn-grd" onclick="confirmarRedireccion(event)">
+												Graduar
+											</a>
+										</div>
+										<div class="ul-style d-flex flex-row mt-2">
+											<a th:href="@{'/appointment/' + ${studentAppointment.studentId}}"
+												class="btn-href">
+												Agregar turno </a>
+											<a th:href="@{'/payment/' + ${studentAppointment.studentId}}"
+												class="btn-href">
+												Agregar
+												pago
+											</a>
+										</div>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div th:if="${#strings.equalsIgnoreCase(students, 'Page 1 of 1 containing UNKNOWN instances')}">
+						<p>Parece que no hay alumnos que concuerden con los parametros deseados...</p>
+						<a href="/home">Limpiar Filtros</a>
+					</div>
 				</div>
 			</div>
+
+
+
+			<nav aria-label="Page navigation example" class="mt-4">
+				<p th:text="${paginas}"></p>
+				<ul class="pagination justify-content-center">
+					<li class="page-item" th:each="pagina : ${paginas}"
+						th:classappend="${pagina == actual ? 'active' : ''}">
+						<a class="page-link" th:href="@{'/home/graduate?pagina=' + ${pagina-1}}"
+							th:text="${pagina}"></a>
+					</li>
+				</ul>
+			</nav>
 		</div>
-
-
-
-		<nav aria-label="Page navigation example" class="mt-4">
-			<p th:text="${paginas}"></p>
-			<ul class="pagination justify-content-center">
-				<li class="page-item" th:each="pagina : ${paginas}"
-					th:classappend="${pagina == actual ? 'active' : ''}">
-					<a class="page-link" th:href="@{'/home?pagina=' + ${pagina-1}}" th:text="${pagina}"></a>
-				</li>
-			</ul>
-		</nav>
 	</div>
 	<script>
 		// Función para transferir el valor del input de tipo date al input de tipo text
@@ -193,6 +304,6 @@
 			window.location = $(this).val();
 		});
 	</script>
-</body>
+	</body>
 
 </html>
