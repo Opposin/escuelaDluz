@@ -30,7 +30,7 @@
 		<div class="container-page">
 			<h1 th:text="${titulo}" class="py-4 text-center"></h1>
 			<div class="col row-cols-1">
-				<form th:action="@{/filter}" method="get" enctype="multipart/form-data" class="">
+				<form th:action="@{/appointments/view/filter}" method="get" enctype="multipart/form-data" class="">
 					<div class="cointainer">
 						<div class="row">
 							<div class="col-sm">
@@ -43,9 +43,9 @@
 								<select class="form-select" id="filterType" name="filterType">
 									<option value="name" selected="selected">
 										Nombre/apellido del alumno.</option>
-									<option value="appointmentDate">Fecha de turno.</option>
-									<option value="appointmentType"> Tipo de turno </option>
-									<option value="appointmentComplete"> Estado del turno </option>
+									<option value="appointmentdate">Fecha de turno.</option>
+									<option value="appointmenttype"> Tipo de turno </option>
+									<option value="appointmentcomplete"> Estado del turno </option>
 								</select>
 							</div>
 
@@ -54,19 +54,33 @@
 								<input type="date" id="appointmentDate" class="form-control" name="appointmentDate">
 							</div>
 
+							<div>
+								<label>Ordenar por: </label>
+								<select class="form-select" id="orderType" name="orderType">
+									<option value="null" selected="selected">
+										Fecha del proximo turno</option>
+									<option value="name">
+										Nombre/apellido alfabeticamente</option>
+									<option value="nameReverse">
+										Nombre/apellido alfabeticamente reversa</option>
+									<option value="classasc">
+										clase del turno menor a mayor</option>
+								</select>
+							</div>
+
 							<div class="div-buton-submit col-sm">
 								<button type="submit" class="btn btn-outline-primary boton-submit">Filtrar</button>
 							</div>
 
-<!--							<label for="showGraduates">Mostrar estudiantes graduados</label>-->
-<!--							<div id="showGraduates" class="mt-2">-->
-<!--								<div class="radio-input">-->
-<!--									<input value="/home/graduate" name="value-1" id="value-1" type="radio">-->
-<!--									<label for="value-1">Si</label>-->
-<!--									<input value="/home" name="value-1" id="value-2" type="radio" checked>-->
-<!--									<label for="value-2">No</label>-->
-<!--								</div>-->
-<!--							</div>-->
+							<!--							<label for="showGraduates">Mostrar estudiantes graduados</label>-->
+							<!--							<div id="showGraduates" class="mt-2">-->
+							<!--								<div class="radio-input">-->
+							<!--									<input value="/home/graduate" name="value-1" id="value-1" type="radio">-->
+							<!--									<label for="value-1">Si</label>-->
+							<!--									<input value="/home" name="value-1" id="value-2" type="radio" checked>-->
+							<!--									<label for="value-2">No</label>-->
+							<!--								</div>-->
+							<!--							</div>-->
 						</div>
 					</div>
 				</form>
@@ -90,7 +104,7 @@
 								<th th:text="${pastAppointment.appointmentDate}"></th>
 								<th th:text="${pastAppointment.appointmentTime}"></th>
 								<th>
-									<form th:action="@{'/appointment/Complete/' + ${pastAppointment.id}}" method="post"
+									<form th:action="@{'/appointment/Complete/view/' + ${pastAppointment.id}}" method="post"
 										enctype="multipart/form-data">
 										<div class="d-flex flex-row">
 											<select id="completedType" name="completedType" class="form-control">
@@ -111,7 +125,7 @@
 						</tbody>
 					</table>
 				</div>
-				
+
 				<div class="mt-3">
 					<table class="table">
 						<thead>
@@ -129,9 +143,10 @@
 							<tr th:each="appointment : ${appointments}">
 								<th th:text="${appointment.student.fistName}"></th>
 								<td th:text="${appointment.student.lastName}"></td>
-								<td class="hide-width" >
+								<td class="hide-width">
 									<div>
-										<p th:text="${appointment.appointmentClassNumber}"></pth:text="${appointment.appointmentClassNumber}">
+										<p th:text="${appointment.appointmentClassNumber}">
+											</pth:text="${appointment.appointmentClassNumber}">
 									</div>
 								</td>
 								<td class="hide-width" th:text="${appointment.appointmentType}"></td>
@@ -152,7 +167,7 @@
 								<td id="acciones">
 									<div class="d-flex flex-row div-mover">
 										<div class="ul-style d-flex flex-row">
-											<a th:href="@{'//appointment/edit/' + ${appointment.student.id} + '/' + ${appointment.id}}"
+											<a th:href="@{'/appointment/edit/' + ${appointment.student.id} + '/' + ${appointment.id}}"
 												class="btn-href">
 												Editar
 											</a>

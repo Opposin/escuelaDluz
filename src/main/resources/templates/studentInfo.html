@@ -99,88 +99,335 @@
 				<span th:text="${student.studentGraduate ? 'Sí' : 'No'}"></span>
 			</div>
 
-			<div class="d-flex flex-row">
-				<div th:if="${!#lists.isEmpty(pastAppointments)}">
-					<h3>Turnos pasados</h3>
-					<div th:each="appointment : ${pastAppointments}" class="appointmentCard">
-						<p>Fecha: <span th:text="${appointment.appointmentDate}"></span></p>
-						<p>Hora: <span th:text="${appointment.appointmentTime}"></span></p>
-						<p th:if="${appointment.appointmentType != null}">Tipo de turno: <span
-								th:text="${appointment.appointmentType != null ? appointment.appointmentType : ''}"></span>
-						</p>
-						<p th:if="${appointment.appointmentClassNumber != null}">clase numero: <span
-								th:text="${appointment.appointmentClassNumber != null ? appointment.appointmentClassNumber : ''}"></span>
-						</p>
-						<p th:if="${appointment.appointmentComplete != null}">Estado del turno: <span th:text="${appointment.appointmentComplete != null ? appointment.appointmentComplete : ''}"></span></p>
-						<!--TODO FIX THIS SHIT NOT SHOWING UP!!! -->
-						<div th:if="${appointment.appointmentComplete != 'Completado' 
-												           and appointment.appointmentComplete != 'Inasistencia' 
-												           and appointment.appointmentComplete != 'CanceladoB'}">
-							<form th:action="@{'/appointment/Complete/' + ${appointment.id}}" method="post"
-								enctype="multipart/form-data">
-								<div class="d-flex flex-row">
-									<select id="completedType" name="completedType" class="form-control">
-										<option th:value="Completado" selected="selected"> Completado con exito</option>
-										<option th:value="Inasistencia"> Inasistencia del alumno </option>
-										<option th:value="CanceladoB"> Cancelado por instructor </option>
-									</select>
-									<div class="ml-7">
-										<button type="submit" class="btn btn-outline-primary boton-submit">Completar
-											turno</button>
+			<div class="accordion" id="accordionExample">
+				<div class="accordion-item">
+					<h2 class="accordion-header">
+						<button class="accordion-button" type="button" data-bs-toggle="collapse"
+							data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+							Turnos proximos
+						</button>
+					</h2>
+					<div id="collapseOne" class="accordion-collapse collapse show">
+						<div class="accordion-body">
+							<span class="d-flex justify-content-center">
+								<div class="d-flex flex-column" style="width: 70%;">
+									<div th:if="${!#lists.isEmpty(upcomingAppointments)}">
+										<!--								<h3>Turnos Proximos</h3>-->
+										<table class="table">
+											<thead>
+												<tr>
+													<th scope="col">Fecha del turno</th>
+													<th scope="col">clase del turno</th>
+													<th class="hide-width" scope="col">Tipo de turno</th>
+													<th scope="col" style="padding-left: 4%;">Acciones</th>
+												</tr>
+											</thead>
+											<tbody class="table-group-divider">
+												<tr th:each="appointment : ${upcomingAppointments}">
+													<th>
+														<div class="d-flex flex-row div-mover">
+															<ul class="ul-style d-flex flex-row">
+																<li th:text="${appointment.appointmentDate != null ? #dates.format(appointment.appointmentDate, 'EEEE dd/MM/yyyy') : 'Sin turno asignado'}"
+																	class="ul-style"></li>
+
+																<li th:text="${appointment.appointmentTime != null ? appointment.appointmentTime : ''}"
+																	class="ul-style time-style"></li>
+															</ul>
+														</div>
+													</th>
+													<td th:text="${appointment.appointmentClassNumber}"
+														style="padding-left: 5%;"></td>
+													<td class="hide-width" th:text="${appointment.appointmentComplete}">
+													</td>
+													<td id="acciones" style="padding-left: 4%;">
+														<div class="d-flex flex-column div-mover">
+															<div class="ul-style d-flex flex-row">
+																<a th:href="@{'/appointment/edit/' + ${student.id}} + '/' + ${appointment.id}"
+																	class="btn-href">
+																	Editar Turno </a>
+																<div th:if="${appointment.appointmentComplete != 'Completado' 
+																														           and appointment.appointmentComplete != 'Inasistencia' 
+																														           and appointment.appointmentComplete != 'CanceladoB'}">
+																	<form
+																		th:action="@{'/appointment/Complete/student/' + ${appointment.id}}"
+																		method="post" enctype="multipart/form-data">
+																		<div class="d-flex flex-row">
+																			<select id="completedType"
+																				name="completedType"
+																				class="form-control">
+																				<option th:value="Completado"
+																					selected="selected">
+																					Completado con exito</option>
+																				<option th:value="Inasistencia">
+																					Inasistencia
+																					del alumno
+																				</option>
+																				<option th:value="CanceladoB"> Cancelado
+																					por
+																					instructor
+																				</option>
+																				<input type="hidden"
+																					th:value="${student.id}"
+																					id="studentId" name="studentId">
+																			</select>
+																			<div class="ml-7">
+																				<button type="submit"
+																					class="btn btn-outline-primary boton-submit">Completar
+																					turno</button>
+																			</div>
+																		</div>
+																	</form>
+																</div>
+															</div>
+														</div>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<div th:if="${#lists.isEmpty(upcomingAppointments)}">
+										<p style="text-align: center;">El Alumno no tiene turnos proximos asignados...
+										</p>
+										<div class="d-flex justify-content-center">
+											<a th:href="@{'/appointment/' + ${student.id}}" class="btn-href mt-4">
+												Agregar
+												turno </a>
+										</div>
 									</div>
 								</div>
-							</form>
+							</span>
 						</div>
-						<a th:href="@{'/appointment/edit/' + ${student.id}} + '/' + ${appointment.id}"
-							class="btn-href">-->
-							Editar Turno </a>
 					</div>
 				</div>
+				<div class="accordion-item">
+					<h2 class="accordion-header">
+						<button class="accordion-button" type="button" data-bs-toggle="collapse"
+							data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+							Turnos pasados
+						</button>
+					</h2>
+					<div id="collapseTwo" class="accordion-collapse collapse show">
+						<span class="d-flex justify-content-center">
+							<div class="d-flex flex-column" style="width: 70%;">
+								<div th:if="${!#lists.isEmpty(pastAppointments)}">
+									<table class="table">
+										<thead>
+											<tr>
+												<th scope="col">Fecha del turno</th>
+												<th scope="col">clase del turno</th>
+												<th class="hide-width" scope="col">Tipo de turno</th>
+												<th scope="col" style="padding-left: 4%;">Acciones</th>
+											</tr>
+										</thead>
+										<tbody class="table-group-divider">
+											<tr th:each="appointment : ${pastAppointments}">
+												<th>
+													<div class="d-flex flex-row div-mover">
+														<ul class="ul-style d-flex flex-row">
+															<li th:text="${appointment.appointmentDate != null ? #dates.format(appointment.appointmentDate, 'EEEE dd/MM/yyyy') : 'Sin turno asignado'}"
+																class="ul-style"></li>
 
-
-				<div>
-					<h3>Próximas turnos</h3>
-					<div th:each="appointment : ${upcomingAppointments}" class="appointmentCard">
-						<p>Fecha: <span th:text="${appointment.appointmentDate}"></span></p>
-						<p>Hora: <span th:text="${appointment.appointmentTime}"></span></p>
-						<p th:if="${appointment.appointmentType != null}">Tipo de turno: <span
-								th:text="${appointment.appointmentType != null ? appointment.appointmentType : ''}"></span>
-						</p>
-						<p th:if="${appointment.appointmentClassNumber != null}">clase numero: <span
-								th:text="${appointment.appointmentClassNumber != null ? appointment.appointmentClassNumber : ''}"></span>
-						</p>
-						<form th:action="@{'/appointment/Complete/' + ${appointment.id}}" method="post"
-							enctype="multipart/form-data">
-							<div class="d-flex flex-row">
-								<select id="completedType" name="completedType" class="form-control">
-									<option th:value="Completado" selected="selected"> Completado con exito</option>
-									<option th:value="Inasistencia"> Inasistencia del alumno </option>
-									<option th:value="CanceladoB"> Cancelado por instructor </option>
-								</select>
-								<div class="ml-7">
-									<button type="submit" class="btn btn-outline-primary boton-submit">Completar
-										turno</button>
+															<li th:text="${appointment.appointmentTime != null ? appointment.appointmentTime : ''}"
+																class="ul-style time-style"></li>
+														</ul>
+													</div>
+												</th>
+												<td th:text="${appointment.appointmentClassNumber}"
+													style="padding-left: 5%;">
+												</td>
+												<td class="hide-width" th:text="${appointment.appointmentComplete}">
+												</td>
+												<td id="acciones" style="padding-left: 4%;">
+													<div class="d-flex flex-column div-mover">
+														<div class="ul-style d-flex flex-row">
+															<a th:href="@{'/appointment/edit/' + ${student.id}} + '/' + ${appointment.id}"
+																class="btn-href">
+																Editar Turno </a>
+															<div th:if="${appointment.appointmentComplete != 'Completado' 
+																							           and appointment.appointmentComplete != 'Inasistencia' 
+																							           and appointment.appointmentComplete != 'CanceladoB'}">
+																<form
+																	th:action="@{'/appointment/Complete/student/' + ${appointment.id}}"
+																	method="post" enctype="multipart/form-data">
+																	<div class="d-flex flex-row">
+																		<select id="completedType" name="completedType"
+																			class="form-control">
+																			<option th:value="Completado"
+																				selected="selected">
+																				Completado con exito</option>
+																			<option th:value="Inasistencia">
+																				Inasistencia del alumno
+																			</option>
+																			<option th:value="CanceladoB"> Cancelado por
+																				instructor
+																			</option>
+																			<input type="hidden"
+																				th:value="${student.id}" id="studentId"
+																				name="studentId">
+																		</select>
+																		<div class="ml-7">
+																			<button type="submit"
+																				class="btn btn-outline-primary boton-submit">Completar
+																				turno</button>
+																		</div>
+																	</div>
+																</form>
+															</div>
+														</div>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
 								</div>
 							</div>
-						</form>
-						<a th:href="@{'/appointment/edit/' + ${student.id}} + '/' + ${appointment.id}"
-							class="btn-href">-->
-							Editar Turno </a>
-					</div>
-					<div th:if="${#lists.isEmpty(upcomingAppointments)}">-->
-						<p>El Alumno no tiene turnos asignados...</p>
-						<a th:href="@{'/appointment/' + ${student.id}}" class="btn-href mt-4">
-							Agregar
-							turno </a>
+						</span>
 					</div>
 				</div>
+				<!--				<div class="accordion-item">-->
+				<!--					<h2 class="accordion-header">-->
+				<!--						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"-->
+				<!--							data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"-->
+				<!--							aria-controls="panelsStayOpen-collapseThree">-->
+				<!--							Pagos del alumno-->
+				<!--						</button>-->
+				<!--					</h2>-->
+				<!--					<div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show">-->
+				<!--						<div class="accordion-body">-->
+				<div class="accordion-item">
+					<h2 class="accordion-header">
+						<button class="accordion-button" type="button" data-bs-toggle="collapse"
+							data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+							Turnos pasados
+						</button>
+					</h2>
+					<div id="collapseThree" class="accordion-collapse collapse show">
+						<span class="d-flex justify-content-center">
+							<div class="d-flex flex-column " style="width: 70%;">
+								<div th:if="${!#lists.isEmpty(student.studentPayments)}">
+									<table class="table">
+										<thead>
+											<tr>
+												<th scope="col">Fecha del pago</th>
+												<th scope="col">Tipo de pago</th>
+												<th class="hide-width" scope="col">cantidad del pago</th>
+												<th class="hide-width" scope="col">numero del pago</th>
+												<!--									<th scope="col" style="padding-left: 4%;">Acciones</th>-->
+											</tr>
+										</thead>
+										<tbody class="table-group-divider">
+											<tr th:each="payment : ${student.studentPayments}">
+												<th>
+													<div class="d-flex flex-row div-mover">
+														<ul class="ul-style d-flex flex-row">
+															<li th:text="${payment.paymentDate != null ? #dates.format(payment.paymentDate, 'EEEE dd/MM/yyyy') : 'Sin turno asignado'}"
+																class="ul-style"></li>
 
-				<!--				<li class="ul-style time-style"-->
-				<!--				th:text="${studentAppointment.paymentNumber != null ? studentAppointment.paymentNumber : ''}">-->
-				<!--				</li> th:if="${!studentAppointment.studentGraduate} -->
-
+															<li th:text="${payment.paymentTime != null ? payment.paymentTime : ''}"
+																class="ul-style time-style"></li>
+														</ul>
+													</div>
+												</th>
+												<td th:text="${payment.paymentType}"></td>
+												<td class="hide-width" th:text="${payment.paymentQuantity}"
+													style="padding-left: 4%;"></td>
+												<td class="hide-width" th:text="${payment.paymentNumber}"
+													style="padding-left: 5%;"></td>
+												<!--									<td id="acciones" style="padding-left: 4%;">-->
+												<!--										<div class="d-flex flex-column div-mover">-->
+												<!--											<div class="ul-style d-flex flex-row">-->
+												<!--												<a th:href="@{'/appointment/edit/' + ${student.id}} + '/' + ${appointment.id}"-->
+												<!--													class="btn-href">-->
+												<!--													Editar Turno </a>-->
+												<!--												<div th:if="${appointment.appointmentComplete != 'Completado' -->
+												<!--																											           and appointment.appointmentComplete != 'Inasistencia' -->
+												<!--																											           and appointment.appointmentComplete != 'CanceladoB'}">-->
+												<!--													<form-->
+												<!--														th:action="@{'/appointment/Complete/student/' + ${appointment.id}}"-->
+												<!--														method="post" enctype="multipart/form-data">-->
+												<!--														<div class="d-flex flex-row">-->
+												<!--															<select id="completedType" name="completedType"-->
+												<!--																class="form-control">-->
+												<!--																<option th:value="Completado" selected="selected">-->
+												<!--																	Completado con exito</option>-->
+												<!--																<option th:value="Inasistencia">-->
+												<!--																	Inasistencia del alumno-->
+												<!--																</option>-->
+												<!--																<option th:value="CanceladoB"> Cancelado por-->
+												<!--																	instructor-->
+												<!--																</option>-->
+												<!--																<input type="hidden" th:value="${student.id}"-->
+												<!--																	id="studentId" name="studentId">-->
+												<!--															</select>-->
+												<!--															<div class="ml-7">-->
+												<!--																<button type="submit"-->
+												<!--																	class="btn btn-outline-primary boton-submit">Completar-->
+												<!--																	turno</button>-->
+												<!--															</div>-->
+												<!--														</div>-->
+												<!--													</form>-->
+												<!--												</div>-->
+												<!--											</div>-->
+												<!--										</div>-->
+												<!--									</td>-->
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</span>
+					</div>
+				</div>
 			</div>
 		</div>
+	</div>
+	<!--				<div>-->
+	<!--					<h3>Próximas turnos</h3>-->
+	<!--					<div th:each="appointment : ${upcomingAppointments}" class="appointmentCard">-->
+	<!--						<p>Fecha: <span th:text="${appointment.appointmentDate}"></span></p>-->
+	<!--						<p>Hora: <span th:text="${appointment.appointmentTime}"></span></p>-->
+	<!--						<p th:if="${appointment.appointmentType != null}">Tipo de turno: <span-->
+	<!--								th:text="${appointment.appointmentType != null ? appointment.appointmentType : ''}"></span>-->
+	<!--						</p>-->
+	<!--						<p th:if="${appointment.appointmentClassNumber != null}">clase numero: <span-->
+	<!--								th:text="${appointment.appointmentClassNumber != null ? appointment.appointmentClassNumber : ''}"></span>-->
+	<!--						</p>-->
+	<!--						<p th:if="${appointment.appointmentComplete != null}">Estado del turno: <span-->
+	<!--								th:text="${appointment.appointmentComplete != null ? appointment.appointmentComplete : ''}"></span>-->
+	<!--						</p>-->
+	<!--						TODO FIX THIS SHIT NOT SHOWING UP!!! -->
+	<!--						<div th:if="${appointment.appointmentComplete != 'Completado' -->
+	<!--																	           and appointment.appointmentComplete != 'Inasistencia' -->
+	<!--																	           and appointment.appointmentComplete != 'CanceladoB'}">-->
+	<!--							<form th:action="@{'/appointment/Complete/' + ${appointment.id}}" method="post"-->
+	<!--								enctype="multipart/form-data">-->
+	<!--								<div class="d-flex flex-row">-->
+	<!--									<select id="completedType" name="completedType" class="form-control">-->
+	<!--										<option th:value="Completado" selected="selected"> Completado con exito</option>-->
+	<!--										<option th:value="Inasistencia"> Inasistencia del alumno </option>-->
+	<!--										<option th:value="CanceladoB"> Cancelado por instructor </option>-->
+	<!--									</select>-->
+	<!--									<div class="ml-7">-->
+	<!--										<button type="submit" class="btn btn-outline-primary boton-submit">Completar-->
+	<!--											turno</button>-->
+	<!--									</div>-->
+	<!--								</div>-->
+	<!--							</form>-->
+	<!--						</div>-->
+	<!--						<div th:if="${#lists.isEmpty(upcomingAppointments)}">-->
+	<!--							<p>El Alumno no tiene turnos asignados...</p>-->
+	<!--							<a th:href="@{'/appointment/' + ${student.id}}" class="btn-href mt-4">-->
+	<!--								Agregar-->
+	<!--								turno </a>-->
+	<!--						</div>-->
+	<!--					</div>-->
+
+	<!--									<li class="ul-style time-style"-->
+	<!--									th:text="${studentAppointment.paymentNumber != null ? studentAppointment.paymentNumber : ''}">-->
+	<!--									</li> th:if="${!studentAppointment.studentGraduate} -->
+
+	</div>
+	</div>
 	</div>
 </body>
 

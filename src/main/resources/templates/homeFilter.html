@@ -255,7 +255,7 @@
 					<li class="page-item" th:each="pagina : ${paginas}"
 						th:classappend="${pagina == actual ? 'active' : ''}">
 						<a class="page-link"
-							th:href="@{'/homeFilter?pagina=' + ${pagina-1} + '&filter=' + ${filter} + '&filterType=' + ${filterType} + '&orderType='} + ${orderType}">
+							th:href="@{'/homeFilter?pagina=' + ${pagina-1} + '&filter=' + ${filter} + '&filterType=' + ${filterType} + '&orderType=' + ${orderType}}">
 							<span th:text="${pagina}"></span>
 						</a>
 					</li>

@@ -135,7 +135,41 @@ public class AppointmentController {
 		redirectAttributes.addFlashAttribute("msj", "Turno completado exitosamente.");
 		redirectAttributes.addFlashAttribute("tipoMsj", "success");
 		System.out.println(appointmentId);
-		return "redirect:/home";
+		return "redirect:/appointments/view";
+	}
+	
+	@PostMapping("/appointment/Complete/student/{id}")
+	public String completeAppointmentsStudent(@PathVariable(name = "id") Long appointmentId,@RequestParam(name = "studentId") Long id, @RequestParam(name = "completedType") String completedType,
+			Model model, RedirectAttributes redirectAttributes) {
+
+
+		// Agregar la lista de horarios al modelo
+		Appointment appointment;
+		
+		appointment = appointmentService.findById(appointmentId);
+		Student student = appointment.getStudent();
+		
+		
+		if (completedType.equals("Completado")) {
+			appointment.setAppointmentComplete(completedType);
+			appointmentService.save(appointment);
+		} else if (completedType.equals("Inasistencia")) {
+			Long variable = student.getStudentNonAtten();
+			System.out.println(variable);
+			variable++;
+			System.out.println(variable);
+			student.setStudentNonAtten(variable);
+			appointment.setAppointmentComplete(completedType);
+			studentService.save(student);
+			appointmentService.save(appointment);
+		} else {
+			appointment.setAppointmentComplete(completedType);
+			
+		}
+		redirectAttributes.addFlashAttribute("msj", "Turno completado exitosamente.");
+		redirectAttributes.addFlashAttribute("tipoMsj", "success");
+		System.out.println(appointmentId);
+		return "redirect:/student/info/" + id;
 	}
 
 	@PostMapping("/save/appointment")
