@@ -125,12 +125,12 @@
 		<!--		<input id="appointmentComplete" name="appointmentComplete" type="hidden"-->
 		<!--			th:value="${appointment.appointmentComplete}">-->
 
-		<input id="id" name="id" type="text" th:value="${student != null ? student.id : id}">
-		<input id="appointmentId" name="appointmentId" type="text">
-		<input id="appointmentTimeVariable" name="appointmentTimeVariable" type="text">
-		<input id="appointmentTime" name="appointmentTime" type="text">
-		<input id="appointmentType" value="Practica regular" name="appointmentType" type="text">
-		<input id="appointmentComplete" value="Turno Pendiente." name="appointmentComplete" type="text">
+		<input id="id" name="id" type="hidden" th:value="${student != null ? student.id : id}">
+		<input id="appointmentId" name="appointmentId" type="hidden">
+		<input id="appointmentTimeVariable" name="appointmentTimeVariable" type="hidden">
+		<input id="appointmentTime" name="appointmentTime" type="hidden">
+		<input id="appointmentType" value="Practica regular" name="appointmentType" type="hidden">
+		<input id="appointmentComplete" value="Turno Pendiente." name="appointmentComplete" type="hidden">
 
 
 		<label class="mt-3" for="appointmentTypeSelect">Tipo de turno:</label>
