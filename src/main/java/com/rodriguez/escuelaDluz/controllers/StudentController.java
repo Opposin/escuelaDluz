@@ -70,49 +70,108 @@ public class StudentController {
 //		return "studentInfo"; // El nombre de la vista Thymeleaf
 //	}
 
+//	@GetMapping("/student/info/{id}")
+//	public String showStudentInfo(@PathVariable(name = "id") Long id, Model model) {
+//		Student student = studentService.findById(id);
+//
+//		if (student.getFistName() != null) {
+//			// Obtener la fecha y hora actual
+//			LocalDateTime now = LocalDateTime.now();
+//
+//			// Dividir las citas en pasadas y próximas
+//			List<Appointment> appointments = student.getAppointments();
+//			DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+//
+//			List<Appointment> pastAppointments = appointments.stream().filter(appointment -> {
+//				LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
+//				LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
+//				LocalDateTime appointmentDateTime = LocalDateTime.of(appointmentDate, appointmentTime);
+//				return appointmentDateTime.isBefore(now);
+//			}).collect(Collectors.toList());
+//
+//			List<Appointment> upcomingAppointments = appointments.stream().filter(appointment -> {
+//				LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
+//				LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
+//				LocalDateTime appointmentDateTime = LocalDateTime.of(appointmentDate, appointmentTime);
+//				return appointmentDateTime.isAfter(now);
+//			}).sorted(Comparator.comparing(appointment -> {
+//				LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
+//				LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
+//				return LocalDateTime.of(appointmentDate, appointmentTime);
+//			})).collect(Collectors.toList());
+//
+//			// Añadir las listas al modelo
+//			model.addAttribute("student", student);
+//			model.addAttribute("pastAppointments", pastAppointments);
+//			model.addAttribute("upcomingAppointments", upcomingAppointments);
+//		} else {
+//			// Manejar el error si no se encuentra el alumno
+//			model.addAttribute("error", "Alumno no encontrado");
+//			return "error";
+//		}
+//		
+//		return "studentInfo"; // El nombre de la vista Thymeleaf
+//	}
+
 	@GetMapping("/student/info/{id}")
 	public String showStudentInfo(@PathVariable(name = "id") Long id, Model model) {
-		Student student = studentService.findById(id);
+	    Student student = studentService.findById(id);
 
-		if (student.getFistName() != null) {
-			// Obtener la fecha y hora actual
-			LocalDateTime now = LocalDateTime.now();
+	    if (student.getFistName() != null) {
+	        // Obtener la fecha y hora actual
+	        LocalDateTime now = LocalDateTime.now();
 
-			// Dividir las citas en pasadas y próximas
-			List<Appointment> appointments = student.getAppointments();
-			DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+	        // Formateador de tiempo para comparar la hora
+	        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
-			List<Appointment> pastAppointments = appointments.stream().filter(appointment -> {
-				LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
-				LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
-				LocalDateTime appointmentDateTime = LocalDateTime.of(appointmentDate, appointmentTime);
-				return appointmentDateTime.isBefore(now);
-			}).collect(Collectors.toList());
+	        // Obtener lista de turnos del estudiante
+	        List<Appointment> appointments = student.getAppointments();
 
-			List<Appointment> upcomingAppointments = appointments.stream().filter(appointment -> {
-				LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
-				LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
-				LocalDateTime appointmentDateTime = LocalDateTime.of(appointmentDate, appointmentTime);
-				return appointmentDateTime.isAfter(now);
-			}).sorted(Comparator.comparing(appointment -> {
-				LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
-				LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
-				return LocalDateTime.of(appointmentDate, appointmentTime);
-			})).collect(Collectors.toList());
+	        // Filtrar turnos pasados o completados/cancelados
+	        List<Appointment> pastAppointments = appointments.stream()
+	            .filter(appointment -> {
+	                LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
+	                LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
+	                LocalDateTime appointmentDateTime = LocalDateTime.of(appointmentDate, appointmentTime);
 
-			// Añadir las listas al modelo
-			model.addAttribute("student", student);
-			model.addAttribute("pastAppointments", pastAppointments);
-			model.addAttribute("upcomingAppointments", upcomingAppointments);
-		} else {
-			// Manejar el error si no se encuentra el alumno
-			model.addAttribute("error", "Alumno no encontrado");
-			return "error";
-		}
-		
-		return "studentInfo"; // El nombre de la vista Thymeleaf
+	                // Incluir si el turno es pasado o si el estado no es "Turno Pendiente."
+	                return appointmentDateTime.isBefore(now) || 
+	                       (appointment.getAppointmentComplete() != null && 
+	                        !appointment.getAppointmentComplete().equals("Turno Pendiente."));
+	            })
+	            .collect(Collectors.toList());
+
+	        // Filtrar turnos próximos
+	        List<Appointment> upcomingAppointments = appointments.stream()
+	            .filter(appointment -> {
+	                LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
+	                LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
+	                LocalDateTime appointmentDateTime = LocalDateTime.of(appointmentDate, appointmentTime);
+	                
+	                return appointmentDateTime.isAfter(now) && 
+	                       (appointment.getAppointmentComplete() == null || 
+	                        appointment.getAppointmentComplete().equals("Turno Pendiente."));
+	            })
+	            .sorted(Comparator.comparing(appointment -> {
+	                LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
+	                LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
+	                return LocalDateTime.of(appointmentDate, appointmentTime);
+	            }))
+	            .collect(Collectors.toList());
+
+	        // Añadir las listas al modelo
+	        model.addAttribute("student", student);
+	        model.addAttribute("pastAppointments", pastAppointments);
+	        model.addAttribute("upcomingAppointments", upcomingAppointments);
+	    } else {
+	        // Manejar el error si no se encuentra el alumno
+	        model.addAttribute("error", "Alumno no encontrado");
+	        return "error";
+	    }
+	    
+	    return "studentInfo"; // El nombre de la vista Thymeleaf
 	}
-
+	
 	@GetMapping("/student/graduate/{id}")
 	public String graduateStudent(@PathVariable(name = "id") Long id, Model model, RedirectAttributes redirectAttributes) {
 		Student student = studentService.findById(id);
@@ -123,6 +182,19 @@ public class StudentController {
 		redirectAttributes.addFlashAttribute("msj", "Estudiante graduado exitosamente.");
 		redirectAttributes.addFlashAttribute("tipoMsj", "success");
 		return "redirect:/home";
+
+	}
+	
+	@GetMapping("student/info/student/graduate/{id}")
+	public String graduateStudentView(@PathVariable(name = "id") Long id, Model model, RedirectAttributes redirectAttributes) {
+		Student student = studentService.findById(id);
+
+		student.setStudentGraduate(true);
+		studentService.save(student);
+		
+		redirectAttributes.addFlashAttribute("msj", "Estudiante graduado exitosamente.");
+		redirectAttributes.addFlashAttribute("tipoMsj", "success");
+		return "redirect:/student/info/" + id;
 
 	}
 

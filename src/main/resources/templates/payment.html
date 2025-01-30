@@ -31,37 +31,88 @@
 		// Llamada a la función con el ID del input
 	</script>
 	<div>
-		<div class="container-page">
-			<h1>Seleccionar Turno</h1>
-			<form th:action="@{/payment/save}" method="post" class="col-md-8 offset-md-2">
-
-				<label for="fecha">Fecha del pago:</label>
-				<input class="form-select" type="date" id="paymentDate" name="paymentDate">
-
-				<div class="col-sm-10">
-					<select class="form-select" name="paymentType" id="paymentType">
-						<option th:value="Efectivo" selected="selected">Efectivo</option>
-						<option th:value="Transferencia">Transferencia</option>>
-					</select>
+		<div class="container mt-4">
+			<div class="card shadow-lg">
+				<div class="card-header bg-primary text-white">
+					<h4 class="mb-0 text-center">Registro de Pago</h4>
 				</div>
+				<div class="card-body">
+					<form th:action="@{/payment/save}" method="post">
 
-				<!-- Select de Horarios -->
-
-				<label for="horario" id="PaymentTimeLabel">Hora del pago:</label>
-				<input class="form-select" type="time" id="paymentTime" name="paymentTime">
-
-				<input class="form-select" type="number" id="paymentQuantity" name="paymentQuantity"
-					onkeypress="return isNumberKey(event)">
-
-
-				<input id="id" name="id" type="text" th:value="${student != null ? student.id : id}">
-
-				<!-- Botón de Enviar -->
-				<button type="submit">Reservar</button>
+						<!-- Fecha del Pago -->
+						<div class="mb-3">
+							<label for="paymentDate" class="form-label">Fecha del Pago:</label>
+							<input type="date" class="form-control" id="paymentDate" name="paymentDate">
+						</div>
 
 
-			</form>
+						<div class="mb-3">
+							<label for="paymentTime" class="form-label">Hora del Pago:</label>
+							<input type="time" class="form-control" id="paymentTime" name="paymentTime">
+						</div>
+
+
+						<!-- Tipo de Pago -->
+						<div class="mb-3">
+							<label for="paymentType" class="form-label">Método de Pago:</label>
+							<select class="form-select" name="paymentType" id="paymentType">
+								<option th:value="Efectivo" selected>Efectivo</option>
+								<option th:value="Transferencia">Transferencia</option>
+							</select>
+						</div>
+
+						<!-- Hora del Pago -->
+
+
+						<!-- Cantidad del Pago -->
+						<div class="mb-3">
+							<label for="paymentQuantity" class="form-label">Cantidad:</label>
+							<input type="number" class="form-control" id="paymentQuantity" name="paymentQuantity"
+								onkeypress="return isNumberKey(event)">
+						</div>
+
+						<!-- ID del Estudiante -->
+						<input type="hidden" id="id" name="id" th:value="${student != null ? student.id : id}">
+
+						<!-- Botón de Enviar -->
+						<div class="text-center mt-4">
+							<button type="submit" class="btn btn-success btn-lg">Registrar Pago</button>
+						</div>
+					</form>
+				</div>
+			</div>
 		</div>
+		<!--		<div class="container-page">-->
+		<!--			<h1>Seleccionar Turno</h1>-->
+		<!--			<form th:action="@{/payment/save}" method="post" class="col-md-8 offset-md-2">-->
+
+		<!--				<label for="fecha">Fecha del pago:</label>-->
+		<!--				<input class="form-select" type="date" id="paymentDate" name="paymentDate">-->
+
+		<!--				<div class="col-sm-10">-->
+		<!--					<select class="form-select" name="paymentType" id="paymentType">-->
+		<!--						<option th:value="Efectivo" selected="selected">Efectivo</option>-->
+		<!--						<option th:value="Transferencia">Transferencia</option>>-->
+		<!--					</select>-->
+		<!--				</div>-->
+
+		<!--				 Select de Horarios -->
+
+		<!--				<label for="horario" id="PaymentTimeLabel">Hora del pago:</label>-->
+		<!--				<input class="form-select" type="time" id="paymentTime" name="paymentTime">-->
+
+		<!--				<input class="form-select" type="number" id="paymentQuantity" name="paymentQuantity"-->
+		<!--					onkeypress="return isNumberKey(event)">-->
+
+
+		<!--				<input id="id" name="id" type="text" th:value="${student != null ? student.id : id}">-->
+
+		<!--				 Botón de Enviar -->
+		<!--				<button type="submit">Reservar</button>-->
+
+
+		<!--			</form>-->
+		<!--		</div>-->
 	</div>
 	<script>
 		function setCurrentTime() {

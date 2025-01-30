@@ -38,7 +38,7 @@ public class AppointmentListController {
 	@GetMapping("/appointments/view")
 	public String getSortedAppointments(
 			@RequestParam(name = "pagina", required = false, defaultValue = "0") Integer pagina,
-			@RequestParam(name = "size", required = false, defaultValue = "6") Integer size, Model model) {
+			@RequestParam(name = "size", required = false, defaultValue = "10") Integer size, Model model) {
 
 		Pageable pageable = PageRequest.of(pagina, size);
 
@@ -242,7 +242,7 @@ public class AppointmentListController {
 	@GetMapping("/appointments/view/filter")
 	public String getSortedAndFilteredAppointments(
 	        @RequestParam(name = "pagina", required = false, defaultValue = "0") Integer pagina,
-	        @RequestParam(name = "size", required = false, defaultValue = "6") Integer size,
+	        @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
 	        @RequestParam(name = "filter", required = false) String param,
 	        @RequestParam(name = "filterType", required = false) String filterType,
 	        @RequestParam(name = "orderType", required = false) String orderType,

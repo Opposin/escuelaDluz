@@ -39,7 +39,7 @@ public class PaymentListController {
 
 	@GetMapping("/payments/view")
 	public String listPayments(@RequestParam(name = "pagina", required = false, defaultValue = "0") Integer pagina,
-			@RequestParam(name = "size", required = false, defaultValue = "1") Integer size, Model model) {
+			@RequestParam(name = "size", required = false, defaultValue = "10") Integer size, Model model) {
 
 		// Obtén la lista de pagos desde el servicio y ordénalos
 		List<Payment> sortedPayments = paymentService.findAllSortedByProximity();
@@ -66,7 +66,7 @@ public class PaymentListController {
 	@GetMapping({ "/payments/view/filter"})
 	public String filterPayments(Model model,
 			@RequestParam(name = "pagina", required = false, defaultValue = "0") Integer pagina,
-			@RequestParam(name = "size", required = false, defaultValue = "1") Integer size,
+			@RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
 			@RequestParam(name = "filter", required = false) String param,
 			@RequestParam(name = "filterType", required = false) String filterType,
 			@RequestParam(name = "orderType", required = false, defaultValue = "paymentDate") String orderType) {

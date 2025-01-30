@@ -36,7 +36,7 @@ public class ListController {
 	@GetMapping({ "/", "/home", "/index" })
 	public String homeList(Model model,
 			@RequestParam(name = "pagina", required = false, defaultValue = "0") Integer pagina,
-			@RequestParam(name = "size", required = false, defaultValue = "5") Integer size) {
+			@RequestParam(name = "size", required = false, defaultValue = "10") Integer size) {
 
 		// Crear el Pageable con la página solicitada y el tamaño
 		Pageable pageable = PageRequest.of(pagina, size);
@@ -67,7 +67,7 @@ public class ListController {
 	@GetMapping({ "/filter", "/homeFilter", "/indexFilter" })
 	public String homeListFilter(Model model,
 	        @RequestParam(name = "pagina", required = false, defaultValue = "0") Integer pagina,
-	        @RequestParam(name = "size", required = false, defaultValue = "5") Integer size,
+	        @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
 	        @RequestParam(name = "filter", required = false) String param,
 	        @RequestParam(name = "filterType", required = false) String filterType,
 	        @RequestParam(name = "orderType", required = false, defaultValue = "appointmentDate") String orderType) {
@@ -166,7 +166,7 @@ public class ListController {
 	@GetMapping({ "/home/graduate" })
 	public String homeListGraduate(Model model,
 			@RequestParam(name = "pagina", required = false, defaultValue = "0") Integer pagina,
-			@RequestParam(name = "size", required = false, defaultValue = "6") Integer size) {
+			@RequestParam(name = "size", required = false, defaultValue = "10") Integer size) {
 
 		// Crear el Pageable con la página solicitada y el tamaño
 		Pageable pageable = PageRequest.of(pagina, size);
@@ -291,7 +291,7 @@ public class ListController {
 	@GetMapping({ "/filter/graduate" })
 	public String homeListGraduateFilter(Model model,
 	        @RequestParam(name = "pagina", required = false, defaultValue = "0") Integer pagina,
-	        @RequestParam(name = "size", required = false, defaultValue = "6") Integer size,
+	        @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
 	        @RequestParam(name = "filter", required = false) String param,
 	        @RequestParam(name = "filterType", required = false) String filterType,
 	        @RequestParam(name = "orderType", required = false, defaultValue = "appointmentDate") String orderType) {

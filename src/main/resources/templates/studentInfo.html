@@ -9,94 +9,117 @@
 </head>
 
 <body>
+	<script>
+		function confirmarRedireccion(event) {
+			// Prevenimos la acción por defecto del enlace
+			event.preventDefault();
+
+			// Obtenemos la URL generada por Thymeleaf
+			var url = event.target.getAttribute('href');
+
+			// Primera confirmación
+			var confirmacion1 = confirm("¿Seguro? Si confirmas, el alumno sera graduado.");
+
+			if (confirmacion1) {
+				// Si la primera confirmación es aceptada, mostramos la segunda confirmación
+				window.location.href = url;
+
+			}
+		}
+	</script>
+
 	<header th:insert="~{layouts/header}"></header>
 	<div class="d-flex justify-content-center">
 		<div class="container-page">
 			<h1 class="py-4 text-center">Detalles del Estudiante</h1>
+			<div class="container mt-4 mb-4">
 
-			<div>
-				<label for="firstName">Nombre/s:</label>
-				<span th:text="${student.fistName}"></span>
-			</div>
+				<div class="card">
+					<div class="card-header bg-primary text-white">
+						<h4 class="mb-0">Información del Estudiante</h4>
+					</div>
 
-			<div>
-				<label for="lastName">Apellido:</label>
-				<span th:text="${student.lastName}"></span>
-			</div>
+					<div class="card-body">
+						<div class="row">
+							<!-- Datos Personales -->
+							<div class="col-md-6">
+								<h5 class="text-secondary">Datos Personales</h5>
+								<p><strong>Nombre/s:</strong> <span th:text="${student.fistName}"></span></p>
+								<p><strong>Apellido:</strong> <span th:text="${student.lastName}"></span></p>
+								<p><strong>DNI:</strong> <span th:text="${student.studentDNI}"></span></p>
+								<p><strong>Edad:</strong> <span th:text="${student.studentAge}"></span></p>
+								<p><strong>Teléfono:</strong> <span th:text="${student.studentTel}"></span></p>
+								<p><strong>Dirección:</strong> <span th:text="${student.studentAddress}"></span></p>
+								<p><strong>Partido:</strong> <span th:text="${student.studentPartido}"></span></p>
+							</div>
 
-			<div>
-				<label for="studentAddress">Dirección del estudiante:</label>
-				<span th:text="${student.studentAddress}"></span>
-			</div>
+							<!-- Información del Curso -->
+							<div class="col-md-6">
+								<h5 class="text-secondary">Información del Curso</h5>
+								<p><strong>Fecha de inicio:</strong>
+									<span th:text="${#dates.format(student.studentCourseBegg, 'dd/MM/yyyy')}"></span>
+								</p>
+								<p><strong>Faltas:</strong> <span th:text="${student.studentNonAtten}"></span></p>
+								<p><strong>Graduado:</strong>
+									<span th:text="${student.studentGraduate ? 'Sí' : 'No'}" class="badge"
+										th:classappend="${student.studentGraduate} ? 'bg-success' : 'bg-danger'">
+									</span>
+								</p>
+								<p><strong>Recomendación:</strong> <span th:text="${student.studentRecomen}"></span></p>
 
-			<div>
-				<label for="studentPartido">Partido del estudiante:</label>
-				<span th:text="${student.studentPartido}"></span>
-			</div>
+								<a th:href="@{'/student/' + ${student.id}}" class="btn-href">
+									Editar estudiante
+								</a>
+								<a th:href="@{'/appointment/' + ${student.id}}" class="btn-href">
+									Agregar turno </a>
+								<a th:href="@{'/payment/' + ${student.id}}" class="btn-href">
+									Agregar
+									pago
+								</a>
+								<a th:if="${!student.studentGraduate}" th:href="@{'student/graduate/' + ${student.id}}"
+									class="btn-grd" onclick="confirmarRedireccion(event)">
+									Graduar
+								</a>
+							</div>
+						</div>
 
-			<div>
-				<label for="studentRecomen">Recomendación:</label>
-				<span th:text="${student.studentRecomen}"></span>
-			</div>
+						<hr>
 
-			<div>
-				<label for="studentComment">Comentario sobre el estudiante:</label>
-				<span th:text="${student.studentComment}"></span>
-			</div>
+						<!-- Evaluación del Estudiante -->
+						<h5 class="text-secondary">Evaluaciones y Prácticas</h5>
+						<div class="row">
+							<div class="col-md-4">
+								<p><strong>Vio el PDF:</strong> <span
+										th:text="${student.studentPdf ? 'Sí' : 'No'}"></span></p>
+								<p><strong>Vio el video de la pista:</strong> <span
+										th:text="${student.studentVideoPista ? 'Sí' : 'No'}"></span></p>
+							</div>
+							<div class="col-md-4">
+								<p><strong>Practicó ZigZag:</strong> <span
+										th:text="${student.studentZigZag ? 'Sí' : 'No'}"></span></p>
+								<p><strong>Practicó estacionamiento:</strong> <span
+										th:text="${student.studentEstacionar ? 'Sí' : 'No'}"></span></p>
+							</div>
+							<div class="col-md-4">
+								<p><strong>Practicó giro en U:</strong> <span
+										th:text="${student.studentGiroU ? 'Sí' : 'No'}"></span></p>
+							</div>
+						</div>
 
-			<div>
-				<label for="studentCourseBegg">Fecha de inicio del curso:</label>
-				<span th:text="${#dates.format(student.studentCourseBegg, 'dd/MM/yyyy')}"></span>
-			</div>
+						<hr>
 
-			<div>
-				<label for="studentDNI">DNI del estudiante:</label>
-				<span th:text="${student.studentDNI}"></span>
-			</div>
-
-			<div>
-				<label for="studentTel">Teléfono del estudiante:</label>
-				<span th:text="${student.studentTel}"></span>
-			</div>
-
-			<div>
-				<label for="studentAge">Edad del estudiante:</label>
-				<span th:text="${student.studentAge}"></span>
-			</div>
-
-			<div>
-				<label for="studentNonAtten">Faltas del estudiante:</label>
-				<span th:text="${student.studentNonAtten}"></span>
-			</div>
-
-			<div>
-				<label for="studentPdf">Vio el estudiante el PDF:</label>
-				<span th:text="${student.studentPdf ? 'Sí' : 'No'}"></span>
-			</div>
-
-			<div>
-				<label for="studentZigZag">Practico el estudiante el ZigZag:</label>
-				<span th:text="${student.studentZigZag ? 'Sí' : 'No'}"></span>
-			</div>
-
-			<div>
-				<label for="studentEstacionar">Practico el estudiante el Estacionamiento:</label>
-				<span th:text="${student.studentEstacionar ? 'Sí' : 'No'}"></span>
-			</div>
-
-			<div>
-				<label for="studentGiroU">Practico el estudiante el Giro en U:</label>
-				<span th:text="${student.studentGiroU ? 'Sí' : 'No'}"></span>
-			</div>
-
-			<div>
-				<label for="studentVideoPista">Vio el estudiante el video de la pista:</label>
-				<span th:text="${student.studentVideoPista ? 'Sí' : 'No'}"></span>
-			</div>
-
-			<div>
-				<label for="studentGraduate">Esta graduado el estudiante:</label>
-				<span th:text="${student.studentGraduate ? 'Sí' : 'No'}"></span>
+						<!-- Comentario del Estudiante -->
+						<div class="card mt-4">
+							<div class="card-header bg-warning text-dark">
+								<h5 class="mb-0">Comentario del Estudiante</h5>
+							</div>
+							<div class="card-body">
+								<textarea class="form-control" rows="4" style="max-height: 150px; overflow-y: auto;"
+									readonly th:text="${student.studentComment}"></textarea>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<div class="accordion" id="accordionExample">
@@ -279,6 +302,9 @@
 											</tr>
 										</tbody>
 									</table>
+								</div>
+								<div th:if="${#lists.isEmpty(pastAppointments)}">
+									<p style="text-align: center;">El alumno no tiene turnos pasados...</p>
 								</div>
 							</div>
 						</span>
