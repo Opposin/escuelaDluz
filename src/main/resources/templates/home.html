@@ -215,12 +215,12 @@
 												Ver
 											</a>
 											<a th:href="@{'/student/' + ${studentAppointment.studentId}}"
-												class="btn-href">
+												class="btn-href" style="margin-left: 1%;">
 												Editar
 											</a>
 											<a th:if="${!studentAppointment.studentGraduate}"
 												th:href="@{'student/graduate/' + ${studentAppointment.studentId}}"
-												class="btn-grd" onclick="confirmarRedireccion(event)">
+												class="btn-grd" onclick="confirmarRedireccion(event)" style="margin-left: 1%;">
 												Graduar
 											</a>
 										</div>
@@ -229,7 +229,7 @@
 												class="btn-href">
 												Agregar turno </a>
 											<a th:href="@{'/payment/' + ${studentAppointment.studentId}}"
-												class="btn-href">
+												class="btn-href" style="margin-left: 1%;">
 												Agregar
 												pago
 											</a>
