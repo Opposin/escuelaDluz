@@ -148,7 +148,7 @@
 				<ul class="pagination justify-content-center">
 					<li class="page-item" th:each="pagina : ${paginas}"
 						th:classappend="${pagina == actual ? 'active' : ''}">
-						<a class="page-link" th:href="@{'/payments/view?pagina=' + ${pagina-1}}" th:text="${pagina}"></a>
+						<a class="page-link" th:href="@{'/payments/view/filter?pagina=' + ${pagina-1}  + '&filter=' + ${filter} + '&filterType=' + ${filterType} + '&orderType=' + ${orderType}}" th:text="${pagina}"></a>
 					</li>
 				</ul>
 			</nav>
@@ -199,4 +199,3 @@
 	</script>
 </body>
 
-</html>

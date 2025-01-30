@@ -126,122 +126,6 @@ public class AppointmentService implements IAppointmentService {
 	    return new PageImpl<>(paginatedStudents, pageable, totalElements);
 	}
 
-//	@Override
-//	public Page<StudentAppointmentDTO> getStudentsWithNextAppointmentGraduate(Pageable pageable) {
-//		LocalDate today = LocalDate.now();
-//		LocalTime now = LocalTime.now();
-//
-//		// Obtener todos los estudiantes desde la base de datos (sin paginación para
-//		// ordenar todo)
-//		Page<Student> studentsPage = studentRepository.findAll(PageRequest.of(0, Integer.MAX_VALUE)); // Usamos un
-//																										// tamaño máximo
-//																										// para obtener
-//																										// todos los
-//																										// estudiantes.
-//
-//		// Transformar los estudiantes en StudentAppointmentDTOs con los turnos más
-//		// cercanos
-//		List<StudentAppointmentDTO> studentsWithAppointments = studentsPage.getContent().stream().map(student -> {
-//			// Filtrar los turnos que son hoy o en el futuro y ordenar por fecha y hora
-//			List<Appointment> upcomingAppointments = student.getAppointments().stream()
-//					.filter(appointment -> !appointment.getAppointmentDate().toLocalDate().isBefore(today)
-//							|| (appointment.getAppointmentDate().toLocalDate().isEqual(today)
-//									&& LocalTime.parse(appointment.getAppointmentTime()).isAfter(now)))
-//					.sorted(Comparator.comparing(Appointment::getAppointmentDate)
-//							.thenComparing(appointment -> LocalTime.parse(appointment.getAppointmentTime())))
-//					.collect(Collectors.toList());
-//
-//			// Obtener el primer turno, el más cercano
-//			Appointment nextAppointment = (upcomingAppointments.isEmpty()) ? null : upcomingAppointments.get(0);
-//
-//			return new StudentAppointmentDTO(student, nextAppointment);
-//		}).collect(Collectors.toList());
-//
-//		// Ordenar todos los estudiantes por su próximo turno, primero los que tienen
-//		// turno
-//		List<StudentAppointmentDTO> sortedStudents = studentsWithAppointments.stream().sorted((s1, s2) -> {
-//			// Si ambos estudiantes tienen un turno, los ordenamos por la fecha y hora del
-//			// turno
-//			if (s1.getAppointmentDate() != null && s2.getAppointmentDate() != null) {
-//				int dateComparison = s1.getAppointmentDate().compareTo(s2.getAppointmentDate());
-//				if (dateComparison == 0) {
-//					return s1.getAppointmentTime().compareTo(s2.getAppointmentTime());
-//				}
-//				return dateComparison;
-//			}
-//			// Si uno de los estudiantes no tiene turno, se coloca al final
-//			return s1.getAppointmentDate() == null ? 1 : -1;
-//		}).collect(Collectors.toList());
-//
-//		// Paginación manual sobre la lista ordenada
-//		int totalElements = sortedStudents.size();
-//		int pageSize = pageable.getPageSize();
-//		int start = (int) pageable.getOffset();
-//		int end = Math.min((start + pageSize), totalElements);
-//
-//		List<StudentAppointmentDTO> paginatedStudents = sortedStudents.subList(start, end);
-//
-//		// Devolver un Page con los estudiantes ordenados y paginados
-//		return new PageImpl<>(paginatedStudents, pageable, totalElements);
-//	}
-
-//	@Override
-//	public Page<StudentAppointmentDTO> getStudentsWithNextAppointment(Pageable pageable) {
-//		LocalDate today = LocalDate.now();
-//		LocalTime now = LocalTime.now();
-//
-//		// Obtener todos los estudiantes desde la base de datos (sin paginación para
-//		// ordenar todo)
-//		Page<Student> studentsPage = studentRepository.findAll(PageRequest.of(0, Integer.MAX_VALUE));
-//
-//		// Filtrar y transformar los estudiantes en StudentAppointmentDTOs con los
-//		// turnos más cercanos
-//		List<StudentAppointmentDTO> studentsWithAppointments = studentsPage.getContent().stream()
-//				.filter(student -> !student.getStudentGraduate()) // Filtrar estudiantes con studentGraduate == true
-//				.map(student -> {
-//					// Filtrar los turnos que son hoy o en el futuro y ordenar por fecha y hora
-//					List<Appointment> upcomingAppointments = student.getAppointments().stream()
-//							.filter(appointment -> !appointment.getAppointmentDate().toLocalDate().isBefore(today)
-//									|| (appointment.getAppointmentDate().toLocalDate().isEqual(today)
-//											&& LocalTime.parse(appointment.getAppointmentTime()).isAfter(now)))
-//							.sorted(Comparator.comparing(Appointment::getAppointmentDate)
-//									.thenComparing(appointment -> LocalTime.parse(appointment.getAppointmentTime())))
-//							.collect(Collectors.toList());
-//
-//					// Obtener el primer turno, el más cercano
-//					Appointment nextAppointment = (upcomingAppointments.isEmpty()) ? null : upcomingAppointments.get(0);
-//
-//					return new StudentAppointmentDTO(student, nextAppointment);
-//				}).collect(Collectors.toList());
-//
-//		// Ordenar todos los estudiantes por su próximo turno, primero los que tienen
-//		// turno
-//		List<StudentAppointmentDTO> sortedStudents = studentsWithAppointments.stream().sorted((s1, s2) -> {
-//			// Si ambos estudiantes tienen un turno, los ordenamos por la fecha y hora del
-//			// turno
-//			if (s1.getAppointmentDate() != null && s2.getAppointmentDate() != null) {
-//				int dateComparison = s1.getAppointmentDate().compareTo(s2.getAppointmentDate());
-//				if (dateComparison == 0) {
-//					return s1.getAppointmentTime().compareTo(s2.getAppointmentTime());
-//				}
-//				return dateComparison;
-//			}
-//			// Si uno de los estudiantes no tiene turno, se coloca al final
-//			return s1.getAppointmentDate() == null ? 1 : -1;
-//		}).collect(Collectors.toList());
-//
-//		// Paginación manual sobre la lista ordenada
-//		int totalElements = sortedStudents.size();
-//		int pageSize = pageable.getPageSize();
-//		int start = (int) pageable.getOffset();
-//		int end = Math.min((start + pageSize), totalElements);
-//
-//		List<StudentAppointmentDTO> paginatedStudents = sortedStudents.subList(start, end);
-//
-//		// Devolver un Page con los estudiantes ordenados y paginados
-//		return new PageImpl<>(paginatedStudents, pageable, totalElements);
-//	}
-
 	@Override
 	public Page<StudentAppointmentDTO> getStudentsWithNextAppointment(Pageable pageable) {
 	    LocalDate today = LocalDate.now();
@@ -367,5 +251,28 @@ public class AppointmentService implements IAppointmentService {
 		String currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
 		return appointmentRepository.findPastAppointments(currentTime);
 	}
+
+	@Override
+	@Transactional
+    public void updateAppointmentsAfterCancellation(Appointment canceledAppointment) {
+        if (canceledAppointment == null || canceledAppointment.getStudent() == null) {
+            return;
+        }
+
+        Student student = canceledAppointment.getStudent();
+        List<Appointment> subsequentAppointments = appointmentRepository.findAppointmentsAfter(
+                student.getId(),
+                canceledAppointment.getAppointmentDate(),
+                canceledAppointment.getAppointmentTime()
+        );
+
+        // Disminuir el número de clase en los turnos posteriores
+        for (Appointment appointment : subsequentAppointments) {
+            appointment.setAppointmentClassNumber(appointment.getAppointmentClassNumber() - 1);
+        }
+
+        // Guardar cambios en la base de datos
+        appointmentRepository.saveAll(subsequentAppointments);
+    }
 
 }

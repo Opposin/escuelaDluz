@@ -30,6 +30,8 @@ public interface IAppointmentService {
 	public List<String> obtenerHorariosDisponiblesPorFecha(LocalDate fecha);
 
     public List<Appointment> getPastAppointments();
+    
+    public void updateAppointmentsAfterCancellation(Appointment canceledAppointment);
 
 //	Appointment saveOrUpdateAppointment(Appointment appointment, Long studentId);
 	

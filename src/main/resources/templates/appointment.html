@@ -21,9 +21,11 @@
 
 		function obtenerHorarios() {
 			const fechaSeleccionada = document.getElementById("appointmentDate").value; // Fecha en formato yyyy-MM-dd
-			const horariosSelect = document.getElementById("appointmentTime");
+			const horariosSelect = document.getElementById("appointmentTimeSelect");
 			const horarioLabel = document.getElementById("appointmentTimeLabel");
 
+			
+			setInputValueFromSelect('appointmentTimeVariable', 'appointmentTime')
 			// Limpiar horarios previos y ocultar el select mientras se realiza la búsqueda
 			horariosSelect.innerHTML = "";
 			horariosSelect.style.display = "none";
@@ -81,49 +83,82 @@
 				console.error(`Input con id '${inputId}' no encontrado.`);
 			}
 		}
+		function setInputValueFromSelect(selectId, inputId) {
+			// Obtener el elemento <select> y <input> por sus IDs
+			const selectElement = document.getElementById(selectId);
+			const inputElement = document.getElementById(inputId);
+
+			// Obtener el valor seleccionado del <select>
+			const selectedValue = selectElement.value;
+
+			// Asignar el valor al <input>
+			inputElement.value = selectedValue;
+		}
 
 		// Llamada a la función con el ID del input
 	</script>
 
-	<div class="d-flex justify-content-center">
-		<div class="container-page">
-			<h1>Seleccionar Turno</h1>
-			<form th:action="@{/save/appointment}" method="post" class="col-md-8 offset-md-2">
+	<h1 class="mt-4" style="text-align: center;">Seleccionar Turno</h1>
+	<form th:action="@{/save/appointment}" th:object="${appointment}" method="post" class="col-md-8 offset-md-2">
 
-				<label for="fecha">Fecha:</label>
-				<input class="form-select" type="date" id="appointmentDate" name="appointmentDate"
-					onchange="obtenerHorarios()">
+		<label for="fecha">Fecha:</label>
+		<input class="form-select" type="date" id="appointmentDate" name="appointmentDate" onchange="obtenerHorarios()">
 
-				<select class="form-select" id="fecha" name="fecha" onchange="actualizarInputFecha()" multiple>
-					<option value="" disabled selected>Seleccione una fecha</option>
-					<option th:each="fecha : ${fechasDisponibles}" th:value="${fecha.fechaISO}"
-						th:text="${fecha.fecha}">
-				</select>
+		<select class="form-select" id="fecha" name="fecha" onchange="actualizarInputFecha()" multiple>
+			<option value="" disabled selected>Seleccione una fecha</option>
+			<option th:each="fecha : ${fechasDisponibles}" th:value="${fecha.fechaISO}" th:text="${fecha.fecha}">
 
-				<div class="col-sm-10">
-					<select class="form-select" name="appointmentType" id="appointmentType">
-						<option th:value="'Practica' + ' ' + 'regular'" selected="selected">Practica regular</option>
-						<option th:value="'Giro'+ ' ' + 'en' + ' ' +'U'">Redes Sociales</option>
-						<option th:value="Conos">Conos</option>
-					</select>
-				</div>
+		</select>
 
-				<!-- Select de Horarios -->
-				<label for="horario" id="appointmentTimeLabel" style="display: none;">Horario:</label>
-				<select class="form-select" id="appointmentTime" name="appointmentTime" style="display: none;" multiple>
-				</select>
+		<!-- Select de Horarios -->
+		<label class="mt-3" for="appointmentTimeSelect" id="appointmentTimeLabel">Horario:</label>
+		<select class="form-select" id="appointmentTimeSelect" name="appointmentTimeSelect" multiple
+			onchange="setInputValueFromSelect('appointmentTimeSelect', 'appointmentTime')">
+		</select>
 
-				<label for="appointmentType">Tipo de turno:</label>
+		<!--		<input id="id" name="id" type="hidden" th:value="${student != null ? student.id : id}">-->
+		<!--		<input id="appointmentId" name="appointmentId" type="hidden" th:value="${appointment.id}">-->
+		<!--		<input id="appointmentTimeVariable" name="appointmentTimeVariable" type="hidden"-->
+		<!--			th:value="${appointment.appointmentTime}">-->
+		<!--		<input id="appointmentTime" name="appointmentTime" type="hidden" th:value="${appointment.appointmentTime}">-->
+		<!--		<input id="appointmentType" name="appointmentType" type="hidden" th:value="${appointment.appointmentType}">-->
+		<!--		<input id="appointmentComplete" name="appointmentComplete" type="hidden"-->
+		<!--			th:value="${appointment.appointmentComplete}">-->
+
+		<input id="id" name="id" type="text" th:value="${student != null ? student.id : id}">
+		<input id="appointmentId" name="appointmentId" type="text">
+		<input id="appointmentTimeVariable" name="appointmentTimeVariable" type="text">
+		<input id="appointmentTime" name="appointmentTime" type="text">
+		<input id="appointmentType" value="Practica regular" name="appointmentType" type="text">
+		<input id="appointmentComplete" value="Turno Pendiente." name="appointmentComplete" type="text">
 
 
-				<input id="id" name="id" type="text" th:value="${student != null ? student.id : id}">
+		<label class="mt-3" for="appointmentTypeSelect">Tipo de turno:</label>
+		<select class="form-select" id="appointmentTypeSelect" name="appointmentTypeSelect"
+			onchange="setInputValueFromSelect('appointmentTypeSelect', 'appointmentType')" multiple>
+			<option value="" disabled selected>Seleccione un tipo de turno</option>
+			<option selected value="Practica regular"> Practica regular </option>
+			<option value="Estacionamiento"> Estacionamiento </option>
+			<option value="Giro en U"> Giro en U </option>
+			<option value="Zig Zag (conos)"> Zig Zag (conos) </option>
+			<option value="Alquiler de auto"> Alquiler de auto </option>
+		</select>
 
-				<!-- Botón de Enviar -->
-				<button type="submit">Reservar</button>
+		<label class="mt-3" for="appointmentTypeSelect">Estado del turno:</label>
+		<select class="form-select" id="appointmentCompleteSelect" name="appointmentCompleteSelect"
+			onchange="setInputValueFromSelect('appointmentCompleteSelect', 'appointmentComplete')" multiple>
+			<option value="" disabled selected>Seleccione un estado de turno</option>
+			<option value="Turno Pendiente." selected> Turno Pendiente </option>
+			<option value="Completo"> Completado </option>
+			<option value="Cancelado"> Cancelado </option>
+		</select>
 
-			</form>
+		<!-- Botón de Enviar -->
+		<div class="d-flex justify-content-center mt-5">
+			<button class="btn btn-outline-primary boton-submit" type="submit">Reservar</button>
 		</div>
-	</div>
+
+	</form>
 
 	<script>
 		setTodayDate('appointmentDate');

@@ -161,7 +161,11 @@ public class StudentController {
 		if (student.getStudentGraduate() == null) {
 			student.setStudentGraduate(false);
 		}
-
+		
+		if(student.getStudentClass() == null) {
+			student.setStudentClass((long) 0);
+		}
+		
 //		System.out.println(cambio);
 		if (br.hasErrors()) {
 			System.out.println(br);

@@ -104,8 +104,8 @@
 								<th th:text="${pastAppointment.appointmentDate}"></th>
 								<th th:text="${pastAppointment.appointmentTime}"></th>
 								<th>
-									<form th:action="@{'/appointment/Complete/view/' + ${pastAppointment.id}}" method="post"
-										enctype="multipart/form-data">
+									<form th:action="@{'/appointment/Complete/view/' + ${pastAppointment.id}}"
+										method="post" enctype="multipart/form-data">
 										<div class="d-flex flex-row">
 											<select id="completedType" name="completedType" class="form-control">
 												<option th:value="Completado" selected="selected"> Completado con exito
@@ -146,7 +146,7 @@
 								<td class="hide-width">
 									<div>
 										<p th:text="${appointment.appointmentClassNumber}">
-											</pth:text="${appointment.appointmentClassNumber}">
+										</p>
 									</div>
 								</td>
 								<td class="hide-width" th:text="${appointment.appointmentType}"></td>
@@ -172,10 +172,11 @@
 												Editar
 											</a>
 										</div>
-										<form th:action="@{'/appointment/Complete/view/' + ${appointment.id}}"
+										<form th:action="@{'/appointment/Complete/view/' + ${appointment.id} + '/2'}"
 											method="post" enctype="multipart/form-data">
 											<div class="d-flex flex-row">
-												<select id="completedType" name="completedType" class="form-control">
+												<select id="completedTypeTable" name="completedTypeTable"
+													class="form-control">
 													<option th:value="Completado" selected="selected"> Completado con
 														exito
 													</option>
@@ -188,12 +189,13 @@
 														turno</button>
 												</div>
 											</div>
+										</form>
 									</div>
 								</td>
 							</tr>
 						</tbody>
 					</table>
-					<div th:if="${#strings.equalsIgnoreCase(students, 'Page 1 of 1 containing UNKNOWN instances')}">
+					<div th:if="${#strings.equalsIgnoreCase(appointments, 'Page 1 of 1 containing UNKNOWN instances')}">
 						<p>Parece que no hay alumnos que concuerden con los parametros deseados...</p>
 						<a href="/home">Limpiar Filtros</a>
 					</div>
