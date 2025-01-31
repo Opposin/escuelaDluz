@@ -12,12 +12,13 @@ public class StudentAppointmentDTO {
 	private Long studentAge;
 	private Long studentNonAtten;
 	private Boolean studentGraduate;
-	
+
 	private Long appointmentId;
 	private Date appointmentDate;
 	private String appointmentTime;
+	private String appointmentComplete;
 	private Long appointmentClassNumber;
-	
+
 	private Long paymentId;
 	private Date paymentDate;
 	private String paymentTime;
@@ -25,38 +26,45 @@ public class StudentAppointmentDTO {
 
 	// Constructor
 	public StudentAppointmentDTO(Student student, Appointment appointment, Payment payment) {
-	        this.studentId = student.getId();
-	        this.studentName = student.getFistName();
-	        this.studentLastName = student.getLastName();
-	        this.studentPartido = student.getStudentPartido();
-	        this.studentAddress = student.getStudentAddress();
-	        this.StudentDNI = student.getStudentDNI();
-	        this.studentAge = student.getStudentAge();
-	        this.studentNonAtten = student.getStudentNonAtten();
-	        this.studentGraduate = student.getStudentGraduate();
-	        if (appointment != null) {
-	            this.appointmentDate = appointment.getAppointmentDate();
-	            this.appointmentTime = appointment.getAppointmentTime();
-	            this.appointmentId = appointment.getId();
-	            this.appointmentId = appointment.getAppointmentClassNumber();
-	        } else {
-	        	this.appointmentId = null;
-	            this.appointmentDate = null;
-	            this.appointmentTime = "";  // Mensaje para cuando no hay turno
-	            this.appointmentClassNumber = null;
-	        }
-	        if (payment != null) {
-	        	this.paymentId = payment.getId();
-	        	this.paymentDate = payment.getPaymentDate();
-	        	this.paymentTime = payment.getPaymentTime();
-	        	this.paymentNumber = payment.getPaymentNumber();
-	        } else {
-	        	this.paymentId = null;
-	        	this.paymentDate = null;
-	        	this.paymentTime = "";
-	        	this.paymentNumber = null;
-	        }
-	    }
+		this.studentId = student.getId();
+		this.studentName = student.getFistName();
+		this.studentLastName = student.getLastName();
+		this.studentPartido = student.getStudentPartido();
+		this.studentAddress = student.getStudentAddress();
+		this.StudentDNI = student.getStudentDNI();
+		this.studentAge = student.getStudentAge();
+		this.studentNonAtten = student.getStudentNonAtten();
+		this.studentGraduate = student.getStudentGraduate();
+		if (appointment != null) {
+			this.appointmentDate = appointment.getAppointmentDate();
+			this.appointmentTime = appointment.getAppointmentTime();
+			this.appointmentId = appointment.getId();
+			this.appointmentId = appointment.getAppointmentClassNumber();
+			if (!appointment.getAppointmentComplete().equals("Turno Pendiente.")) {
+				this.appointmentComplete = appointment.getAppointmentComplete();
+			} else {
+				this.appointmentComplete = appointment.getAppointmentComplete();
+			}
+
+		} else {
+			this.appointmentId = null;
+			this.appointmentDate = null;
+			this.appointmentTime = ""; // Mensaje para cuando no hay turno
+			this.appointmentClassNumber = null;
+			this.appointmentComplete = null;
+		}
+		if (payment != null) {
+			this.paymentId = payment.getId();
+			this.paymentDate = payment.getPaymentDate();
+			this.paymentTime = payment.getPaymentTime();
+			this.paymentNumber = payment.getPaymentNumber();
+		} else {
+			this.paymentId = null;
+			this.paymentDate = null;
+			this.paymentTime = "";
+			this.paymentNumber = null;
+		}
+	}
 
 	public Long getStudentId() {
 		return studentId;
@@ -129,7 +137,7 @@ public class StudentAppointmentDTO {
 	public void setAppointmentTime(String appointmentTime) {
 		this.appointmentTime = appointmentTime;
 	}
-	
+
 	public Long getAppointmentId() {
 		return appointmentId;
 	}
@@ -193,6 +201,5 @@ public class StudentAppointmentDTO {
 	public void setPaymentNumber(Long paymentNumber) {
 		this.paymentNumber = paymentNumber;
 	}
-	
-	
+
 }
