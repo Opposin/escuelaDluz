@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmls:th="http://www.thymeleaf.org">
+
+</html>
+
+<head th:insert="~{layouts/head}"></head>
+
+<body>
+	<header th:insert="~{layouts/header}"></header>
+	<script src="/js/script.js"></script>
+	<div class="d-flex justify-content-center">
+		<div class="container-page">
+			<h2 th:text="${titulo}" class="py-4 text-center"></h2>
+			<div class="container mt-4">
+				<div class="card shadow-lg">
+					<div class="card-header bg-primary text-white">
+						<h4 class="mb-0">Registro de Empleados</h4>
+					</div>
+					<div class="card-body">
+						<form action="/employee" method="post" th:object="${employee}">
+							<div class="row">
+								<!-- Datos Personales -->
+								<div class="col-md-6">
+									<input th:field="${employee.id}" th:value="${employee.id}" type="hidden">
+									<h5 class="text-secondary">Datos Personales</h5>
+									<div class="mb-3">
+										<label class="form-label">Nombre/s:</label>
+										<input type="text" class="form-control" th:field="*{employeeFirstName}">
+										<div th:if="${#fields.hasErrors('employeeFirstName')}" class="d-block">
+											<p class="text-danger">Error Aqui, no debe estar vacio.</p>
+										</div>
+									</div>
+									<div class="mb-3">
+										<label class="form-label">Apellido:</label>
+										<input type="text" class="form-control" th:field="*{employeeSecondName}">
+										<div th:if="${#fields.hasErrors('employeeSecondName')}" class="d-block">
+											<p class="text-danger">Error Aqui, no debe estar vacio.</p>
+										</div>
+									</div>
+									<div class="mb-3">
+										<label class="form-label">DNI:</label>
+										<input type="text" class="form-control" th:field="*{employeeDNI}"
+											onkeypress="return isNumberKey(event)">
+										<div th:if="${#fields.hasErrors('employeeDNI')}" class="d-block">
+											<p class="text-danger">Error Aqui, no debe estar vacio.</p>
+										</div>
+									</div>
+									<div class="mb-3">
+										<label class="form-label">Teléfono:</label>
+										<input type="text" class="form-control" th:field="*{employeeCell}"
+											onkeypress="return isNumberKey(event)">
+										<div th:if="${#fields.hasErrors('employeeCell')}" class="d-block">
+											<p class="text-danger">Error Aqui, no debe estar vacio.</p>
+										</div>
+									</div>
+									<div class="mb-3">
+										<label class="form-label">Dirección:</label>
+										<input type="text" class="form-control" th:field="*{employeeAdress}">
+										<div th:if="${#fields.hasErrors('employeeAdress')}" class="d-block">
+											<p class="text-danger">Error Aqui, no debe estar vacio.</p>
+										</div>
+									</div>
+									<div class="mb-3">
+										<label class="form-label">Partido:</label>
+										<select class="form-select" th:field="*{employeePartido}" id="employeePartido">
+											<option th:value="'La' + ' ' + 'Matanza'" selected>La Matanza</option>
+											<option th:value="Quilmes">Quilmes</option>
+											<option th:value="Lanús">Lanús</option>
+											<option th:value="'Lomas' + ' ' + 'de' + ' ' + 'Zamora'">Lomas de Zamora
+											</option>
+											<option th:value="'Almirante'  + ' ' + 'Brown'">Almirante Brown</option>
+											<option th:value="Moreno">Moreno</option>
+											<option th:value="'San' + ' ' + 'Miguel'">San Miguel</option>
+											<option th:value="Avellaneda">Avellaneda</option>
+											<option th:value="Morón">Morón</option>
+											<option th:value="Tigre">Tigre</option>
+											<option th:value="Berazategui">Berazategui</option>
+											<option th:value="'Vicente' + ' ' + 'López'">Vicente López</option>
+											<option th:value="'Tres' + ' ' + 'de' + ' ' + 'Febrero'">Tres de Febrero
+											</option>
+											<option th:value="'José' + ' ' + 'C.' + ' ' + 'Paz'">José C. Paz
+											</option>
+											<option th:value="'San' + ' ' + 'Isidro'">San Isidro</option>
+											<option th:value="'Hurlingham'">Hurlingham</option>
+											<option th:value="Pilar">Pilar</option>
+											<option th:value="Escobar">Escobar</option>
+											<option th:value="'San' + ' ' + 'Fernando'">San Fernando</option>
+											<option th:value="'Ituzaingó'">Ituzaingó</option>
+											<option th:value="Ensenada">Ensenada</option>
+											<option th:value="Berisso">Berisso</option>
+										</select>
+									</div>
+								</div>
+
+								<!-- Información del Curso -->
+								<div class="col-md-6">
+									<h5 class="text-secondary">Información del empleo</h5>
+									<div class="col-md-6">
+										<h5 class="text-secondary">Recomendación</h5>
+										<select class="form-select mb-5" th:field="*{employeeType}" id="employeeType">
+											<option th:value="recepcionista" selected="selected">
+												Recepcionista</option>
+											<option th:value="instructor">Instructor de manejo</option>
+										</select>
+									</div>
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" th:field="*{employeeActive}"
+											checked>
+										<label class="form-check-label">Empleado Activo</label>
+									</div>
+								</div>
+
+								<hr>
+
+								<!-- Comentario del Estudiante -->
+								<div class="card mt-4">
+									<div class="card-header bg-warning text-dark">
+										<h5 class="mb-0" id="charCount">Comentario sobre el alumno (Máximo 500
+											caracteres) 0/500</h5>
+									</div>
+									<div class="card-body">
+										<textarea class="form-control" rows="4"
+											style="max-height: 150px; overflow-y: auto;" th:field="*{employeeComment}"
+											id="StudentComment" oninput="updateCharCount()"></textarea>
+									</div>
+								</div>
+
+								<hr>
+
+								<!-- Botones de Acción -->
+								<div class="text-center">
+									<button type="submit" class="btn btn-success">Guardar</button>
+									<button type="reset" class="btn btn-secondary">Limpiar</button>
+								</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+</html>

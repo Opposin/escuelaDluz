@@ -1,5 +1,6 @@
 package com.rodriguez.escuelaDluz.controllers;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -19,7 +20,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.rodriguez.escuelaDluz.entities.Appointment;
 import com.rodriguez.escuelaDluz.entities.Student;
+import com.rodriguez.escuelaDluz.services.EmployeeService;
 import com.rodriguez.escuelaDluz.services.IAppointmentService;
+import com.rodriguez.escuelaDluz.services.IEmployeeService;
 import com.rodriguez.escuelaDluz.services.IStudentService;
 
 import jakarta.validation.Valid;
@@ -28,10 +31,13 @@ import jakarta.validation.Valid;
 public class StudentController {
 	private IStudentService studentService;
 	private IAppointmentService appointmentService;
+	private IEmployeeService employeeService;
 
-	public StudentController(IStudentService studentService, IAppointmentService appointmentService) {
+	public StudentController(IStudentService studentService, IAppointmentService appointmentService,
+			IEmployeeService employeeService) {
 		this.studentService = studentService;
 		this.appointmentService = appointmentService;
+		this.employeeService = employeeService;
 	}
 
 	@GetMapping("/student")
@@ -39,6 +45,7 @@ public class StudentController {
 		Student student = new Student();
 		model.addAttribute("student", student);
 		model.addAttribute("appointments", appointmentService.findAll());
+		model.addAttribute("recepcionistas", employeeService.findRecepcionistas());
 		model.addAttribute("titulo", "Crear un nuevo alumno.");
 
 		return "student";
@@ -49,149 +56,126 @@ public class StudentController {
 		Student student = studentService.findById(id);
 		model.addAttribute("student", student);
 		model.addAttribute("appointments", appointmentService.findAll());
-		model.addAttribute("titulo", "Editar al alumno " + student.getFistName());
+		model.addAttribute("recepcionistas", employeeService.findRecepcionistas());
+		model.addAttribute("titulo", "Editar al alumno " + student.getFirstName());
 
 		return "student";
 
 	}
 
-//	@GetMapping("/student/info/{id}")
-//	public String showStudentInfo(@PathVariable(name = "id") Long id, Model model) {
-//		Student student = studentService.findById(id);
-//		if (student.getFistName() != null) {
-//			model.addAttribute("student", student);
-//			model.addAttribute("appointments", student.getAppointments());
-//		} else {
-//			// Si no se encuentra el alumno, manejar el error
-//			model.addAttribute("error", "Alumno no encontrado");
-//			return "error";
-//		}
-//		System.out.println(student.getStudentAppointments());
-//		return "studentInfo"; // El nombre de la vista Thymeleaf
-//	}
+	@GetMapping("/inactivate/{id}")
+	public String inactivateStudent(@PathVariable(name = "id") Long id, Model model,
+			RedirectAttributes redirectAttributes) {
+		Student student = studentService.findById(id);
 
-//	@GetMapping("/student/info/{id}")
-//	public String showStudentInfo(@PathVariable(name = "id") Long id, Model model) {
-//		Student student = studentService.findById(id);
-//
-//		if (student.getFistName() != null) {
-//			// Obtener la fecha y hora actual
-//			LocalDateTime now = LocalDateTime.now();
-//
-//			// Dividir las citas en pasadas y próximas
-//			List<Appointment> appointments = student.getAppointments();
-//			DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-//
-//			List<Appointment> pastAppointments = appointments.stream().filter(appointment -> {
-//				LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
-//				LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
-//				LocalDateTime appointmentDateTime = LocalDateTime.of(appointmentDate, appointmentTime);
-//				return appointmentDateTime.isBefore(now);
-//			}).collect(Collectors.toList());
-//
-//			List<Appointment> upcomingAppointments = appointments.stream().filter(appointment -> {
-//				LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
-//				LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
-//				LocalDateTime appointmentDateTime = LocalDateTime.of(appointmentDate, appointmentTime);
-//				return appointmentDateTime.isAfter(now);
-//			}).sorted(Comparator.comparing(appointment -> {
-//				LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
-//				LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
-//				return LocalDateTime.of(appointmentDate, appointmentTime);
-//			})).collect(Collectors.toList());
-//
-//			// Añadir las listas al modelo
-//			model.addAttribute("student", student);
-//			model.addAttribute("pastAppointments", pastAppointments);
-//			model.addAttribute("upcomingAppointments", upcomingAppointments);
-//		} else {
-//			// Manejar el error si no se encuentra el alumno
-//			model.addAttribute("error", "Alumno no encontrado");
-//			return "error";
-//		}
-//		
-//		return "studentInfo"; // El nombre de la vista Thymeleaf
-//	}
+		LocalDate localDate = LocalDate.now();
+		Date sqlDate = Date.valueOf(localDate);
+
+		student.setStudentAlertNonActive(true);
+		student.setStudentInactive(true);
+		student.setStudentInactiveDate(sqlDate);
+		studentService.save(student);
+
+		redirectAttributes.addFlashAttribute("msj", "Estudiante desactivado exitosamente.");
+		redirectAttributes.addFlashAttribute("tipoMsj", "success");
+		return "redirect:/home";
+	}
+
+	@GetMapping("/ignore/{id}")
+	public String ignoreStudent(@PathVariable(name = "id") Long id, Model model,
+			RedirectAttributes redirectAttributes) {
+		Student student = studentService.findById(id);
+
+		student.setStudentAlertNonActive(true);
+		studentService.save(student);
+
+		redirectAttributes.addFlashAttribute("msj", "Alerta escondida exitosamente.");
+		redirectAttributes.addFlashAttribute("tipoMsj", "success");
+		return "redirect:/home";
+	}
 
 	@GetMapping("/student/info/{id}")
 	public String showStudentInfo(@PathVariable(name = "id") Long id, Model model) {
-	    Student student = studentService.findById(id);
-
-	    if (student.getFistName() != null) {
-	        // Obtener la fecha y hora actual
-	        LocalDateTime now = LocalDateTime.now();
-
-	        // Formateador de tiempo para comparar la hora
-	        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-
-	        // Obtener lista de turnos del estudiante
-	        List<Appointment> appointments = student.getAppointments();
-
-	        // Filtrar turnos pasados o completados/cancelados
-	        List<Appointment> pastAppointments = appointments.stream()
-	            .filter(appointment -> {
-	                LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
-	                LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
-	                LocalDateTime appointmentDateTime = LocalDateTime.of(appointmentDate, appointmentTime);
-
-	                // Incluir si el turno es pasado o si el estado no es "Turno Pendiente."
-	                return appointmentDateTime.isBefore(now) || 
-	                       (appointment.getAppointmentComplete() != null && 
-	                        !appointment.getAppointmentComplete().equals("Turno Pendiente."));
-	            })
-	            .collect(Collectors.toList());
-
-	        // Filtrar turnos próximos
-	        List<Appointment> upcomingAppointments = appointments.stream()
-	            .filter(appointment -> {
-	                LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
-	                LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
-	                LocalDateTime appointmentDateTime = LocalDateTime.of(appointmentDate, appointmentTime);
-	                
-	                return appointmentDateTime.isAfter(now) && 
-	                       (appointment.getAppointmentComplete() == null || 
-	                        appointment.getAppointmentComplete().equals("Turno Pendiente."));
-	            })
-	            .sorted(Comparator.comparing(appointment -> {
-	                LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
-	                LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
-	                return LocalDateTime.of(appointmentDate, appointmentTime);
-	            }))
-	            .collect(Collectors.toList());
-
-	        // Añadir las listas al modelo
-	        model.addAttribute("student", student);
-	        model.addAttribute("pastAppointments", pastAppointments);
-	        model.addAttribute("upcomingAppointments", upcomingAppointments);
-	    } else {
-	        // Manejar el error si no se encuentra el alumno
-	        model.addAttribute("error", "Alumno no encontrado");
-	        return "error";
-	    }
-	    
-	    return "studentInfo"; // El nombre de la vista Thymeleaf
-	}
-	
-	@GetMapping("/student/graduate/{id}")
-	public String graduateStudent(@PathVariable(name = "id") Long id, Model model, RedirectAttributes redirectAttributes) {
 		Student student = studentService.findById(id);
+
+		if (student.getFirstName() != null) {
+			// Obtener la fecha y hora actual
+			LocalDateTime now = LocalDateTime.now();
+
+			// Formateador de tiempo para comparar la hora
+			DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+			// Obtener lista de turnos del estudiante
+			List<Appointment> appointments = student.getAppointments();
+
+			// Filtrar turnos pasados o completados/cancelados
+			List<Appointment> pastAppointments = appointments.stream().filter(appointment -> {
+				LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
+				LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
+				LocalDateTime appointmentDateTime = LocalDateTime.of(appointmentDate, appointmentTime);
+
+				// Incluir si el turno es pasado o si el estado no es "Turno Pendiente."
+				return appointmentDateTime.isBefore(now) || (appointment.getAppointmentComplete() != null
+						&& !appointment.getAppointmentComplete().equals("Turno Pendiente."));
+			}).collect(Collectors.toList());
+
+			// Filtrar turnos próximos
+			List<Appointment> upcomingAppointments = appointments.stream().filter(appointment -> {
+				LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
+				LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
+				LocalDateTime appointmentDateTime = LocalDateTime.of(appointmentDate, appointmentTime);
+
+				return appointmentDateTime.isAfter(now) && (appointment.getAppointmentComplete() == null
+						|| appointment.getAppointmentComplete().equals("Turno Pendiente."));
+			}).sorted(Comparator.comparing(appointment -> {
+				LocalDate appointmentDate = appointment.getAppointmentDate().toLocalDate();
+				LocalTime appointmentTime = LocalTime.parse(appointment.getAppointmentTime(), timeFormatter);
+				return LocalDateTime.of(appointmentDate, appointmentTime);
+			})).collect(Collectors.toList());
+
+			// Añadir las listas al modelo
+			model.addAttribute("student", student);
+			model.addAttribute("pastAppointments", pastAppointments);
+			model.addAttribute("upcomingAppointments", upcomingAppointments);
+		} else {
+			// Manejar el error si no se encuentra el alumno
+			model.addAttribute("error", "Alumno no encontrado");
+			return "error";
+		}
+
+		return "studentInfo"; // El nombre de la vista Thymeleaf
+	}
+
+	@GetMapping("/student/graduate/{id}")
+	public String graduateStudent(@PathVariable(name = "id") Long id, Model model,
+			RedirectAttributes redirectAttributes) {
+		Student student = studentService.findById(id);
+
+		LocalDate localDate = LocalDate.now();
+		Date sqlDate = Date.valueOf(localDate);
+
+		student.setStudentInactiveDate(sqlDate);
 
 		student.setStudentGraduate(true);
 		studentService.save(student);
-		
+
 		redirectAttributes.addFlashAttribute("msj", "Estudiante graduado exitosamente.");
 		redirectAttributes.addFlashAttribute("tipoMsj", "success");
 		return "redirect:/home";
 
 	}
-	
-	@GetMapping("student/info/student/graduate/{id}")
-	public String graduateStudentView(@PathVariable(name = "id") Long id, Model model, RedirectAttributes redirectAttributes) {
-		Student student = studentService.findById(id);
 
+	@GetMapping("student/info/student/graduate/{id}")
+	public String graduateStudentView(@PathVariable(name = "id") Long id, Model model,
+			RedirectAttributes redirectAttributes) {
+		Student student = studentService.findById(id);
+		LocalDate localDate = LocalDate.now();
+		Date sqlDate = Date.valueOf(localDate);
+
+		student.setStudentInactiveDate(sqlDate);
 		student.setStudentGraduate(true);
 		studentService.save(student);
-		
+
 		redirectAttributes.addFlashAttribute("msj", "Estudiante graduado exitosamente.");
 		redirectAttributes.addFlashAttribute("tipoMsj", "success");
 		return "redirect:/student/info/" + id;
@@ -199,7 +183,8 @@ public class StudentController {
 	}
 
 	@PostMapping("/student")
-	public String saveStudent(@Valid Student student, BindingResult br, Model model, RedirectAttributes redirectAttributes) {
+	public String saveStudent(@Valid Student student, BindingResult br, Model model,
+			RedirectAttributes redirectAttributes) {
 
 //		System.out.println("pdf ="+ student.getStudentPdf());
 //		Long cambio;
@@ -233,16 +218,40 @@ public class StudentController {
 		if (student.getStudentGraduate() == null) {
 			student.setStudentGraduate(false);
 		}
-		
-		if(student.getStudentClass() == null) {
+
+		if (student.getStudentClass() == null) {
 			student.setStudentClass((long) 0);
 		}
-		
+
+		if (student.getStudent45degree() == null) {
+			student.setStudent45degree(false);
+		}
+
+		if (student.getStudentInactive() == null) {
+			student.setStudentInactive(false);
+		}
+
+		if (student.getStudentAdminSellCon() == null) {
+			student.setStudentAdminSellCon(false);
+		}
+
+		if (student.getStudentIncline() == null) {
+			student.setStudentIncline(false);
+		}
+
+		if (student.getStudentMotorTalk() == null) {
+			student.setStudentMotorTalk(false);
+		}
+
+		if (student.getStudentGrade() == null) {
+			student.setStudentGrade((long) 0);
+		}
 //		System.out.println(cambio);
 		if (br.hasErrors()) {
 			System.out.println(br);
 			model.addAttribute("student", student);
 			model.addAttribute("appointments", appointmentService.findAll());
+			model.addAttribute("recepcionistas", employeeService.findRecepcionistas());
 			model.addAttribute("titulo", "Errores encontrados, Vuelva a intentar");
 			return "student";
 		}
@@ -257,7 +266,7 @@ public class StudentController {
 			// 'dni' no puede ser null
 			model.addAttribute("msj", "El campo DNI no puede ser duplicado, por favor vuelva a intentar");
 			model.addAttribute("tipoMsj", "danger");
-			model.addAttribute("titulo", "El campo 'DNI' el campo dni no puede ser duplicado");
+			model.addAttribute("titulo", "El campo 'DNI' el campo no puede ser duplicado");
 			model.addAttribute("student", student);
 			model.addAttribute("appointments", appointmentService.findAll());
 			return "student"; // Retornamos al formulario con el mensaje de error

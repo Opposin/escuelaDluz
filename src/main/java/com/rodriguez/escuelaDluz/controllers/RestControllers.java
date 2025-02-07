@@ -14,13 +14,33 @@ import com.rodriguez.escuelaDluz.services.AppointmentService;
 @RestController
 public class RestControllers {
 
-	 @Autowired
-	    private AppointmentService turnoService;
+	@Autowired
+	private AppointmentService turnoService;
 
-	    @GetMapping("/horarios-disponibles")
-	    public List<String> obtenerHorariosDisponibles(@RequestParam("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fecha) {
-	        System.out.println("Fecha recibida: " + fecha); // Para depuración
-	        return turnoService.obtenerHorariosDisponiblesPorFecha(fecha);
-	    }
+//	@GetMapping("/horarios-disponibles")
+//	public List<String> obtenerHorariosDisponibles(
+//			@RequestParam("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fecha) {
+//		System.out.println("Fecha recibida: " + fecha); // Para depuración
+//		return turnoService.obtenerHorariosDisponiblesPorFecha(fecha);
+//	}
+
+	@GetMapping("/horarios-disponibles")
+	public List<String> obtenerHorariosDisponibles(
+			@RequestParam("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fecha,
+			@RequestParam("appointmentInstructor") Long instructorId) {
+
+		System.out.println("Fecha recibida: " + fecha + ", Instructor ID: " + instructorId); // Para depuración
+
+		return turnoService.obtenerHorariosDisponiblesPorFecha(fecha, instructorId);
+	}
 	
+	@GetMapping("/horarios-consecutivos-disponibles")
+    public List<String> obtenerHorariosConsecutivosDisponibles(
+            @RequestParam("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fecha,
+            @RequestParam("appointmentInstructor") Long instructorId) {
+
+        System.out.println("Fecha recibida: " + fecha + ", Instructor ID: " + instructorId + " (Consecutivos)"); // Para depuración
+
+        return turnoService.obtenerHorariosDisponiblesConsecutivos(fecha, instructorId);
+    }
 }

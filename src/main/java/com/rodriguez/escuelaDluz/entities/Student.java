@@ -28,7 +28,7 @@ public class Student implements Serializable {
 
 	@Column(name = "firstName")
 	@NotEmpty(message = "No debe estar vacio.")
-	private String fistName;
+	private String firstName;
 
 	@Column(name = "secondName")
 	@NotEmpty(message = "No debe estar vacio.")
@@ -50,18 +50,29 @@ public class Student implements Serializable {
 	@NotNull(message = "Debe ser una fecha valida.")
 	private Date studentCourseBegg;
 	
+	@NotNull(message = "Debe ser una fecha valida.")
 	private Date studentCourseEnd;
+	
+	private Date studentInactiveDate;
+	
+	@NotEmpty(message = "No debe estar vacio.")
+	private String studentRecepcionist;
 
-	@Column(name = "DNI", unique = true)
-	@NotNull(message = "El DNI debe estar vacio.")
+	@Column(name = "DNI")
+	@NotNull(message = "El DNI no debe estar vacio.")
 	private Long studentDNI;
 
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Appointment> studentAppointments;
-	
+
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Payment> studentPayments;
+
+	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Exam> studentExams;
+
 	
+	@NotNull(message = "El numero telefonico debe estar vacio.")
 	private Long studentTel;
 	
 	private Long studentClass;
@@ -75,10 +86,22 @@ public class Student implements Serializable {
 
 //	@NotNull(message = "No debe estar vacio.")
 	private Long studentNonAtten;
+	
+	private Boolean studentAlertNonActive;
 
 	private Boolean studentPdf;
 
 	private Boolean studentZigZag;
+	
+	private Boolean studentMotorTalk;
+	
+	private Boolean student45degree;
+	
+	private Boolean studentIncline;
+	
+	private Boolean studentAdminSellCon;
+	
+	private Boolean studentInactive;
 
 	private Boolean studentEstacionar;
 
@@ -88,9 +111,9 @@ public class Student implements Serializable {
 
 	private Boolean studentGraduate;
 	
-//	@Version
-//    private Long version;
-
+	
+	private Long studentGrade;
+	
 	public Long getId() {
 		return id;
 	}
@@ -99,12 +122,12 @@ public class Student implements Serializable {
 		this.id = id;
 	}
 
-	public String getFistName() {
-		return fistName;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setFistName(String fistName) {
-		this.fistName = fistName;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
 	public String getLastName() {
@@ -282,16 +305,98 @@ public class Student implements Serializable {
 	public void setStudentClass(Long studentClass) {
 		this.studentClass = studentClass;
 	}
+
+	public Boolean getStudentMotorTalk() {
+		return studentMotorTalk;
+	}
+
+	public void setStudentMotorTalk(Boolean studentMotorTalk) {
+		this.studentMotorTalk = studentMotorTalk;
+	}
+
+	public Boolean getStudentAdminSellCon() {
+		return studentAdminSellCon;
+	}
+
+	public void setStudentAdminSellCon(Boolean studentAdminSellCon) {
+		this.studentAdminSellCon = studentAdminSellCon;
+	}
+
+	public Boolean getStudentInactive() {
+		return studentInactive;
+	}
+
+	public void setStudentInactive(Boolean studentActive) {
+		this.studentInactive = studentActive;
+	}
+
+	public Date getStudentGraduateDate() {
+		return studentInactiveDate;
+	}
+
+	public void setStudentGraduateDate(Date studentGraduateDate) {
+		this.studentInactiveDate = studentGraduateDate;
+	}
+
+	public Boolean getStudent45degree() {
+		return student45degree;
+	}
+
+	public void setStudent45degree(Boolean student45degree) {
+		this.student45degree = student45degree;
+	}
+
+	public Boolean getStudentIncline() {
+		return studentIncline;
+	}
+
+	public void setStudentIncline(Boolean studentIncline) {
+		this.studentIncline = studentIncline;
+	}
+
+	public Long getStudentGrade() {
+		return studentGrade;
+	}
+
+	public void setStudentGrade(Long studentGrade) {
+		this.studentGrade = studentGrade;
+	}
+
+	public Date getStudentInactiveDate() {
+		return studentInactiveDate;
+	}
+
+	public void setStudentInactiveDate(Date studentInactiveDate) {
+		this.studentInactiveDate = studentInactiveDate;
+	}
+
+	public String getStudentRecepcionist() {
+		return studentRecepcionist;
+	}
+
+	public void setStudentRecepcionist(String studentRecepcionist) {
+		this.studentRecepcionist = studentRecepcionist;
+	}
+
+	public Boolean getStudentAlertNonActive() {
+		return studentAlertNonActive;
+	}
+
+	public void setStudentAlertNonActive(Boolean studentAlertNonActive) {
+		this.studentAlertNonActive = studentAlertNonActive;
+	}
+
+	public List<Exam> getStudentExams() {
+		return studentExams;
+	}
+
+	public void setStudentExams(List<Exam> studentExams) {
+		this.studentExams = studentExams;
+	}
+	
+	
 	
 }
-//	public Long getVersion() {
-//		return version;
-//	}
-//
-//	public void setVersion(Long version) {
-//		this.version = version;
-//	}
-//	
 	
 
 

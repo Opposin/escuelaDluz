@@ -12,13 +12,16 @@ import com.rodriguez.escuelaDluz.entities.Student;
 public interface IStudentService {
 
 	public void save(Student student);
-	
+
 	public Student findById(Long id);
-	
+
 	public void delete(Long id);
-	
+
 	public List<Student> findAll();
-	
+
 	public Page<Student> findAll(Pageable pageable);
 
+	public List<Student> setInactiveStudents();
+
+	public void deleteInactiveStudents();
 }

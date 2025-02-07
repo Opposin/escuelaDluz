@@ -2,17 +2,17 @@ package com.rodriguez.escuelaDluz.services;
 
 import java.sql.Date;
 import java.time.DayOfWeek;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +20,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import com.rodriguez.escuelaDluz.dao.IAppointmentRepository;
+import com.rodriguez.escuelaDluz.dao.IEmployeeRepository;
 import com.rodriguez.escuelaDluz.dao.IPaymentRepository;
 import com.rodriguez.escuelaDluz.dao.IStudentRepository;
 import com.rodriguez.escuelaDluz.entities.Appointment;
@@ -42,9 +41,12 @@ public class AppointmentService implements IAppointmentService {
 
 	@Autowired
 	IStudentRepository studentRepository;
-	
+
 	@Autowired
 	IPaymentRepository paymentRepository;
+
+	@Autowired
+	IEmployeeRepository employeeRepository;
 
 	@Override
 	@Transactional
@@ -68,125 +70,149 @@ public class AppointmentService implements IAppointmentService {
 	public List<Appointment> findAll() {
 		return (List<Appointment>) appointmentRepository.findAll();
 	}
-	
+
+
 	@Override
 	public Page<StudentAppointmentDTO> getStudentsWithNextAppointmentGraduate(Pageable pageable) {
-	    LocalDate today = LocalDate.now();
-	    LocalTime now = LocalTime.now();
+		LocalDate today = LocalDate.now();
+		LocalTime now = LocalTime.now();
 
-	    // Obtener todos los estudiantes desde la base de datos (sin paginación para ordenar todo)
-	    Page<Student> studentsPage = studentRepository.findAll(PageRequest.of(0, Integer.MAX_VALUE));
+		// Obtener todos los estudiantes desde la base de datos (sin paginación para
+		// ordenar todo)
+		Page<Student> studentsPage = studentRepository.findAll(PageRequest.of(0, Integer.MAX_VALUE));
 
-	    // Transformar los estudiantes en StudentAppointmentDTOs con los turnos más cercanos y último pago
-	    List<StudentAppointmentDTO> studentsWithAppointments = studentsPage.getContent().stream().map(student -> {
-	        // Filtrar los turnos que son hoy o en el futuro y ordenar por fecha y hora
-	        List<Appointment> upcomingAppointments = student.getAppointments().stream()
-	                .filter(appointment -> !appointment.getAppointmentDate().toLocalDate().isBefore(today)
-	                        || (appointment.getAppointmentDate().toLocalDate().isEqual(today)
-	                                && LocalTime.parse(appointment.getAppointmentTime()).isAfter(now)))
-	                .sorted(Comparator.comparing(Appointment::getAppointmentDate)
-	                        .thenComparing(appointment -> LocalTime.parse(appointment.getAppointmentTime())))
-	                .collect(Collectors.toList());
+		// Filtrar y transformar los estudiantes en StudentAppointmentDTOs con los
+		// turnos más cercanos
+		List<StudentAppointmentDTO> studentsWithAppointments = studentsPage.getContent().stream()
+				.filter(student -> student.getStudentGraduate() != null // Incluir tanto true como false
+						&& (student.getStudentInactive() == null || !student.getStudentInactive())) // Excluir inactivos
+				.map(student -> {
+					// Filtrar los turnos que son hoy o en el futuro y que sean "Turno Pendiente"
+					List<Appointment> upcomingAppointments = student.getAppointments().stream()
+							.filter(appointment -> "Turno Pendiente.".equals(appointment.getAppointmentComplete()) && // Solo
+																														// incluir
+																														// turnos
+																														// pendientes
+									(!appointment.getAppointmentDate().toLocalDate().isBefore(today)
+											|| (appointment.getAppointmentDate().toLocalDate().isEqual(today)
+													&& LocalTime.parse(appointment.getAppointmentTime()).isAfter(now))))
+							.sorted(Comparator.comparing(Appointment::getAppointmentDate)
+									.thenComparing(appointment -> LocalTime.parse(appointment.getAppointmentTime())))
+							.collect(Collectors.toList());
 
-	        // Obtener el primer turno, el más cercano
-	        Appointment nextAppointment = (upcomingAppointments.isEmpty()) ? null : upcomingAppointments.get(0);
+					// Obtener el primer turno, el más cercano
+					Appointment nextAppointment = (upcomingAppointments.isEmpty()) ? null : upcomingAppointments.get(0);
 
-	        // Obtener el último pago realizado
-	        Payment lastPayment = student.getStudentPayments().stream()
-	                .max(Comparator.comparing(Payment::getPaymentNumber))
-	                .orElse(null);
+					// Obtener el último pago realizado
+					Payment lastPayment = student.getStudentPayments().stream()
+							.max(Comparator.comparing(Payment::getPaymentNumber)).orElse(null);
 
-	        // Crear el DTO incluyendo el turno más cercano y el último pago
-	        return new StudentAppointmentDTO(student, nextAppointment, lastPayment);
-	    }).collect(Collectors.toList());
+					// Crear el DTO incluyendo el turno más cercano y el último pago
+					return new StudentAppointmentDTO(student, nextAppointment, lastPayment);
+				}).collect(Collectors.toList());
 
-	    // Ordenar todos los estudiantes por su próximo turno, primero los que tienen turno
-	    List<StudentAppointmentDTO> sortedStudents = studentsWithAppointments.stream().sorted((s1, s2) -> {
-	        // Si ambos estudiantes tienen un turno, los ordenamos por la fecha y hora del turno
-	        if (s1.getAppointmentDate() != null && s2.getAppointmentDate() != null) {
-	            int dateComparison = s1.getAppointmentDate().compareTo(s2.getAppointmentDate());
-	            if (dateComparison == 0) {
-	                return s1.getAppointmentTime().compareTo(s2.getAppointmentTime());
-	            }
-	            return dateComparison;
-	        }
-	        // Si uno de los estudiantes no tiene turno, se coloca al final
-	        return s1.getAppointmentDate() == null ? 1 : -1;
-	    }).collect(Collectors.toList());
+		// Ordenar todos los estudiantes por su próximo turno, primero los que tienen
+		// turno
+		List<StudentAppointmentDTO> sortedStudents = studentsWithAppointments.stream().sorted((s1, s2) -> {
+			// Si ambos estudiantes tienen un turno, los ordenamos por la fecha y hora del
+			// turno
+			if (s1.getAppointmentDate() != null && s2.getAppointmentDate() != null) {
+				int dateComparison = s1.getAppointmentDate().compareTo(s2.getAppointmentDate());
+				if (dateComparison == 0) {
+					return s1.getAppointmentTime().compareTo(s2.getAppointmentTime());
+				}
+				return dateComparison;
+			}
+			// Si uno de los estudiantes no tiene turno, se coloca al final
+			return s1.getAppointmentDate() == null ? 1 : -1;
+		}).collect(Collectors.toList());
 
-	    // Paginación manual sobre la lista ordenada
-	    int totalElements = sortedStudents.size();
-	    int pageSize = pageable.getPageSize();
-	    int start = (int) pageable.getOffset();
-	    int end = Math.min((start + pageSize), totalElements);
+		// Paginación manual sobre la lista ordenada
+		int totalElements = sortedStudents.size();
+		int pageSize = pageable.getPageSize();
+		int start = (int) pageable.getOffset();
+		int end = Math.min((start + pageSize), totalElements);
 
-	    List<StudentAppointmentDTO> paginatedStudents = sortedStudents.subList(start, end);
+		List<StudentAppointmentDTO> paginatedStudents = sortedStudents.subList(start, end);
 
-	    // Devolver un Page con los estudiantes ordenados y paginados
-	    return new PageImpl<>(paginatedStudents, pageable, totalElements);
+		// Devolver un Page con los estudiantes ordenados y paginados
+		return new PageImpl<>(paginatedStudents, pageable, totalElements);
 	}
 
 	@Override
 	public Page<StudentAppointmentDTO> getStudentsWithNextAppointment(Pageable pageable) {
-	    LocalDate today = LocalDate.now();
-	    LocalTime now = LocalTime.now();
+		LocalDate today = LocalDate.now();
+		LocalTime now = LocalTime.now();
 
-	    // Obtener todos los estudiantes desde la base de datos (sin paginación para ordenar todo)
-	    Page<Student> studentsPage = studentRepository.findAll(PageRequest.of(0, Integer.MAX_VALUE));
+		// Obtener todos los estudiantes desde la base de datos (sin paginación para
+		// ordenar todo)
+		Page<Student> studentsPage = studentRepository.findAll(PageRequest.of(0, Integer.MAX_VALUE));
 
-	    // Filtrar y transformar los estudiantes en StudentAppointmentDTOs con los turnos más cercanos
-	    List<StudentAppointmentDTO> studentsWithAppointments = studentsPage.getContent().stream()
-	            .filter(student -> !student.getStudentGraduate()) // Filtrar estudiantes con studentGraduate == true
-	            .map(student -> {
-	                // Filtrar los turnos que son hoy o en el futuro y ordenar por fecha y hora
-	                List<Appointment> upcomingAppointments = student.getAppointments().stream()
-	                        .filter(appointment -> !appointment.getAppointmentDate().toLocalDate().isBefore(today)
-	                                || (appointment.getAppointmentDate().toLocalDate().isEqual(today)
-	                                        && LocalTime.parse(appointment.getAppointmentTime()).isAfter(now)))
-	                        .sorted(Comparator.comparing(Appointment::getAppointmentDate)
-	                                .thenComparing(appointment -> LocalTime.parse(appointment.getAppointmentTime())))
-	                        .collect(Collectors.toList());
+		// Filtrar y transformar los estudiantes en StudentAppointmentDTOs con los
+		// turnos más cercanos
+		List<StudentAppointmentDTO> studentsWithAppointments = studentsPage.getContent().stream()
+				.filter(student -> !student.getStudentGraduate()
+						&& (student.getStudentInactive() == null || !student.getStudentInactive()) // Filtrar
+																									// estudiantes
+																									// inactivos
+				).map(student -> {
+					// Filtrar los turnos que son hoy o en el futuro, que sean "Turno Pendiente" y
+					// ordenar por fecha y hora
+					List<Appointment> upcomingAppointments = student.getAppointments().stream()
+							.filter(appointment -> "Turno Pendiente.".equals(appointment.getAppointmentComplete()) && // Filtrar
+																														// solo
+																														// los
+																														// turnos
+																														// pendientes
+									(!appointment.getAppointmentDate().toLocalDate().isBefore(today)
+											|| (appointment.getAppointmentDate().toLocalDate().isEqual(today)
+													&& LocalTime.parse(appointment.getAppointmentTime()).isAfter(now))))
+							.sorted(Comparator.comparing(Appointment::getAppointmentDate)
+									.thenComparing(appointment -> LocalTime.parse(appointment.getAppointmentTime())))
+							.collect(Collectors.toList());
 
-	                // Obtener el primer turno, el más cercano
-	                Appointment nextAppointment = (upcomingAppointments.isEmpty()) ? null : upcomingAppointments.get(0);
+					// Obtener el primer turno, el más cercano
+					Appointment nextAppointment = (upcomingAppointments.isEmpty()) ? null : upcomingAppointments.get(0);
 
-	                // Obtener el último pago realizado
-	                Payment lastPayment = student.getStudentPayments().stream()
-	                        .max(Comparator.comparing(Payment::getPaymentNumber))
-	                        .orElse(null);
+					// Obtener el último pago realizado
+					Payment lastPayment = student.getStudentPayments().stream()
+							.max(Comparator.comparing(Payment::getPaymentNumber)).orElse(null);
 
-	                // Crear el DTO incluyendo el turno más cercano y el último pago
-	                return new StudentAppointmentDTO(student, nextAppointment, lastPayment);
-	            }).collect(Collectors.toList());
+					// Crear el DTO incluyendo el turno más cercano y el último pago
+					return new StudentAppointmentDTO(student, nextAppointment, lastPayment);
+				}).collect(Collectors.toList());
 
-	    // Ordenar todos los estudiantes por su próximo turno, primero los que tienen turno
-	    List<StudentAppointmentDTO> sortedStudents = studentsWithAppointments.stream().sorted((s1, s2) -> {
-	        // Si ambos estudiantes tienen un turno, los ordenamos por la fecha y hora del turno
-	        if (s1.getAppointmentDate() != null && s2.getAppointmentDate() != null) {
-	            int dateComparison = s1.getAppointmentDate().compareTo(s2.getAppointmentDate());
-	            if (dateComparison == 0) {
-	                return s1.getAppointmentTime().compareTo(s2.getAppointmentTime());
-	            }
-	            return dateComparison;
-	        }
-	        // Si uno de los estudiantes no tiene turno, se coloca al final
-	        return s1.getAppointmentDate() == null ? 1 : -1;
-	    }).collect(Collectors.toList());
+		// Ordenar todos los estudiantes por su próximo turno, primero los que tienen
+		// turno
+		List<StudentAppointmentDTO> sortedStudents = studentsWithAppointments.stream().sorted((s1, s2) -> {
+			// Si ambos estudiantes tienen un turno, los ordenamos por la fecha y hora del
+			// turno
+			if (s1.getAppointmentDate() != null && s2.getAppointmentDate() != null) {
+				int dateComparison = s1.getAppointmentDate().compareTo(s2.getAppointmentDate());
+				if (dateComparison == 0) {
+					return s1.getAppointmentTime().compareTo(s2.getAppointmentTime());
+				}
+				return dateComparison;
+			}
+			// Si uno de los estudiantes no tiene turno, se coloca al final
+			return s1.getAppointmentDate() == null ? 1 : -1;
+		}).collect(Collectors.toList());
 
-	    // Paginación manual sobre la lista ordenada
-	    int totalElements = sortedStudents.size();
-	    int pageSize = pageable.getPageSize();
-	    int start = (int) pageable.getOffset();
-	    int end = Math.min((start + pageSize), totalElements);
+		// Paginación manual sobre la lista ordenada
+		int totalElements = sortedStudents.size();
+		int pageSize = pageable.getPageSize();
+		int start = (int) pageable.getOffset();
+		int end = Math.min((start + pageSize), totalElements);
 
-	    List<StudentAppointmentDTO> paginatedStudents = sortedStudents.subList(start, end);
+		List<StudentAppointmentDTO> paginatedStudents = sortedStudents.subList(start, end);
 
-	    // Devolver un Page con los estudiantes ordenados y paginados
-	    return new PageImpl<>(paginatedStudents, pageable, totalElements);
+		// Devolver un Page con los estudiantes ordenados y paginados
+		return new PageImpl<>(paginatedStudents, pageable, totalElements);
 	}
-	
-	private static final List<String> HORARIOS = Arrays.asList("09:00", "09:45", "10:30", "11:15", "12:00", "12:45",
-			"13:30", "14:15", "15:00", "15:45", "16:30", "17:15", "18:00");
+
+
+	private static final List<String> HORARIOS = Arrays.asList("08:00", "08:40", "09:20", "10:00", "10:40", "11:20",
+			"12:00", "12:40", "13:20", "14:00", "14:40", "15:20", "16:00", "16:40", "17:20", "18:00", "18:40", "19:20");
 
 	@Override
 	public List<Map<String, Object>> generarFechasDisponibles() {
@@ -194,9 +220,9 @@ public class AppointmentService implements IAppointmentService {
 		LocalDate fechaActual = LocalDate.now();
 		int diasGenerados = 0;
 
-		// Iterar para los próximos 10 días hábiles
+		// Iterar para los próximos 10 días hábiles incluyendo sábados
 		while (diasGenerados < 10) {
-			if (fechaActual.getDayOfWeek() != DayOfWeek.SATURDAY && fechaActual.getDayOfWeek() != DayOfWeek.SUNDAY) {
+			if (fechaActual.getDayOfWeek() != DayOfWeek.SUNDAY) { // Solo excluimos los domingos
 
 				Date sqlDate = Date.valueOf(fechaActual);
 				List<Appointment> turnosDelDia = appointmentRepository.findByAppointmentDate(sqlDate);
@@ -212,9 +238,7 @@ public class AppointmentService implements IAppointmentService {
 				if (!horariosDisponibles.isEmpty()) {
 					Map<String, Object> fechaHorarios = new HashMap<>();
 					fechaHorarios.put("fechaISO", fechaActual.toString());
-//                    fechaHorarios.put("fecha", fechaActual.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 					fechaHorarios.put("fecha", fechaActual.format(DateTimeFormatter.ofPattern("EEEE, dd/MM/yyyy")));
-//                    fechaHorarios.put("fecha", fechaActual.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 					fechaHorarios.put("horariosDisponibles", horariosDisponibles);
 					fechasDisponibles.add(fechaHorarios);
 					diasGenerados++;
@@ -225,27 +249,85 @@ public class AppointmentService implements IAppointmentService {
 
 		return fechasDisponibles;
 	}
+	
+	
 
 	@Override
-	public List<String> obtenerHorariosDisponiblesPorFecha(LocalDate fecha) {
-		// Convertir LocalDate a java.sql.Date para usar con JPA
+	public List<String> obtenerHorariosDisponiblesPorFecha(LocalDate fecha, Long instructorId) {
+	    Date fechaSQL = Date.valueOf(fecha);
+	    List<Appointment> turnosDelDia = appointmentRepository.findByAppointmentDateAndInstructorId(fechaSQL, instructorId);
+
+	    // Filtrar los turnos válidos (ignorar cancelados e inasistencias)
+	    List<Appointment> turnosValidos = turnosDelDia.stream()
+	            .filter(turno -> turno.getAppointmentComplete() == null
+	                    || (!turno.getAppointmentComplete().equalsIgnoreCase("Cancelado")
+	                        && !turno.getAppointmentComplete().equalsIgnoreCase("Inasistencia")))
+	            .toList();
+
+	    // Contar turnos del instructor por horario, considerando appointmentTime y appointmentTime2
+	    Set<String> horariosOcupados = new HashSet<>();
+
+	    for (Appointment turno : turnosValidos) {
+	        // Marcar appointmentTime como ocupado
+	        horariosOcupados.add(turno.getAppointmentTime());
+
+	        // Marcar appointmentTime2 como ocupado si no es null
+	        if (turno.getAppointmentTime2() != null) {
+	            horariosOcupados.add(turno.getAppointmentTime2());
+	        }
+	    }
+
+	    // Filtrar horarios disponibles para el instructor
+	    return HORARIOS.stream()
+	            .filter(horario -> !horariosOcupados.contains(horario)) // Excluir los horarios ocupados
+	            .collect(Collectors.toList());
+	}
+	
+	@Override
+	public List<String> obtenerHorariosDisponiblesConsecutivos(LocalDate fecha, Long instructorId) {
 		Date fechaSQL = Date.valueOf(fecha);
+		List<Appointment> turnosDelDia = appointmentRepository.findByAppointmentDateAndInstructorId(fechaSQL,
+				instructorId);
 
-		// Obtener los turnos existentes para la fecha seleccionada
-		List<Appointment> turnosDelDia = appointmentRepository.findByAppointmentDate(fechaSQL);
+		// Filtrar los turnos válidos (ignorar cancelados e inasistencias)
+		List<Appointment> turnosValidos = turnosDelDia.stream()
+				.filter(turno -> turno.getAppointmentComplete() == null
+						|| (!turno.getAppointmentComplete().equalsIgnoreCase("Cancelado")
+								&& !turno.getAppointmentComplete().equalsIgnoreCase("Inasistencia")))
+				.toList();
 
-		// Contar la cantidad de turnos por horario
-		Map<String, Long> conteoHorarios = turnosDelDia.stream()
-				.collect(Collectors.groupingBy(Appointment::getAppointmentTime, Collectors.counting()));
+		// Contar turnos del instructor por horario, considerando appointmentTime y
+		// appointmentTime2
+		Map<String, Long> conteoHorarios = new HashMap<>();
 
-		// Filtrar los horarios disponibles
-		return HORARIOS.stream().filter(horario -> conteoHorarios.getOrDefault(horario, 0L) < 2)
-				.collect(Collectors.toList());
+		for (Appointment turno : turnosValidos) {
+			// Contar appointmentTime
+			conteoHorarios.put(turno.getAppointmentTime(),
+					conteoHorarios.getOrDefault(turno.getAppointmentTime(), 0L) + 1);
+
+			// Contar appointmentTime2 si no es null
+			if (turno.getAppointmentTime2() != null) {
+				conteoHorarios.put(turno.getAppointmentTime2(),
+						conteoHorarios.getOrDefault(turno.getAppointmentTime2(), 0L) + 1);
+			}
+		}
+
+		// Filtrar horarios disponibles consecutivos
+		List<String> horariosDisponibles = new ArrayList<>();
+		for (int i = 0; i < HORARIOS.size() - 1; i++) { // Iteramos hasta el penúltimo horario
+			String horarioActual = HORARIOS.get(i);
+			String horarioSiguiente = HORARIOS.get(i + 1);
+
+			// Verificar si ambos horarios están disponibles
+			if (conteoHorarios.getOrDefault(horarioActual, 0L) == 0
+					&& conteoHorarios.getOrDefault(horarioSiguiente, 0L) == 0) {
+				horariosDisponibles.add(horarioActual); // Agregar solo el primer horario del par consecutivo
+			}
+		}
+
+		return horariosDisponibles;
 	}
 
-	
-	
-	
 	@Override
 	public List<Appointment> getPastAppointments() {
 		String currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
@@ -254,25 +336,46 @@ public class AppointmentService implements IAppointmentService {
 
 	@Override
 	@Transactional
-    public void updateAppointmentsAfterCancellation(Appointment canceledAppointment) {
-        if (canceledAppointment == null || canceledAppointment.getStudent() == null) {
-            return;
-        }
+	public void updateAppointmentsAfterCancellation(Appointment canceledAppointment) {
+		if (canceledAppointment == null || canceledAppointment.getStudent() == null) {
+			return;
+		}
 
-        Student student = canceledAppointment.getStudent();
-        List<Appointment> subsequentAppointments = appointmentRepository.findAppointmentsAfter(
-                student.getId(),
-                canceledAppointment.getAppointmentDate(),
-                canceledAppointment.getAppointmentTime()
-        );
+		Student student = canceledAppointment.getStudent();
+		List<Appointment> subsequentAppointments = appointmentRepository.findAppointmentsAfter(student.getId(),
+				canceledAppointment.getAppointmentDate(), canceledAppointment.getAppointmentTime());
 
-        // Disminuir el número de clase en los turnos posteriores
-        for (Appointment appointment : subsequentAppointments) {
-            appointment.setAppointmentClassNumber(appointment.getAppointmentClassNumber() - 1);
-        }
+		// Disminuir el número de clase en los turnos posteriores
+		if (canceledAppointment.getAppointmentClassNumber2() != null) {
+			for (Appointment appointment : subsequentAppointments) {
+				if(appointment.getAppointmentClassNumber2() != null) {
+					appointment.setAppointmentClassNumber(appointment.getAppointmentClassNumber() - 1);
+					appointment.setAppointmentClassNumber2(appointment.getAppointmentClassNumber2() - 1);
+				} else {
+					appointment.setAppointmentClassNumber(appointment.getAppointmentClassNumber() - 2);
+				}
+			}
+		} else {
+			for (Appointment appointment : subsequentAppointments) {
+				if(appointment.getAppointmentClassNumber2() != null) {
+					appointment.setAppointmentClassNumber(appointment.getAppointmentClassNumber() - 1);
+					appointment.setAppointmentClassNumber2(appointment.getAppointmentClassNumber2() - 1);
+				} else {
+					appointment.setAppointmentClassNumber(appointment.getAppointmentClassNumber() - 1);
+				}
+			}
+		}
 
-        // Guardar cambios en la base de datos
-        appointmentRepository.saveAll(subsequentAppointments);
+		// Guardar cambios en la base de datos
+		appointmentRepository.saveAll(subsequentAppointments);
+	}
+
+	@Override
+	public List<Appointment> getPendingAppointmentsWithInactiveEmployees() {
+        return appointmentRepository.findAll().stream()
+                .filter(a -> "Turno Pendiente.".equals(a.getAppointmentComplete())) // Filtra por appointmentComplete
+                .filter(a -> a.getEmployee() != null && Boolean.FALSE.equals(a.getEmployee().getEmployeeActive())) // Filtra por employeeActive false
+                .filter(a -> a.getAppointmentInactiveInstructorAlert() == null || !a.getAppointmentInactiveInstructorAlert()) // Ignora si es true, incluye si es null o false
+                .collect(Collectors.toList());
     }
-
 }

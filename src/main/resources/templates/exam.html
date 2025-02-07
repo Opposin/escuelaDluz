@@ -34,41 +34,40 @@
 		<div class="container mt-4">
 			<div class="card shadow-lg">
 				<div class="card-header bg-primary text-white">
-					<h4 class="mb-0 text-center">Registro de Pago</h4>
+					<h4 class="mb-0 text-center">Registro de Examen</h4>
 				</div>
 				<div class="card-body">
-					<form th:action="@{/payment/save}" method="post">
+					<form th:action="@{/exam/save}" method="post">
 
 						<!-- Fecha del Pago -->
 						<div class="mb-3">
-							<label for="paymentDate" class="form-label">Fecha del Pago:</label>
-							<input type="date" class="form-control" id="paymentDate" name="paymentDate">
+							<label for="examDate" class="form-label">Fecha del examen:</label>
+							<input type="date" class="form-control" id="examDate" name="examDate">
 						</div>
-
-
-						<div class="mb-3">
-							<label for="paymentTime" class="form-label">Hora del Pago:</label>
-							<input type="time" class="form-control" id="paymentTime" name="paymentTime">
-						</div>
-
 
 						<!-- Tipo de Pago -->
 						<div class="mb-3">
-							<label for="paymentType" class="form-label">Método de Pago:</label>
-							<select class="form-select" name="paymentType" id="paymentType">
-								<option th:value="Efectivo" selected>Efectivo</option>
-								<option th:value="Transferencia">Transferencia</option>
+							<label for="examType" class="form-label">Tipo de examen:</label>
+							<select class="form-select" name="examType" id="examType">
+								<option th:value="Teorico" selected>Teorico</option>
+								<option th:value="Practico">Practico</option>
 							</select>
 						</div>
 
-						<!-- Hora del Pago -->
-
-
-						<!-- Cantidad del Pago -->
 						<div class="mb-3">
-							<label for="paymentQuantity" class="form-label">Cantidad:</label>
-							<input type="number" class="form-control" id="paymentQuantity" name="paymentQuantity"
-								onkeypress="return isNumberKey(event)">
+							<label for="examTry" class="form-label">Intento de examen:</label>
+							<select class="form-select" name="examTry" id="examTry">
+								<option th:value="'primer'+ ' ' + 'intento'" selected>Primer intento</option>
+								<option th:value="'segundo' + ' ' + 'intento'">Segundo intento</option>
+							</select>
+						</div>
+
+						<div class="mb-3">
+							<label for="examAproved" class="form-label">Examen aprobado o desaprobado:</label>
+							<select class="form-select" name="examAproved" id="examAproved">
+								<option th:value="1" selected>aprobado</option>
+								<option th:value="0">desaprobado</option>
+							</select>
 						</div>
 
 						<!-- ID del Estudiante -->
@@ -76,7 +75,7 @@
 
 						<!-- Botón de Enviar -->
 						<div class="text-center mt-4">
-							<button type="submit" class="btn btn-success btn-lg">Registrar Pago</button>
+							<button type="submit" class="btn btn-success btn-lg">Registrar examen</button>
 						</div>
 					</form>
 				</div>
@@ -88,15 +87,12 @@
 			const now = new Date(); // Obtiene la fecha y hora actual
 			const hours = String(now.getHours()).padStart(2, '0'); // Asegura 2 dígitos para la hora
 			const minutes = String(now.getMinutes()).padStart(2, '0'); // Asegura 2 dígitos para los minutos
-			const currentTime = `${hours}:${minutes}`; // Formatea la hora como HH:mm
-			const timeInput = document.getElementById("paymentTime");
-			timeInput.value = currentTime; // Asigna el valor al input de tipo time
 		}
 
 		// Ejecuta la función automáticamente al cargar la página
 		window.onload = setCurrentTime;
 
-		setTodayDate('paymentDate');
+		setTodayDate('examDate');
 	</script>
 </body>
 

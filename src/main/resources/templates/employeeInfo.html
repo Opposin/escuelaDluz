@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmls:th="http://www.thymeleaf.org">
+
+</html>
+
+<head th:insert="~{layouts/head}">
+
+</head>
+
+<body>
+	<script>
+		function confirmarRedireccion(event) {
+			// Prevenimos la acción por defecto del enlace
+			event.preventDefault();
+
+			// Obtenemos la URL generada por Thymeleaf
+			var url = event.target.getAttribute('href');
+
+			// Primera confirmación
+			var confirmacion1 = confirm("¿Seguro?");
+
+			if (confirmacion1) {
+				// Si la primera confirmación es aceptada, mostramos la segunda confirmación
+				window.location.href = url;
+
+			}
+		}
+	</script>
+
+	<header th:insert="~{layouts/header}"></header>
+	<div class="d-flex justify-content-center">
+		<div class="container-page">
+			<h1 class="py-4 text-center">Detalles del Estudiante</h1>
+			<div class="container mt-4 mb-4">
+
+				<div class="card">
+					<div class="card-header bg-primary text-white">
+						<h4 class="mb-0">Información del Estudiante</h4>
+					</div>
+
+					<div class="card-body">
+						<div class="row">
+							<!-- Datos Personales -->
+							<div class="col-md-6">
+								<h5 class="text-secondary">Datos Personales</h5>
+								<p><strong>Nombre/s:</strong> <span th:text="${employee.employeeFirstName}"></span></p>
+								<p><strong>Apellido:</strong> <span th:text="${employee.employeeSecondName}"></span></p>
+								<p><strong>DNI:</strong> <span th:text="${employee.employeeDNI}"></span></p>
+								<p><strong>Teléfono:</strong> <span th:text="${employee.employeeCell}"></span></p>
+								<p><strong>Dirección:</strong> <span th:text="${employee.employeeAdress}"></span></p>
+								<p><strong>Partido:</strong> <span th:text="${employee.employeePartido}"></span></p>
+							</div>
+
+							<!-- Información del Curso -->
+							<div class="col-md-6">
+								<h5 class="text-secondary">Información del empleo</h5>
+								<p><strong>Tipo de empleado:</strong> <span th:text="${employee.employeeType}"></span>
+								</p>
+								<p><strong>Empleado Activo:</strong>
+									<span th:text="${employee.employeeActive ? 'Sí' : 'No'}" class="badge"
+										th:classappend="${employee.employeeActive} ? 'bg-success' : 'bg-danger'">
+									</span>
+								</p>
+								<a th:href="@{'/employee/' + ${employee.id}}" class="btn-href">
+									Editar
+								</a>
+								<a th:if="${!employee.employeeActive}"
+									th:href="@{'employee/activate/' + ${employee.id}}" class="btn-href"
+									onclick="confirmarRedireccion(event)">
+									Marcar como activo
+								</a>
+								<a th:if="${employee.employeeActive}"
+									th:href="@{'employee/deactivate/' + ${employee.id}}" class="btn-grd"
+									onclick="confirmarRedireccion(event)">
+									Marcar como inactivo
+								</a>
+							</div>
+						</div>
+
+						<hr>
+
+						<div class="card mt-4">
+							<div class="card-header bg-warning text-dark">
+								<h5 class="mb-0">Comentario del empleado</h5>
+							</div>
+							<div class="card-body">
+								<textarea class="form-control" rows="4" style="max-height: 150px; overflow-y: auto;"
+									readonly th:text="${employee.employeeComment}"></textarea>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			</span>
+		</div>
+	</div>
+</body>
+
+</html>

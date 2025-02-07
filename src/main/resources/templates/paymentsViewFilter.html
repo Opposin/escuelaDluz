@@ -6,7 +6,7 @@
 
 <head th:insert="~{layouts/head}"></head>
 
-<body>
+<body class="logo">
 	<script>
 		function confirmarRedireccion(event) {
 			// Prevenimos la acción por defecto del enlace
@@ -69,14 +69,14 @@
 									<option value="paymentNumberReverse">
 										Nombre/apellido alfabeticamente reversa</option>
 									<option value="paymentQuantity">
-										clase del turno menor a mayor</option>
+										Cantidad del pago menor a mayor</option>
 									<option value="paymentQuantityReverse">
-										clase del turno menor a mayor</option>
+										Cantidad del pago mayor a menor</option>
 								</select>
 							</div>
 
 							<div class="div-buton-submit col-sm">
-								<button type="submit" class="btn btn-outline-primary boton-submit">Filtrar</button>
+								<button type="submit" class="btn btn-primary boton-submit">Filtrar</button>
 							</div>
 						</div>
 					</div>
@@ -93,12 +93,12 @@
 								<th class="hide-width" scope="col">Cantidad del pago</th>
 								<th class="hide-width" scope="col">Pago numero</th>
 								<th scope="col">Fecha</th>
-								<th scope="col">Acciones</th>
+								<th scope="col"> Acciones </th>
 							</tr>
 						</thead>
 						<tbody class="table-group-divider">
 							<tr th:each="payment : ${payments}">
-								<th th:text="${payment.student.fistName}"></th>
+								<th th:text="${payment.student.firstName}"></th>
 								<td th:text="${payment.student.lastName}"></td>
 								<td class="hide-width">
 									<div>
@@ -114,24 +114,18 @@
 									<div class="d-flex flex-row div-mover">
 										<ul class="ul-style d-flex flex-row">
 											<li th:text="${payment.paymentDate != null ?
-																				#dates.format(payment.paymentDate, 'EEEE dd/MM/yyyy') : 'Sin fecha de pago'}" class="ul-style">
+																									#dates.format(payment.paymentDate, 'EEEE dd/MM/yyyy') : 'Sin fecha de pago'}"
+												class="ul-style">
 											</li>
 
 											<li th:text="${payment.paymentTime != null ?
-																				payment.paymentTime : ''}" class="ul-style time-style"></li>
+																									payment.paymentTime : ''}" class="ul-style time-style"></li>
 										</ul>
 									</div>
 								</td>
-
-								<td id="acciones">
-									<div class="d-flex flex-row div-mover">
-										<div class="ul-style d-flex flex-row">
-											<a th:href="@{'/payment/edit/' + ${payment.student.id} + '/' + ${payment.id}}"
-												class="btn-href">
-												Editar
-											</a>
-										</div>
-									</div>
+								<td>
+								<td> <a th:href="@{'/payment/edit/' + ${payment.id}}" class="btn-href" style="margin-right: -40%;">
+										Editar Turno </a></td>
 								</td>
 							</tr>
 						</tbody>
@@ -148,7 +142,9 @@
 				<ul class="pagination justify-content-center">
 					<li class="page-item" th:each="pagina : ${paginas}"
 						th:classappend="${pagina == actual ? 'active' : ''}">
-						<a class="page-link" th:href="@{'/payments/view/filter?pagina=' + ${pagina-1}  + '&filter=' + ${filter} + '&filterType=' + ${filterType} + '&orderType=' + ${orderType}}" th:text="${pagina}"></a>
+						<a class="page-link"
+							th:href="@{'/payments/view/filter?pagina=' + ${pagina-1}  + '&filter=' + ${filter} + '&filterType=' + ${filterType} + '&orderType=' + ${orderType}}"
+							th:text="${pagina}"></a>
 					</li>
 				</ul>
 			</nav>
@@ -198,4 +194,3 @@
 		});
 	</script>
 </body>
-

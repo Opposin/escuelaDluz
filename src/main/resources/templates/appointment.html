@@ -8,31 +8,34 @@
 
 </head>
 
-<body>
+<body class="logo">
 	<header th:insert="~{layouts/header}"></header>
 	<script>
-		function actualizarInputFecha() {
-			const selectFecha = document.getElementById("fecha");
-			const inputFecha = document.getElementById("appointmentDate");
-			const fechaSeleccionada = selectFecha.value; // Valor en formato YYYY-MM-DD
-			inputFecha.value = fechaSeleccionada;
-			obtenerHorarios() // Asigna la fecha seleccionada al input
-		}
 
 		function obtenerHorarios() {
-			const fechaSeleccionada = document.getElementById("appointmentDate").value; // Fecha en formato yyyy-MM-dd
+			const fechaSeleccionada = document.getElementById("appointmentDate").value;
+			const instructorSeleccionado = document.getElementById("appointmentInstructor").value;
+			const tipoTurnoSeleccionado = document.getElementById("appointmentTypeSelect").value; // Obtiene el tipo de turno seleccionado
 			const horariosSelect = document.getElementById("appointmentTimeSelect");
 			const horarioLabel = document.getElementById("appointmentTimeLabel");
 
-			
-			setInputValueFromSelect('appointmentTimeVariable', 'appointmentTime')
-			// Limpiar horarios previos y ocultar el select mientras se realiza la búsqueda
+			setInputValueFromSelect('appointmentTimeVariable', 'appointmentTime');
+
 			horariosSelect.innerHTML = "";
 			horariosSelect.style.display = "none";
 			horarioLabel.style.display = "none";
 
-			if (fechaSeleccionada) {
-				fetch(`/horarios-disponibles?fecha=${fechaSeleccionada}`)
+			if (fechaSeleccionada && instructorSeleccionado) {
+				let url;
+
+				// Si el tipo de turno es "Zig Zag (conos)", usar horarios consecutivos, sino usar los normales
+				if (tipoTurnoSeleccionado === "Zig Zag (conos)") {
+					url = `/horarios-consecutivos-disponibles?fecha=${fechaSeleccionada}&appointmentInstructor=${instructorSeleccionado}`;
+				} else {
+					url = `/horarios-disponibles?fecha=${fechaSeleccionada}&appointmentInstructor=${instructorSeleccionado}`;
+				}
+
+				fetch(url)
 					.then(response => {
 						if (!response.ok) {
 							throw new Error(`Error en la respuesta: ${response.status}`);
@@ -48,7 +51,6 @@
 								horariosSelect.appendChild(option);
 							});
 
-							// Mostrar el select y su label si hay horarios disponibles
 							horariosSelect.style.display = "block";
 							horarioLabel.style.display = "block";
 						} else {
@@ -57,7 +59,6 @@
 							option.textContent = "No hay horarios disponibles";
 							horariosSelect.appendChild(option);
 
-							// Mostrar el select con la opción de "No hay horarios disponibles"
 							horariosSelect.style.display = "block";
 							horarioLabel.style.display = "block";
 						}
@@ -95,6 +96,23 @@
 			inputElement.value = selectedValue;
 		}
 
+		function actualizarInputFecha() {
+			const selectFecha = document.getElementById("fecha"); // Select de fechas
+			const inputFecha = document.getElementById("appointmentDate"); // Input de fecha
+
+			// Obtener el valor seleccionado
+			const fechaSeleccionada = selectFecha.value;
+
+			if (fechaSeleccionada) {
+				inputFecha.value = fechaSeleccionada;
+
+				// Disparar manualmente el evento "change" para actualizar horarios
+				const event = new Event("change", {bubbles: true});
+				inputFecha.dispatchEvent(event);
+				obtenerHorarios()
+			}
+		}
+
 		// Llamada a la función con el ID del input
 	</script>
 
@@ -110,11 +128,33 @@
 
 		</select>
 
+		<label class="mt-3" for="appointmentInstructor" id="appointmentInstructorLabel">Instructor:</label>
+		<select class="form-select" id="appointmentInstructor" name="appointmentInstructor"
+			onchange="obtenerHorarios()">
+			<option value="" disabled selected>Seleccione un instructor</option>
+			<option th:each="instructor : ${instructores}" th:value="${instructor.id}"
+				th:text="${instructor.employeeFirstName}"></option>
+		</select>
+
+		<label class="mt-3" for="appointmentTypeSelect">Tipo de turno:</label>
+		<select class="form-select" id="appointmentTypeSelect" name="appointmentTypeSelect"
+			onchange="setInputValueFromSelect('appointmentTypeSelect', 'appointmentType')" multiple>
+			<option value="" disabled selected>Seleccione un tipo de turno</option>
+			<option selected value="Practica regular"> Practica regular </option>
+			<option value="Estacionamiento"> Estacionamiento </option>
+			<option value="Giro en U"> Giro en U </option>
+			<option value="Zig Zag (conos)"> Zig Zag (conos) </option>
+			<option value="Alquiler de auto"> Alquiler de auto </option>
+		</select>
+
+
 		<!-- Select de Horarios -->
 		<label class="mt-3" for="appointmentTimeSelect" id="appointmentTimeLabel">Horario:</label>
 		<select class="form-select" id="appointmentTimeSelect" name="appointmentTimeSelect" multiple
 			onchange="setInputValueFromSelect('appointmentTimeSelect', 'appointmentTime')">
 		</select>
+
+
 
 		<!--		<input id="id" name="id" type="hidden" th:value="${student != null ? student.id : id}">-->
 		<!--		<input id="appointmentId" name="appointmentId" type="hidden" th:value="${appointment.id}">-->
@@ -129,47 +169,98 @@
 		<input id="appointmentId" name="appointmentId" type="hidden">
 		<input id="appointmentTimeVariable" name="appointmentTimeVariable" type="hidden">
 		<input id="appointmentTime" name="appointmentTime" type="hidden">
-		<input id="appointmentType" value="Practica regular" name="appointmentType" type="hidden">
+		<input id="appointmentType" value="Practica regular" name="appointmentType" type="hidden"
+			onchange="obtenerHorarios()">
+			<input id="appointmentType" value="Practica regular" name="appointmentType2" type="hidden">
 		<input id="appointmentComplete" value="Turno Pendiente." name="appointmentComplete" type="hidden">
-
-
-		<label class="mt-3" for="appointmentTypeSelect">Tipo de turno:</label>
-		<select class="form-select" id="appointmentTypeSelect" name="appointmentTypeSelect"
-			onchange="setInputValueFromSelect('appointmentTypeSelect', 'appointmentType')" multiple>
-			<option value="" disabled selected>Seleccione un tipo de turno</option>
-			<option selected value="Practica regular"> Practica regular </option>
-			<option value="Estacionamiento"> Estacionamiento </option>
-			<option value="Giro en U"> Giro en U </option>
-			<option value="Zig Zag (conos)"> Zig Zag (conos) </option>
-			<option value="Alquiler de auto"> Alquiler de auto </option>
-		</select>
+		<br>
+		<div>
+		<label>Segundo horario del turno en caso de zig zag</label>
+		<input id="appointmentTime2" name="appointmentTime2" type="text">
+		</div>
 
 		<label class="mt-3" for="appointmentTypeSelect">Estado del turno:</label>
 		<select class="form-select" id="appointmentCompleteSelect" name="appointmentCompleteSelect"
 			onchange="setInputValueFromSelect('appointmentCompleteSelect', 'appointmentComplete')" multiple>
 			<option value="" disabled selected>Seleccione un estado de turno</option>
 			<option value="Turno Pendiente." selected> Turno Pendiente </option>
-			<option value="Completo"> Completado </option>
+			<option value="Completado"> Completado con exito </option>
 			<option value="Cancelado"> Cancelado </option>
 		</select>
 
 		<!-- Botón de Enviar -->
 		<div class="d-flex justify-content-center mt-5">
-			<button class="btn btn-outline-primary boton-submit" type="submit">Reservar</button>
+			<button  class="btn btn-primary boton-submit" type="submit">Reservar</button>
 		</div>
 
 	</form>
 
 	<script>
-		setTodayDate('appointmentDate');
-
 		document.addEventListener("DOMContentLoaded", () => {
-			// Al cargar la página, verifica si el campo de fecha tiene un valor
 			const inputFecha = document.getElementById("appointmentDate");
-			if (inputFecha && inputFecha.value) {
-				obtenerHorarios(); // Llama a obtenerHorarios si ya hay una fecha seleccionada
+
+			if (inputFecha) {
+				inputFecha.addEventListener("change", obtenerHorarios);
 			}
 		});
+		document.addEventListener("DOMContentLoaded", () => {
+			const inputFecha = document.getElementById("appointmentTypeSelect");
+
+			if (inputFecha) {
+				inputFecha.addEventListener("change", obtenerHorarios);
+			}
+		});
+
+		document.addEventListener("DOMContentLoaded", function () {
+		    const selectTime = document.getElementById("appointmentTimeSelect");
+		    const selectType = document.getElementById("appointmentTypeSelect");
+		    const inputElement = document.getElementById("appointmentTime2"); // Modifica según el ID correcto del input
+
+		    function getSelectedType() {
+		        // Obtener el valor seleccionado correctamente en select múltiple
+		        const selectedOption = selectType.querySelector("option:checked");
+		        return selectedOption ? selectedOption.value : "";
+		    }
+
+		    selectTime.addEventListener("change", function () {
+		        // Verificar si el tipo de turno seleccionado es "Zig Zag (conos)"
+		        if (getSelectedType() === "Zig Zag (conos)") {
+		            const selectedValue = selectTime.value;
+		            if (selectedValue) {
+		                inputElement.value = addMinutesToTime(selectedValue, 40);
+		            }
+		        } else {
+		            inputElement.value = ""; // Si no es "Zig Zag (conos)", limpiar el input
+		        }
+		    });
+
+		    selectType.addEventListener("change", function () {
+		        // Si cambia el tipo de turno y ya había un horario seleccionado, recalcular
+		        if (getSelectedType() === "Zig Zag (conos)" && selectTime.value) {
+		            inputElement.value = addMinutesToTime(selectTime.value, 40);
+		        } else {
+		            inputElement.value = ""; // Limpiar input si el tipo de turno cambia a otro
+		        }
+		    });
+		});
+
+		// Función para sumar minutos a un horario en formato HH:MM
+		function addMinutesToTime(time, minutesToAdd) {
+		    let [hours, minutes] = time.split(":").map(Number);
+		    minutes += minutesToAdd;
+
+		    // Ajustar la hora si los minutos superan 59
+		    while (minutes >= 60) {
+		        minutes -= 60;
+		        hours += 1;
+		    }
+
+		    // Asegurar formato de dos dígitos
+		    const formattedHours = String(hours).padStart(2, '0');
+		    const formattedMinutes = String(minutes).padStart(2, '0');
+
+		    return `${formattedHours}:${formattedMinutes}`;
+		}
 	</script>
 </body>
 

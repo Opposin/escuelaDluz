@@ -128,8 +128,8 @@ public class PaymentListController {
 			}
 			case "name" -> {
 				payments = payments.stream()
-						.filter(p -> p.getStudent() != null && ((p.getStudent().getFistName() != null
-								&& p.getStudent().getFistName().toLowerCase().contains(param.toLowerCase()))
+						.filter(p -> p.getStudent() != null && ((p.getStudent().getFirstName() != null
+								&& p.getStudent().getFirstName().toLowerCase().contains(param.toLowerCase()))
 								|| (p.getStudent().getLastName() != null && p.getStudent().getLastName()
 										.toLowerCase().contains(param.toLowerCase()))))
 						.collect(Collectors.toList());

@@ -17,7 +17,7 @@ import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = " appointments")
+@Table(name = "appointments")
 public class Appointment implements Serializable{
 
 
@@ -29,21 +29,30 @@ public class Appointment implements Serializable{
 	
 	@Column(name = "fecha")
 	@Temporal(TemporalType.DATE)
-	@NotNull(message = "Fecha Invalida")
 	private Date appointmentDate;
 	
 	
 	private String appointmentTime;
 	
+	private String appointmentTime2;
+	
 	@ManyToOne
 	@JoinColumn(name = "student_id")
 	private Student student;
+	
+	@ManyToOne
+	@JoinColumn(name = "employee_id")
+	private Employee employee;
 	
 	private String appointmentComplete;
 	
 	private String appointmentType;
 	
 	private Long appointmentClassNumber;
+	
+	private Long appointmentClassNumber2;
+	
+	private Boolean appointmentInactiveInstructorAlert;
 	
 	@Version
     private Long version;
@@ -111,6 +120,37 @@ public class Appointment implements Serializable{
 	public void setAppointmentClassNumber(Long appointmentClassNumber) {
 		this.appointmentClassNumber = appointmentClassNumber;
 	}
-	
+
+	public Employee getEmployee() {
+		return employee;
+	}
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
+
+	public String getAppointmentTime2() {
+		return appointmentTime2;
+	}
+
+	public void setAppointmentTime2(String appointmentTime2) {
+		this.appointmentTime2 = appointmentTime2;
+	}
+
+	public Long getAppointmentClassNumber2() {
+		return appointmentClassNumber2;
+	}
+
+	public void setAppointmentClassNumber2(Long appointmentClassNumber2) {
+		this.appointmentClassNumber2 = appointmentClassNumber2;
+	}
+
+	public Boolean getAppointmentInactiveInstructorAlert() {
+		return appointmentInactiveInstructorAlert;
+	}
+
+	public void setAppointmentInactiveInstructorAlert(Boolean appointmentInactiveInstructorAlert) {
+		this.appointmentInactiveInstructorAlert = appointmentInactiveInstructorAlert;
+	}
 	
 }

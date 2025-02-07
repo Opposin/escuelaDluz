@@ -18,47 +18,61 @@
 						<h4 class="mb-0">Registro de Estudiante</h4>
 					</div>
 					<div class="card-body">
-						<form action="#" method="post" th:object="${student}">
+						<form action="/student" method="post" th:object="${student}">
 							<div class="row">
 								<!-- Datos Personales -->
 								<div class="col-md-6">
+									<input th:field="${student.id}" th:value="${student.id}" type="hidden">
 									<h5 class="text-secondary">Datos Personales</h5>
 									<div class="mb-3">
 										<label class="form-label">Nombre/s:</label>
-										<input type="text" class="form-control" th:field="*{fistName}">
+										<input type="text" class="form-control" th:field="*{firstName}">
+										<div th:if="${#fields.hasErrors('firstName')}" class="d-block">
+											<p class="text-danger">Error Aqui, no debe estar vacio.</p>
+										</div>
 									</div>
 									<div class="mb-3">
 										<label class="form-label">Apellido:</label>
 										<input type="text" class="form-control" th:field="*{lastName}">
+										<div th:if="${#fields.hasErrors('lastName')}" class="d-block">
+											<p class="text-danger">Error Aqui, no debe estar vacio.</p>
+										</div>
 									</div>
 									<div class="mb-3">
 										<label class="form-label">DNI:</label>
 										<input type="text" class="form-control" th:field="*{studentDNI}"
 											onkeypress="return isNumberKey(event)">
+										<div th:if="${#fields.hasErrors('studentDNI')}" class="d-block">
+											<p class="text-danger">Error Aqui, no debe estar vacio.</p>
+										</div>
 									</div>
 									<div class="mb-3">
 										<label class="form-label">Edad:</label>
 										<input type="number" class="form-control" th:field="*{studentAge}"
 											onkeypress="return isNumberKey(event)">
+										<div th:if="${#fields.hasErrors('studentAge')}" class="d-block">
+											<p class="text-danger">Error Aqui, no debe estar vacio.</p>
+										</div>
 									</div>
 									<div class="mb-3">
 										<label class="form-label">Teléfono:</label>
 										<input type="text" class="form-control" th:field="*{studentTel}"
 											onkeypress="return isNumberKey(event)">
+										<div th:if="${#fields.hasErrors('studentTel')}" class="d-block">
+											<p class="text-danger">Error Aqui, no debe estar vacio.</p>
+										</div>
 									</div>
-								</div>
-
-								<!-- Información del Curso -->
-								<div class="col-md-6">
-									<h5 class="text-secondary">Información del Curso</h5>
 									<div class="mb-3">
 										<label class="form-label">Dirección:</label>
 										<input type="text" class="form-control" th:field="*{studentAddress}">
+										<div th:if="${#fields.hasErrors('studentAddress')}" class="d-block">
+											<p class="text-danger">Error Aqui, no debe estar vacio.</p>
+										</div>
 									</div>
 									<div class="mb-3">
 										<label class="form-label">Partido:</label>
-										<select class="form-select" th:field="*{studentPartido}" id="studentPartido">-->
-											<option th:value="'La' + ' ' + 'Matanza'">La Matanza</option>
+										<select class="form-select" th:field="*{studentPartido}" id="studentPartido">
+											<option th:value="'La' + ' ' + 'Matanza'" selected>La Matanza</option>
 											<option th:value="Quilmes">Quilmes</option>
 											<option th:value="Lanús">Lanús</option>
 											<option th:value="'Lomas' + ' ' + 'de' + ' ' + 'Zamora'">Lomas de Zamora
@@ -73,7 +87,8 @@
 											<option th:value="'Vicente' + ' ' + 'López'">Vicente López</option>
 											<option th:value="'Tres' + ' ' + 'de' + ' ' + 'Febrero'">Tres de Febrero
 											</option>
-											<option th:value="'José' + ' ' + 'C.' + ' ' + 'Paz'">José C. Paz</option>
+											<option th:value="'José' + ' ' + 'C.' + ' ' + 'Paz'">José C. Paz
+											</option>
 											<option th:value="'San' + ' ' + 'Isidro'">San Isidro</option>
 											<option th:value="'Hurlingham'">Hurlingham</option>
 											<option th:value="Pilar">Pilar</option>
@@ -84,9 +99,21 @@
 											<option th:value="Berisso">Berisso</option>
 										</select>
 									</div>
+								</div>
+
+								<!-- Información del Curso -->
+								<div class="col-md-6">
+									<h5 class="text-secondary">Información del Curso</h5>
+
 									<div class="mb-3">
 										<label class="form-label">Fecha de inicio del curso:</label>
-										<input type="date" class="form-control" th:field="*{studentCourseBegg}">
+										<input type="date" id="studentCourseBegg" name="studentCourseBegg"
+											class="form-control" th:field="*{studentCourseBegg}">
+									</div>
+									<div class="mb-3">
+										<label class="form-label">Fecha de vencimiento del curso:</label>
+										<input type="date" id="studentCourseEnd" name="studentCourseEnd"
+											class="form-control" th:field="*{studentCourseEnd}">
 									</div>
 									<div class="mb-3">
 										<label class="form-label">Faltas:</label>
@@ -94,7 +121,8 @@
 											onkeypress="return isNumberKey(event)">
 									</div>
 									<div class="mb-3 mt-4">
-										<label for="studentClasses">Numero de clases que va a tomar el alumno</label>
+										<label for="studentClasses">Numero de clases que va a tomar el
+											alumno</label>
 										<input type="number" class="form-control" id="studentClasses"
 											th:field="*{studentClasses}" name="studentClasses" placeholder="ejemplo: 12"
 											onkeypress="return isNumberKey(event)">
@@ -105,6 +133,22 @@
 											th:field="*{studentClasses}" name="studentClasses"
 											placeholder="ejemplo: 2, por defecto 0"
 											onkeypress="return isNumberKey(event)">
+									</div>
+									<div class="mb-3 mt-4">
+										<label for="studentClasses">Fue atendido por:</label>
+										<select th:field="*{studentRecepcionist}" class="form-select">
+											<option value="" disabled selected>Seleccione un recepcionista</option>
+											<!--											<option th:each="recepcionista : ${recepcionistas}"-->
+											<!--												th:value="${recepcionista.employeeFirstName} + ' ' + ${recepcionista.employeeSecondName}"-->
+											<!--												th:text="${recepcionista.employeeFirstName} + ' ' + ${recepcionista.employeeSecondName}"></option>-->
+											<option th:each="recepcionista : ${recepcionistas}"
+												th:value="|${recepcionista.employeeFirstName} ${recepcionista.employeeSecondName}|"
+												th:text="|${recepcionista.employeeFirstName} ${recepcionista.employeeSecondName}|">
+											</option>
+										</select>
+										<div th:if="${#fields.hasErrors('studentRecepcionist')}" class="d-block">
+											<p class="text-danger">Error se debe seleccionar una opcion.</p>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -123,6 +167,30 @@
 										<input class="form-check-input" type="checkbox" th:field="*{studentVideoPista}">
 										<label class="form-check-label">Vio el video de la pista</label>
 									</div>
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" th:field="*{studentIncline}">
+										<label class="form-check-label">Practico estacionar inclinado</label>
+									</div>
+									<div class="form-check">
+										<div class="d-flex flex-row mb-3">
+											<label class="form-check-label">Nota dada por examinador:</label>
+											<select th:field="*{studentGrade}" id="studentGrade"
+												class="form-control form-control-sm"
+												style="width: 70px; margin-left: 2%; text-align: center;">
+												<option th:value="0" selected="selected">Sin nota</option>
+												<option th:value="1">1</option>
+												<option th:value="2">2</option>
+												<option th:value="3">3</option>
+												<option th:value="4">4</option>
+												<option th:value="5">5</option>
+												<option th:value="6">6</option>
+												<option th:value="7">7</option>
+												<option th:value="8">8</option>
+												<option th:value="9">9</option>
+												<option th:value="10">10</option>
+											</select>
+										</div>
+									</div>
 								</div>
 								<div class="col-md-4">
 									<div class="form-check">
@@ -133,15 +201,27 @@
 										<input class="form-check-input" type="checkbox" th:field="*{studentEstacionar}">
 										<label class="form-check-label">Practicó Estacionamiento</label>
 									</div>
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" th:field="*{studentMotorTalk}">
+										<label class="form-check-label">Tuvo la charla sobre el motor</label>
+									</div>
 								</div>
 								<div class="col-md-4">
 									<div class="form-check">
 										<input class="form-check-input" type="checkbox" th:field="*{studentGiroU}">
 										<label class="form-check-label">Practicó Giro en U</label>
 									</div>
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" th:field="*{student45degree}">
+										<label class="form-check-label">Practicó los 45 Grados</label>
+									</div>
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox"
+											th:field="*{studentAdminSellCon}">
+										<label class="form-check-label">Firmo el control administrativo de
+											ventas</label>
+									</div>
 								</div>
-
-
 
 								<hr>
 
@@ -172,7 +252,8 @@
 									</div>
 									<div class="col-md-6">
 										<h5 class="text-secondary">Recomendación</h5>
-										<select class="form-select mb-5" th:field="*{studentRecomen}" id="studentRecomen">-->
+										<select class="form-select mb-5" th:field="*{studentRecomen}"
+											id="studentRecomen">-->
 											<option th:value="'No' + ' ' + 'recibio' + ' ' + 'recomendacion.'"
 												selected="selected">
 												no
@@ -195,281 +276,12 @@
 					</div>
 				</div>
 			</div>
-			<!--			<form th:action="@{/student}" th:object="${student}" method="post" enctype="multipart/form-data">-->
-
-			<!--				<div class="d-flex flex-column justify-content-md-center">-->
-
-			<!--					<div class="d-flex flex-row mt-3">-->
-			<!--						<div class="col mb-3">-->
-			<!--							<label for="firstName">Nombre/s</label>-->
-			<!--							<div class="col-sm-10">-->
-			<!--								<input type="text" class="form-control" id="fistName" th:field="*{fistName}"-->
-			<!--									name="fistName">-->
-			<!--							</div>-->
-			<!--							<div th:if="${#fields.hasErrors('fistName')}" class="d-block">-->
-			<!--								<p class="text-danger">Error Aqui, no debe estar vacio.</p>-->
-			<!--							</div>-->
-			<!--						</div>-->
-
-			<!--						<div class="col mb-3">-->
-			<!--							<label for="lastName">Apellido</label>-->
-			<!--							<div class="col-sm-10">-->
-			<!--								<input type="text" class="form-control" id="lastName" th:field="*{lastName}"-->
-			<!--									name="lastName">-->
-			<!--							</div>-->
-			<!--							<div th:if="${#fields.hasErrors('lastName')}" class="d-block">-->
-			<!--								<p class="text-danger">Error Aqui, no debe estar vacio.</p>-->
-			<!--							</div>-->
-			<!--						</div>-->
-			<!--					</div>-->
-			<!--					<div class="d-flex flex-row mt-3">-->
-			<!--						<div class="col mb-3">-->
-			<!--							<label for="studentAddress">Direccion</label>-->
-			<!--							<div class="col-sm-10">-->
-			<!--								<input type="text" class="form-control" id="studentAddress" th:field="*{studentAddress}"-->
-			<!--									name="studentAddress">-->
-			<!--							</div>-->
-			<!--							<div th:if="${#fields.hasErrors('studentAddress')}" class="d-block">-->
-			<!--								<p class="text-danger">Error Aqui, no debe estar vacio.</p>-->
-			<!--							</div>-->
-			<!--						</div>-->
-
-			<!--						<div class="col mb-3">-->
-			<!--							<label for="studentDNI">Documento Identificatorio</label>-->
-			<!--							<div class="col-sm-10">-->
-			<!--								<input type="number" class="form-control" id="studentDNI" th:field="*{studentDNI}"-->
-			<!--									name="studentDNI" onkeypress="return isNumberKey(event)">-->
-			<!--							</div>-->
-			<!--							<div th:if="${#fields.hasErrors('studentDNI')}" class="d-block">-->
-			<!--								<p class="text-danger">Error Aqui, no debe estar vacio, ni debe estar repetido.</p>-->
-			<!--							</div>-->
-			<!--						</div>-->
-
-			<!--						<div class="col mb-3">-->
-			<!--							<label for="studentAge">Edad</label>-->
-			<!--							<div class="col-sm-10">-->
-			<!--								<input type="number" class="form-control" id="studentAge" th:field="*{studentAge}"-->
-			<!--									name="studentAge" value="18" onkeypress="return isNumberKey(event)">-->
-			<!--							</div>-->
-			<!--							<div th:if="${#fields.hasErrors('studentAge')}" class="d-block">-->
-			<!--								<p class="text-danger">Error Aqui, no debe estar vacio.</p>-->
-			<!--							</div>-->
-			<!--						</div>-->
-			<!--					</div>-->
-			<!--					<divdiv class="d-flex flex-row mt-3">-->
-			<!--						<div class="col mb-3">-->
-			<!--							<label for="number">Numero telefonico</label>-->
-			<!--							<div class="col-sm-10">-->
-			<!--								<input type="number" class="form-control" id="studentTel" th:field="*{studentTel}"-->
-			<!--									name="studentTel" onkeypress="return isNumberKey(event)">-->
-			<!--							</div>-->
-			<!--							<div th:if="${#fields.hasErrors('studentTel')}" class="d-block">-->
-			<!--								<p class="text-danger">Error Aqui, no debe estar vacio.</p>-->
-			<!--							</div>-->
-			<!--						</div>-->
-
-			<!--						<div class="col mb-3">-->
-			<!--							<label for="studentDNI">Inasistencias del alumno</label>-->
-			<!--							<div class="col-sm-10">-->
-			<!--								<input type="number" class="form-control" id="studentNonAtten"-->
-			<!--									th:field="*{studentNonAtten}" name="studentNonAtten" placeholder="0"-->
-			<!--									onkeypress="return isNumberKey(event)">-->
-			<!--							</div>-->
-			<!--							<div th:if="${#fields.hasErrors('studentNonAtten')}" class="d-block">-->
-			<!--								<p class="text-danger">Error Aqui, no debe estar vacio.</p>-->
-			<!--							</div>-->
-			<!--						</div>-->
-
-			<!--						<div class="col mb-3">-->
-			<!--							<label for="studentPartido">Partido del alumno</label>-->
-			<!--							<div class="col-sm-10">-->
-			<!--								<select class="form-select" th:field="*{studentPartido}" id="studentPartido">-->
-			<!--									<option th:value="'La' + ' ' + 'Matanza'">La Matanza</option>-->
-			<!--									<option th:value="Quilmes">Quilmes</option>-->
-			<!--									<option th:value="Lanús">Lanús</option>-->
-			<!--									<option th:value="'Lomas' + ' ' + 'de' + ' ' + 'Zamora'">Lomas de Zamora</option>-->
-			<!--									<option th:value="'Almirante'  + ' ' + 'Brown'">Almirante Brown</option>-->
-			<!--									<option th:value="Moreno">Moreno</option>-->
-			<!--									<option th:value="'San' + ' ' + 'Miguel'">San Miguel</option>-->
-			<!--									<option th:value="Avellaneda">Avellaneda</option>-->
-			<!--									<option th:value="Morón">Morón</option>-->
-			<!--									<option th:value="Tigre">Tigre</option>-->
-			<!--									<option th:value="Berazategui">Berazategui</option>-->
-			<!--									<option th:value="'Vicente' + ' ' + 'López'">Vicente López</option>-->
-			<!--									<option th:value="'Tres' + ' ' + 'de' + ' ' + 'Febrero'">Tres de Febrero</option>-->
-			<!--									<option th:value="'José' + ' ' + 'C.' + ' ' + 'Paz'">José C. Paz</option>-->
-			<!--									<option th:value="'San' + ' ' + 'Isidro'">San Isidro</option>-->
-			<!--									<option th:value="'Hurlingham'">Hurlingham</option>-->
-			<!--									<option th:value="Pilar">Pilar</option>-->
-			<!--									<option th:value="Escobar">Escobar</option>-->
-			<!--									<option th:value="'San' + ' ' + 'Fernando'">San Fernando</option>-->
-			<!--									<option th:value="'Ituzaingó'">Ituzaingó</option>-->
-			<!--									<option th:value="Ensenada">Ensenada</option>-->
-			<!--									<option th:value="Berisso">Berisso</option>-->
-			<!--								</select>-->
-			<!--							</div>-->
-			<!--							<div th:errorclass="error" th:if="${#fields.hasErrors('studentPartido')}"-->
-			<!--								th:errors="*{studentPartido}" class="d-block">-->
-
-			<!--							</div>-->
-			<!--						</div>-->
-			<!--						<div>-->
-			<!--							<label for="studentClasses">Numero de clases del alumno</label>-->
-			<!--							<div class="col-sm-10">-->
-			<!--								<input type="number" class="form-control" id="studentClasses"-->
-			<!--									th:field="*{studentClasses}" name="studentClasses" placeholder="ejemplo: 12"-->
-			<!--									onkeypress="return isNumberKey(event)">-->
-			<!--							</div>-->
-			<!--							<div th:if="${#fields.hasErrors('studentClasses')}" class="d-block">-->
-			<!--								<p class="text-danger">Error Aqui, no debe estar vacio.</p>-->
-			<!--							</div>-->
-			<!--						</div>-->
-			<!--				</div>-->
-
-			<!--				<div class="d-flex flex-row mt-3">-->
-			<!--					<div class="col mb-3">-->
-			<!--						<label for="studentCourseBegg">Fecha de inicio del curso</label>-->
-			<!--						<div class="col-sm-10">-->
-			<!--							<input type="date" class="form-control" id="studentCourseBegg"-->
-			<!--								th:field="*{studentCourseBegg}" name="studentCourseBegg">-->
-			<!--						</div>-->
-			<!--						<div th:if="${#fields.hasErrors('studentCourseBegg')}" class="d-block">-->
-			<!--							<p class="text-danger">Error Aqui, debe ser una fecha valida</p>-->
-			<!--						</div>-->
-			<!--					</div>-->
-
-			<!--					<div class="col mb-3">-->
-			<!--						<label for="studentRecomen">¿Como conocio la academia?</label>-->
-			<!--						<div class="col-sm-10">-->
-			<!--							<select class="form-select" th:field="*{studentRecomen}" id="studentRecomen">-->
-			<!--								<option th:value="'No' + ' ' + 'recibio' + ' ' + 'recomendacion.'" selected="selected">-->
-			<!--									no-->
-			<!--									recibio recomendacion</option>-->
-			<!--								<option th:value="Familiar">Familiar/Amigos</option>-->
-			<!--								<option th:value="'Redes'+ ' ' +'Sociales'">Redes Sociales</option>-->
-			<!--								<option th:value="Otro...">otro...</option>-->
-			<!--							</select>-->
-			<!--						</div>-->
-			<!--						<div th:errorclass="error" th:if="${#fields.hasErrors('studentRecomen')}"-->
-			<!--							th:errors="*{studentRecomen}" class="d-block">-->
-			<!--							<p>Error Aqui</p>-->
-			<!--						</div>-->
-			<!--					</div>-->
-
-			<!--					<div>-->
-			<!--						<label for="studentClasses">Numero de clases que ha tomado el alumno</label>-->
-			<!--						<div class="col-sm-10">-->
-			<!--							<input type="number" class="form-control" id="studentClass" th:value="0"-->
-			<!--								th:field="*{studentClass}" name="studentClass" placeholder="ejemplo: 0"-->
-			<!--								onkeypress="return isNumberKey(event)">-->
-			<!--						</div>-->
-			<!--					</div>-->
-			<!--				</div>-->
-
-
-			<!--				<div id="container-radios">-->
-			<!--					<div class="radio-card">-->
-			<!--						<label for="select-studentPdf">¿Vio el estudiante el pdf?</label>-->
-			<!--						<div id="select-studentPdf" class="div-centrar">-->
-
-			<!--							<div class="radio-input">-->
-			<!--								<input th:value="1" name="value-1" id="value-1" type="radio" th:field="*{studentPdf}">-->
-			<!--								<label for="value-1">Si</label>-->
-			<!--								<input th:value="0" name="value-1" id="value-2" type="radio" th:field="*{studentPdf}">-->
-			<!--								<label for="value-2">No</label>-->
-			<!--							</div>-->
-			<!--						</div>-->
-			<!--					</div>-->
-
-			<!--					<div class="radio-card">-->
-			<!--						<label for="select-studentZigZag">¿Practico el studiante el zigzag?</label>-->
-			<!--						<div id="select-studentZigZag" class="div-centrar">-->
-			<!--							<div class="radio-input">-->
-			<!--								<input th:value="1" name="value-3" id="value-3" type="radio"-->
-			<!--									th:field="*{studentZigZag}">-->
-			<!--								<label for="value-3">Si</label>-->
-			<!--								<input th:value="0" name="value-3" id="value-4" type="radio"-->
-			<!--									th:field="*{studentZigZag}">-->
-			<!--								<label for="value-4">No</label>-->
-			<!--							</div>-->
-			<!--						</div>-->
-			<!--					</div>-->
-
-			<!--					<div class="radio-card">-->
-			<!--						<label for="select-studentEstacionar">¿Practico el studiante el estacionamiento?</label>-->
-			<!--						<div id="select-studentEstacionar" class="div-centrar">-->
-			<!--							<div class="radio-input">-->
-			<!--								<input th:value="1" name="value-5" id="value-5" type="radio"-->
-			<!--									th:field="*{studentEstacionar}">-->
-			<!--								<label for="value-5">Si</label>-->
-			<!--								<input th:value="0" name="value-5" id="value-6" type="radio"-->
-			<!--									th:field="*{studentEstacionar}">-->
-			<!--								<label for="value-6">No</label>-->
-			<!--							</div>-->
-			<!--						</div>-->
-			<!--					</div>-->
-
-			<!--					<div class="radio-card">-->
-			<!--						<label for="select-studentGiroU">¿Practico el studiante el giro en u?</label>-->
-			<!--						<div id="select-studentGiroU" class="div-centrar">-->
-			<!--							<div class="radio-input">-->
-			<!--								<input th:value="1" name="value-7" id="value-7" type="radio" th:field="*{studentGiroU}">-->
-			<!--								<label for="value-7">Si</label>-->
-			<!--								<input th:value="0" name="value-7" id="value-8" type="radio" th:field="*{studentGiroU}">-->
-			<!--								<label for="value-8">No</label>-->
-			<!--							</div>-->
-			<!--						</div>-->
-			<!--					</div>-->
-
-			<!--					<div class="radio-card">-->
-			<!--						<label for="select-studentVideoPista">¿Vio el video de la pista?</label>-->
-			<!--						<div id="select-studentVideoPista" class="div-centrar">-->
-			<!--							<div class="radio-input">-->
-			<!--								<input th:value="1" name="value-9" id="value-9" type="radio"-->
-			<!--									th:field="*{studentVideoPista}">-->
-			<!--								<label for="value-9">Si</label>-->
-			<!--								<input th:value="0" name="value-9" id="value-10" type="radio"-->
-			<!--									th:field="*{studentVideoPista}">-->
-			<!--								<label for="value-10">No</label>-->
-			<!--							</div>-->
-			<!--						</div>-->
-			<!--					</div>-->
-			<!--					<div class="radio-card">-->
-			<!--						<label for="select-studentGraduate">¿El estudiante esta graduado?</label>-->
-			<!--						<div id="select-studentGraduate" class="div-centrar">-->
-
-			<!--							<div class="radio-input2">-->
-			<!--								<input th:value="1" name="value-11" id="value-11" type="radio"-->
-			<!--									th:field="*{studentGraduate}">-->
-			<!--								<label for="value-11">Si</label>-->
-			<!--								<input th:value="0" name="value-11" id="value-12" type="radio"-->
-			<!--									th:field="*{studentGraduate}">-->
-			<!--								<label for="value-12">No</label>-->
-			<!--							</div>-->
-			<!--						</div>-->
-			<!--					</div>-->
-			<!--				</div>-->
-
-			<!--				<div class="mb-3">-->
-			<!--					<label for="StudentComment" id="charCount">Comentario sobre el alumno (Máximo 500-->
-			<!--						caracteres) 0/500</label>-->
-			<!--					<textarea class="form-control" id="StudentComment" name="StudentComment" rows="4"-->
-			<!--						placeholder="Aqui podemos poner un comentario sobre el nuevo alumno..."-->
-			<!--						th:field="*{StudentComment}" oninput="updateCharCount()"></textarea>-->
-			<!--				</div>-->
-
-			<!--				<input id="id" name="id" type="text" th:field="*{id}">-->
-
-			<!--				<div class="div-buton-submit">-->
-			<!--					<button type="submit" class="btn btn-outline-primary boton-submit">Guardar</button>-->
-			<!--				</div>-->
-
-
-			<!--			</form>-->
+			
 		</div>
 	</div>
 
 	<script>
+
 		function updateCharCount() {
 			// Obtener el texto del textarea
 			var text = document.getElementById('StudentComment').value;
@@ -488,6 +300,44 @@
 				charCountLabel.style.color = '#555'; // Color por defecto
 			}
 		}
+
+		function establecerFechaHoy() {
+			let hoy = new Date();
+			let fechaFormateada = hoy.toISOString().split('T')[0];
+			let inputFechaInicio = document.getElementById('studentCourseBegg');
+			inputFechaInicio.value = fechaFormateada;
+
+			// Calcular fecha desde el inicio
+			calcularFecha();
+		}
+
+		function sumarDiasSinDomingos(fecha, dias) {
+			let contador = 0;
+			let nuevaFecha = new Date(fecha); // Clonar la fecha original
+			while (contador < dias) {
+				nuevaFecha.setDate(nuevaFecha.getDate() + 1);
+				if (nuevaFecha.getDay() !== 0) { // 0 es domingo
+					contador++;
+				}
+			}
+			return nuevaFecha;
+		}
+
+		function calcularFecha() {
+			let fechaInicio = document.getElementById('studentCourseBegg').value;
+			if (!fechaInicio) return;
+
+			let fecha = new Date(fechaInicio);
+			let nuevaFecha = sumarDiasSinDomingos(fecha, 20);
+			document.getElementById('studentCourseEnd').value = nuevaFecha.toISOString().split('T')[0];
+		}
+
+		// Ejecutar la primera función al cargar la página
+		window.onload = establecerFechaHoy;
+
+		// Ejecutar la segunda función cuando se cambie el valor del primer input
+		document.getElementById('studentCourseBegg').addEventListener('input', calcularFecha);
+
 	</script>
 </body>
 

@@ -68,4 +68,40 @@ public class PaymentController {
 		return "redirect:/home";
 	}
 
+	@GetMapping("/payment/edit/{id}")
+	public String editPayment(@PathVariable(name = "id") Long id, Model model) {
+	    Payment payment = paymentService.findById(id);
+	    if (payment == null) {
+	        return "redirect:/home"; // Redirige si el pago no existe
+	    }
+
+	    model.addAttribute("payment", payment);
+	    model.addAttribute("student", payment.getStudent());
+	    return "payment_edit"; // Nombre de la vista de edición
+	}
+
+	@PostMapping("/payment/update")
+	public String updatePayment(
+	        @RequestParam(name = "paymentId") Long paymentId,
+	        @RequestParam(name = "paymentDate") Date paymentDate,
+	        @RequestParam(name = "paymentType") String paymentType,
+	        @RequestParam(name = "paymentTime") String paymentTime,
+	        @RequestParam(name = "paymentQuantity") Long paymentQuantity,
+	        @RequestParam(name = "id") Long studentId) {
+
+	    Payment payment = paymentService.findById(paymentId);
+	    if (payment == null) {
+	        return "redirect:/home";
+	    }
+
+	    Student student = studentService.findById(studentId);
+	    payment.setStudent(student);
+	    payment.setPaymentDate(paymentDate);
+	    payment.setPaymentQuantity(paymentQuantity);
+	    payment.setPaymentTime(paymentTime);
+	    payment.setPaymentType(paymentType);
+
+	    paymentService.save(payment);
+	    return "redirect:/home";
+	}
 }

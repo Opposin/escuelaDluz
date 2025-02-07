@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmls:th="http://www.thymeleaf.org">
+
+</html>
+
+<head th:insert="~{layouts/head}"></head>
+
+<body>
+	<header th:insert="~{layouts/header}"></header>
+
+	<div class="container mt-4">
+		<div class="card shadow-lg">
+			<div class="card-header bg-warning text-white">
+				<h4 class="mb-0 text-center">Editar Pago</h4>
+			</div>
+			<div class="card-body">
+				<form th:action="@{/payment/update}" method="post">
+
+					<!-- ID del Pago (oculto) -->
+					<input type="hidden" name="paymentId" th:value="${payment.id}">
+
+					<!-- Fecha del Pago -->
+					<div class="mb-3">
+						<label for="paymentDate" class="form-label">Fecha del Pago:</label>
+						<input type="date" class="form-control" id="paymentDate" name="paymentDate" 
+							th:value="${payment.paymentDate}">
+					</div>
+
+					<!-- Hora del Pago -->
+					<div class="mb-3">
+						<label for="paymentTime" class="form-label">Hora del Pago:</label>
+						<input type="time" class="form-control" id="paymentTime" name="paymentTime"
+							th:value="${payment.paymentTime}">
+					</div>
+
+					<!-- Tipo de Pago -->
+					<div class="mb-3">
+						<label for="paymentType" class="form-label">Método de Pago:</label>
+						<select class="form-select" name="paymentType" id="paymentType">
+							<option th:value="Efectivo" th:selected="${payment.paymentType == 'Efectivo'}">Efectivo</option>
+							<option th:value="Transferencia" th:selected="${payment.paymentType == 'Transferencia'}">Transferencia</option>
+						</select>
+					</div>
+
+					<!-- Cantidad del Pago -->
+					<div class="mb-3">
+						<label for="paymentQuantity" class="form-label">Cantidad:</label>
+						<input type="number" class="form-control" id="paymentQuantity" name="paymentQuantity"
+							th:value="${payment.paymentQuantity}">
+					</div>
+
+					<!-- ID del Estudiante (oculto) -->
+					<input type="hidden" id="studentId" name="id" th:value="${student.id}">
+
+					<!-- Botón de Guardar Cambios -->
+					<div class="text-center mt-4">
+						<button type="submit" class="btn btn-primary btn-lg">Guardar Cambios</button>
+						<a th:href="@{/home}" class="btn btn-secondary btn-lg">Cancelar</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

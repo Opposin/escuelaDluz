@@ -27,12 +27,14 @@ public interface IAppointmentService {
 	
 	public List<Map<String, Object>> generarFechasDisponibles();
 	
-	public List<String> obtenerHorariosDisponiblesPorFecha(LocalDate fecha);
+	public List<String> obtenerHorariosDisponiblesPorFecha(LocalDate fecha, Long instructorId);
 
     public List<Appointment> getPastAppointments();
     
     public void updateAppointmentsAfterCancellation(Appointment canceledAppointment);
 
-//	Appointment saveOrUpdateAppointment(Appointment appointment, Long studentId);
+    public List<String> obtenerHorariosDisponiblesConsecutivos(LocalDate fecha, Long instructorId);
+    
+    public List<Appointment> getPendingAppointmentsWithInactiveEmployees();
 	
 }

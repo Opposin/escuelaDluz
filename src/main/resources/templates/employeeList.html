@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmls:th="http://www.thymeleaf.org">
+
+</html>
+
+<head th:insert="~{layouts/head}"></head>
+
+<body class="logo">
+	<script>
+		function confirmarRedireccion(event) {
+			// Prevenimos la acción por defecto del enlace
+			event.preventDefault();
+
+			// Obtenemos la URL generada por Thymeleaf
+			var url = event.target.getAttribute('href');
+
+			// Primera confirmación
+			var confirmacion1 = confirm("¿Seguro? Si confirmas, el alumno sera graduado.");
+
+			if (confirmacion1) {
+				// Si la primera confirmación es aceptada, mostramos la segunda confirmación
+				window.location.href = url;
+
+			}
+		}
+	</script>
+	<header th:insert="~{layouts/header}"></header>
+	<div class="d-flex justify-content-center">
+		<div class="container-page">
+			<h1 th:text="${titulo}" class="py-4 text-center"></h1>
+			<div class="mt-3">
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Nombre/s</th>
+							<th scope="col">Apellido</th>
+							<th scope="col"> DNI del empleado</th>
+							<th scope="col">Telefono del empleado</th>
+							<th scope="col">Tipo de empleado</th>
+							<th scope="col">Estado del empleado</th>
+							<th scope="col">Acciones</th>
+						</tr>
+					</thead>
+					<tbody class="table-group-divider">
+						<tr th:each="employee : ${employees}">
+							<th th:text="${employee.employeeFirstName}"></th>
+							<td th:text="${employee.employeeSecondName}"></td>
+							<td th:text="${employee.employeeDNI}"></td>
+							<td th:text="${employee.employeeCell}"></td>
+							<td th:text="${employee.employeeType}"></td>
+							<td th:text="${employee.employeeActive ? 'Sí' : 'No'}" class="badge mt-2"
+								style="margin-left: 20%;"
+								th:classappend="${employee.employeeActive} ? 'bg-success' : 'bg-danger'"></td>
+							<td id="acciones">
+								<div class="d-flex flex-row div-mover">
+									<div class="ul-style d-flex flex-row">
+										<a th:href="@{'/employee/info/' + ${employee.id}}"
+											class="btn-href">
+											Ver
+										</a>
+										<a th:href="@{'/employee/' + ${employee.id}}" class="btn-href">
+											Editar
+										</a>
+										<a th:if="${!employee.employeeActive}"
+											th:href="@{'employee/activate/' + ${employee.id}}" class="btn-href"
+											onclick="confirmarRedireccion(event)">
+											Marcar como activo
+										</a>
+										<a th:if="${employee.employeeActive}"
+											th:href="@{'employee/deactivate/' + ${employee.id}}" class="btn-grd"
+											onclick="confirmarRedireccion(event)">
+											Marcar como inactivo
+										</a>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!--		<nav aria-label="Page navigation example" class="mt-4">-->
+		<!--			<p th:text="${paginas}"></p>-->
+		<!--			<ul class="pagination justify-content-center">-->
+		<!--				<li class="page-item" th:each="pagina : ${paginas}"-->
+		<!--					th:classappend="${pagina == actual ? 'active' : ''}">-->
+		<!--					<a class="page-link" th:href="@{'/appointments/view?pagina=' + ${pagina-1}}"-->
+		<!--						th:text="${pagina}"></a>-->
+		<!--				</li>-->
+		<!--			</ul>-->
+		<!--		</nav>-->
+	</div>
+</body>
+
+</html>

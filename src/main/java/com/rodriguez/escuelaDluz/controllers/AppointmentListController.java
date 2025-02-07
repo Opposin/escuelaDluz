@@ -280,8 +280,8 @@ public class AppointmentListController {
 	            case "name":
 	                appointments = appointments.stream()
 	                        .filter(app -> app.getStudent() != null &&
-	                                ((app.getStudent().getFistName() != null &&
-	                                        app.getStudent().getFistName().toLowerCase().contains(param.toLowerCase())) ||
+	                                ((app.getStudent().getFirstName() != null &&
+	                                        app.getStudent().getFirstName().toLowerCase().contains(param.toLowerCase())) ||
 	                                        (app.getStudent().getLastName() != null &&
 	                                                app.getStudent().getLastName().toLowerCase().contains(param.toLowerCase()))))
 	                        .toList();
@@ -310,8 +310,8 @@ public class AppointmentListController {
 	        Comparator<Appointment> nameComparator = Comparator.comparing(
 	                (Appointment app) -> {
 	                    // Obtener el nombre del estudiante o una cadena vacía si es null
-	                    String firstName = (app.getStudent() != null && app.getStudent().getFistName() != null)
-	                            ? app.getStudent().getFistName().toLowerCase()
+	                    String firstName = (app.getStudent() != null && app.getStudent().getFirstName() != null)
+	                            ? app.getStudent().getFirstName().toLowerCase()
 	                            : "";
 	                    return firstName;
 	                }
