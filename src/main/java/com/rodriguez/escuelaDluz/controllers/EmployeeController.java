@@ -1,5 +1,6 @@
 package com.rodriguez.escuelaDluz.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.rodriguez.escuelaDluz.entities.Employee;
 import com.rodriguez.escuelaDluz.services.IEmployeeService;
+import com.rodriguez.escuelaDluz.services.IVariableService;
 
 import jakarta.validation.Valid;
 
@@ -18,9 +20,11 @@ import jakarta.validation.Valid;
 public class EmployeeController {
 
 	private IEmployeeService employeeService;
+    private IVariableService variableService;
 	
-	public EmployeeController(IEmployeeService employeeService) {
+	public EmployeeController(IEmployeeService employeeService, IVariableService variableService) {
 		this.employeeService = employeeService;
+		this.variableService = variableService;
 	}
 	
 	@GetMapping("/employee")
@@ -52,6 +56,10 @@ public class EmployeeController {
 		}
 		
 		try {
+			if(employee.getId() != null) {
+				Employee employee2 = employeeService.findById(employee.getId());
+				employee.setEmployeeAppointments(employee2.getEmployeeAppointments());
+			}
 			employeeService.save(employee);
 			redirectAttributes.addFlashAttribute("msj", "Empleado guardado exitosamente.");
 			redirectAttributes.addFlashAttribute("tipoMsj", "success");
@@ -99,28 +107,30 @@ public class EmployeeController {
 	}
 	
 	
-	@GetMapping("employee/employee/deactivate/{id}")
+	@GetMapping("employee/deactivate/{id}")
 	public String EmployeeDeactivateList(Model model, @PathVariable(name = "id") Long id, RedirectAttributes redirectAttributes) {
 		Employee employee = employeeService.findById(id);
 		employee.setEmployeeActive(false);
 		employeeService.save(employee);
 		redirectAttributes.addFlashAttribute("msj", "Empleado marcado como inactivo exitosamente.");
 		redirectAttributes.addFlashAttribute("tipoMsj", "success");
-		return "redirect:/employee/list";
+		return "redirect:/employees/list";
 	}
 	
-	@GetMapping("employee/employee/activate/{id}")
+	@GetMapping("employee/activate/{id}")
 	public String EmployeeActivateList(Model model, @PathVariable(name = "id") Long id, RedirectAttributes redirectAttributes) {
 		Employee employee = employeeService.findById(id);
 		employee.setEmployeeActive(true);
 		employeeService.save(employee);
 		redirectAttributes.addFlashAttribute("msj", "Empleado marcado como activo exitosamente.");
 		redirectAttributes.addFlashAttribute("tipoMsj", "success");
-		return "redirect:/employee/list";
+		return "redirect:/employees/list";
 	}
-	@GetMapping("/employee/list")
+	
+	@GetMapping("/employees/list")
 	public String EmployeeList(Model model) {
 		model.addAttribute("employees", employeeService.findAll());
+		model.addAttribute("variables", variableService.findAll());
 		
 		return "employeeList";
 	}

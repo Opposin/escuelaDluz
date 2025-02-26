@@ -11,7 +11,6 @@
 <body class="logo">
 	<header th:insert="~{layouts/header}"></header>
 	<script>
-
 		function obtenerHorarios() {
 			const fechaSeleccionada = document.getElementById("appointmentDate").value;
 			const instructorSeleccionado = document.getElementById("appointmentInstructor").value;
@@ -69,21 +68,6 @@
 			}
 		}
 
-		function setTodayDate(inputId) {
-			// Obtiene la fecha de hoy
-			const today = new Date();
-
-			// Formatea la fecha en el formato 'YYYY-MM-DD' requerido por los inputs de tipo date
-			const formattedDate = today.toISOString().split('T')[0];
-
-			// Busca el input por su ID y establece el valor
-			const dateInput = document.getElementById(inputId);
-			if (dateInput) {
-				dateInput.value = formattedDate;
-			} else {
-				console.error(`Input con id '${inputId}' no encontrado.`);
-			}
-		}
 		function setInputValueFromSelect(selectId, inputId) {
 			// Obtener el elemento <select> y <input> por sus IDs
 			const selectElement = document.getElementById(selectId);
@@ -169,9 +153,9 @@
 		<input id="appointmentId" name="appointmentId" type="hidden">
 		<input id="appointmentTimeVariable" name="appointmentTimeVariable" type="hidden">
 		<input id="appointmentTime" name="appointmentTime" type="hidden">
-		<input id="appointmentType" value="Practica regular" name="appointmentType" type="hidden"
-			onchange="obtenerHorarios()">
-			<input id="appointmentType" value="Practica regular" name="appointmentType2" type="hidden">
+		<input id="appointmentType" name="appointmentType" type="hidden"
+			onchange="obtenerHorarios()" value="Practica regular">
+<!--		<input id="appointmentType" name="appointmentType2" type="hidden">-->
 		<input id="appointmentComplete" value="Turno Pendiente." name="appointmentComplete" type="hidden">
 		<br>
 		<div>
@@ -261,6 +245,39 @@
 
 		    return `${formattedHours}:${formattedMinutes}`;
 		}
+		
+		document.addEventListener("DOMContentLoaded", function() {
+		    let input1 = document.getElementById("appointmentType");
+		    let input2 = document.getElementById("appointmentType2");
+
+		    // Usa un MutationObserver para detectar cambios en el atributo 'value'
+		    let observer = new MutationObserver(() => {
+		      input2.value = input1.value;
+		    });
+
+		    observer.observe(input1, { attributes: true, attributeFilter: ["value"] });
+
+		    // Para cubrir casos en los que el usuario escriba directamente
+		    input1.addEventListener("input", () => {
+		      input2.value = input1.value;
+		    });
+		  });
+		  
+		  document.addEventListener("DOMContentLoaded", function () {
+		          const inputFecha = document.getElementById("appointmentDate");
+
+		          if (inputFecha) {
+		              // Obtener la fecha actual en formato YYYY-MM-DD
+		              const hoy = new Date();
+		              const yyyy = hoy.getFullYear();
+		              const mm = String(hoy.getMonth() + 1).padStart(2, '0'); // Mes con dos dígitos
+		              const dd = String(hoy.getDate()).padStart(2, '0'); // Día con dos dígitos
+		              const fechaHoy = `${yyyy}-${mm}-${dd}`;
+
+		              // Establecer la fecha actual en el input
+		              inputFecha.value = fechaHoy;
+		          }
+		      });
 	</script>
 </body>
 

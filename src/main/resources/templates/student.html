@@ -18,12 +18,20 @@
 						<h4 class="mb-0">Registro de Estudiante</h4>
 					</div>
 					<div class="card-body">
-						<form action="/student" method="post" th:object="${student}">
+						<form action="/student" method="post" th:object="${student}" enctype="multipart/form-data">
 							<div class="row">
 								<!-- Datos Personales -->
 								<div class="col-md-6">
+									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 									<input th:field="${student.id}" th:value="${student.id}" type="hidden">
 									<h5 class="text-secondary">Datos Personales</h5>
+									<div class="mb-3 d-flex flex-column">
+										<img style="width: 150px; height: 150px; background-color: lightgray; border-radius: 5%;"
+											id="studentImage">
+										</img>
+										<input type="file" name="image" accept="image/*" onchange="previewImage(event)" class="form-control mt-2 " style="max-width: 400px;">
+									</div>
+									
 									<div class="mb-3">
 										<label class="form-label">Nombre/s:</label>
 										<input type="text" class="form-control" th:field="*{firstName}">
@@ -128,9 +136,9 @@
 											onkeypress="return isNumberKey(event)">
 									</div>
 									<div class="mb-3 mt-4">
-										<label for="studentClasses">Numero de clases que ya tomo el alumno</label>
-										<input type="number" class="form-control" id="studentClasses"
-											th:field="*{studentClasses}" name="studentClasses"
+										<label for="studentClass">Numero de clases que ya tomo el alumno</label>
+										<input type="number" class="form-control" id="studentClass"
+											th:field="*{studentClass}" name="studentClass"
 											placeholder="ejemplo: 2, por defecto 0"
 											onkeypress="return isNumberKey(event)">
 									</div>
@@ -276,11 +284,20 @@
 					</div>
 				</div>
 			</div>
-			
+
 		</div>
 	</div>
 
 	<script>
+
+		function previewImage(event) {
+			var reader = new FileReader();
+			reader.onload = function () {
+				var output = document.getElementById('studentImage');
+				output.src = reader.result;
+			};
+			reader.readAsDataURL(event.target.files[0]);
+		}
 
 		function updateCharCount() {
 			// Obtener el texto del textarea
@@ -328,7 +345,7 @@
 			if (!fechaInicio) return;
 
 			let fecha = new Date(fechaInicio);
-			let nuevaFecha = sumarDiasSinDomingos(fecha, 20);
+			let nuevaFecha = sumarDiasSinDomingos(fecha, 39);
 			document.getElementById('studentCourseEnd').value = nuevaFecha.toISOString().split('T')[0];
 		}
 

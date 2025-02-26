@@ -58,8 +58,8 @@ public class Student implements Serializable {
 	@NotEmpty(message = "No debe estar vacio.")
 	private String studentRecepcionist;
 
-	@Column(name = "DNI")
-	@NotNull(message = "El DNI no debe estar vacio.")
+	@Column(name = "DNI", unique = true)
+	@NotNull(message = "El DNI no debe estar vacío.")
 	private Long studentDNI;
 
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -74,6 +74,8 @@ public class Student implements Serializable {
 	
 	@NotNull(message = "El numero telefonico debe estar vacio.")
 	private Long studentTel;
+	
+	private String studentImage;
 	
 	private Long studentClass;
 	
@@ -392,6 +394,14 @@ public class Student implements Serializable {
 
 	public void setStudentExams(List<Exam> studentExams) {
 		this.studentExams = studentExams;
+	}
+
+	public String getStudentImage() {
+		return studentImage;
+	}
+
+	public void setStudentImage(String studentImage) {
+		this.studentImage = studentImage;
 	}
 	
 	

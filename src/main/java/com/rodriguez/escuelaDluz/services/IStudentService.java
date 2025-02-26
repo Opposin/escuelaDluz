@@ -24,4 +24,6 @@ public interface IStudentService {
 	public List<Student> setInactiveStudents();
 
 	public void deleteInactiveStudents();
+
+	public Student searchByDNI(Long DNI);
 }

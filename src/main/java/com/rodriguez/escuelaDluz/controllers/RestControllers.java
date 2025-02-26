@@ -29,7 +29,7 @@ public class RestControllers {
 			@RequestParam("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fecha,
 			@RequestParam("appointmentInstructor") Long instructorId) {
 
-		System.out.println("Fecha recibida: " + fecha + ", Instructor ID: " + instructorId); // Para depuración
+//		System.out.println("Fecha recibida: " + fecha + ", Instructor ID: " + instructorId); // Para depuración
 
 		return turnoService.obtenerHorariosDisponiblesPorFecha(fecha, instructorId);
 	}
@@ -39,7 +39,7 @@ public class RestControllers {
             @RequestParam("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fecha,
             @RequestParam("appointmentInstructor") Long instructorId) {
 
-        System.out.println("Fecha recibida: " + fecha + ", Instructor ID: " + instructorId + " (Consecutivos)"); // Para depuración
+//        System.out.println("Fecha recibida: " + fecha + ", Instructor ID: " + instructorId + " (Consecutivos)"); // Para depuración
 
         return turnoService.obtenerHorariosDisponiblesConsecutivos(fecha, instructorId);
     }

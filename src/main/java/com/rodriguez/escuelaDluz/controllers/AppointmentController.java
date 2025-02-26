@@ -34,8 +34,6 @@ public class AppointmentController {
 		this.employeeService = employeeService;
 	}
 
-	
-	
 	@GetMapping("/appointment/{id}")
 	public String createAppointment(@PathVariable(name = "id") Long id, Model model) {
 
@@ -43,7 +41,7 @@ public class AppointmentController {
 
 		List<Map<String, Object>> fechasDisponibles = appointmentService.generarFechasDisponibles();
 
-		System.out.println(fechasDisponibles);
+//		System.out.println(fechasDisponibles);
 
 		if (student == null) {
 			return "redirect:/home"; // Redirige si no se encuentra el alumno
@@ -88,9 +86,9 @@ public class AppointmentController {
 			appointmentService.save(appointment);
 		} else if (completedType.equals("Inasistencia")) {
 			Long variable = student.getStudentNonAtten();
-			System.out.println(variable);
+//			System.out.println(variable);
 			variable++;
-			System.out.println(variable);
+//			System.out.println(variable);
 			student.setStudentNonAtten(variable);
 			appointment.setAppointmentComplete(completedType);
 			studentService.save(student);
@@ -104,10 +102,10 @@ public class AppointmentController {
 		}
 		redirectAttributes.addFlashAttribute("msj", "Turno completado exitosamente.");
 		redirectAttributes.addFlashAttribute("tipoMsj", "success");
-		System.out.println(appointmentId);
+//		System.out.println(appointmentId);
 		return "redirect:/home";
 	}
-	
+
 	@PostMapping("/appointment/Complete/{id}/2")
 	public String completeAppointment2(@PathVariable(name = "id") Long appointmentId,
 			@RequestParam(name = "completedTypeInactive") String completedType, Model model,
@@ -122,26 +120,26 @@ public class AppointmentController {
 		if (completedType.equals("Completado")) {
 			appointment.setAppointmentComplete(completedType);
 			appointmentService.save(appointment);
-			
+			appointmentService.actualizarClasesDelStudent(student);
 		} else if (completedType.equals("Inasistencia")) {
 			Long variable = student.getStudentNonAtten();
-			System.out.println(variable);
+//			System.out.println(variable);
 			variable++;
-			System.out.println(variable);
+//			System.out.println(variable);
 			student.setStudentNonAtten(variable);
 			appointment.setAppointmentComplete(completedType);
 			studentService.save(student);
 			appointmentService.save(appointment);
-			appointmentService.updateAppointmentsAfterCancellation(appointment);
+			appointmentService.actualizarClasesDelStudent(student);
 		} else {
 			appointment.setAppointmentComplete(completedType);
 			appointmentService.save(appointment);
-			appointmentService.updateAppointmentsAfterCancellation(appointment);
+			appointmentService.actualizarClasesDelStudent(student);
 
 		}
 		redirectAttributes.addFlashAttribute("msj", "Turno completado exitosamente.");
 		redirectAttributes.addFlashAttribute("tipoMsj", "success");
-		System.out.println(appointmentId);
+//		System.out.println(appointmentId);
 		return "redirect:/home";
 	}
 
@@ -159,25 +157,26 @@ public class AppointmentController {
 		if (completedType.equals("Completado")) {
 			appointment.setAppointmentComplete(completedType);
 			appointmentService.save(appointment);
+			appointmentService.actualizarClasesDelStudent(student);
 		} else if (completedType.equals("Inasistencia")) {
 			Long variable = student.getStudentNonAtten();
-			System.out.println(variable);
+//			System.out.println(variable);
 			variable++;
-			System.out.println(variable);
+//			System.out.println(variable);
 			student.setStudentNonAtten(variable);
 			appointment.setAppointmentComplete(completedType);
 			studentService.save(student);
 			appointmentService.save(appointment);
-			appointmentService.updateAppointmentsAfterCancellation(appointment);
+			appointmentService.actualizarClasesDelStudent(student);
 		} else {
 			appointment.setAppointmentComplete(completedType);
 			appointmentService.save(appointment);
-			appointmentService.updateAppointmentsAfterCancellation(appointment);
+			appointmentService.actualizarClasesDelStudent(student);
 
 		}
 		redirectAttributes.addFlashAttribute("msj", "Turno completado exitosamente.");
 		redirectAttributes.addFlashAttribute("tipoMsj", "success");
-		System.out.println(appointmentId);
+//		System.out.println(appointmentId);
 		return "redirect:/appointments/view";
 	}
 
@@ -192,30 +191,31 @@ public class AppointmentController {
 		appointment = appointmentService.findById(appointmentId);
 		Student student = appointment.getStudent();
 
-		System.out.println(completedType);
+//		System.out.println(completedType);
 
 		if (completedType.equals("Completado")) {
 			appointment.setAppointmentComplete(completedType);
 			appointmentService.save(appointment);
+			appointmentService.actualizarClasesDelStudent(student);
 		} else if (completedType.equals("Inasistencia")) {
 			Long variable = student.getStudentNonAtten();
-			System.out.println(variable);
+//			System.out.println(variable);
 			variable++;
-			System.out.println(variable);
+//			System.out.println(variable);
 			student.setStudentNonAtten(variable);
 			appointment.setAppointmentComplete(completedType);
 			studentService.save(student);
 			appointmentService.save(appointment);
-			appointmentService.updateAppointmentsAfterCancellation(appointment);
+			appointmentService.actualizarClasesDelStudent(student);
 		} else {
 			appointment.setAppointmentComplete(completedType);
 			appointmentService.save(appointment);
-			appointmentService.updateAppointmentsAfterCancellation(appointment);
+			appointmentService.actualizarClasesDelStudent(student);
 
 		}
 		redirectAttributes.addFlashAttribute("msj", "Turno completado exitosamente.");
 		redirectAttributes.addFlashAttribute("tipoMsj", "success");
-		System.out.println(appointmentId);
+//		System.out.println(appointmentId);
 		return "redirect:/appointments/view";
 	}
 
@@ -233,29 +233,65 @@ public class AppointmentController {
 		if (completedType.equals("Completado")) {
 			appointment.setAppointmentComplete(completedType);
 			appointmentService.save(appointment);
+			appointmentService.actualizarClasesDelStudent(student);
 		} else if (completedType.equals("Inasistencia")) {
 			Long variable = student.getStudentNonAtten();
-			System.out.println(variable);
+//			System.out.println(variable);
 			variable++;
-			System.out.println(variable);
+//			System.out.println(variable);
 			student.setStudentNonAtten(variable);
 			appointment.setAppointmentComplete(completedType);
 			studentService.save(student);
 			appointmentService.save(appointment);
-			appointmentService.updateAppointmentsAfterCancellation(appointment);
+			appointmentService.actualizarClasesDelStudent(student);
 		} else {
 			appointment.setAppointmentComplete(completedType);
 			appointmentService.save(appointment);
-			appointmentService.updateAppointmentsAfterCancellation(appointment);
+			appointmentService.actualizarClasesDelStudent(student);
 
 		}
 		redirectAttributes.addFlashAttribute("msj", "Turno completado exitosamente.");
 		redirectAttributes.addFlashAttribute("tipoMsj", "success");
-		System.out.println(appointment.getAppointmentComplete());
+//		System.out.println(appointment.getAppointmentComplete());
 		return "redirect:/student/info/" + id;
 	}
-	
-	
+
+	@PostMapping("/appointment/Complete/student/2/{id}")
+	public String completeAppointmentsStudent2(@PathVariable(name = "id") Long appointmentId,
+			@RequestParam(name = "studentId") Long id, @RequestParam(name = "completedTypeTable") String completedType,
+			Model model, RedirectAttributes redirectAttributes) {
+
+		// Agregar la lista de horarios al modelo
+		Appointment appointment;
+
+		appointment = appointmentService.findById(appointmentId);
+		Student student = appointment.getStudent();
+
+		if (completedType.equals("Completado")) {
+			appointment.setAppointmentComplete(completedType);
+			appointmentService.save(appointment);
+			appointmentService.actualizarClasesDelStudent(student);
+		} else if (completedType.equals("Inasistencia")) {
+			Long variable = student.getStudentNonAtten();
+//			System.out.println(variable);
+			variable++;
+//			System.out.println(variable);
+			student.setStudentNonAtten(variable);
+			appointment.setAppointmentComplete(completedType);
+			studentService.save(student);
+			appointmentService.save(appointment);
+			appointmentService.actualizarClasesDelStudent(student);
+		} else {
+			appointment.setAppointmentComplete(completedType);
+			appointmentService.save(appointment);
+			appointmentService.actualizarClasesDelStudent(student);
+
+		}
+		redirectAttributes.addFlashAttribute("msj", "Turno completado exitosamente.");
+		redirectAttributes.addFlashAttribute("tipoMsj", "success");
+//		System.out.println(appointment.getAppointmentComplete());
+		return "redirect:/student/info/" + id;
+	}
 
 	@PostMapping("/save/appointment")
 	public String saveOrUpdateAppointment(@RequestParam(required = false) Long appointmentId,
@@ -277,7 +313,7 @@ public class AppointmentController {
 
 		try {
 			Appointment appointment;
-			System.out.println(appointmentId);
+//			System.out.println(appointmentId);
 // Verificar si es una actualización
 			if (appointmentId != null) {
 				appointment = appointmentService.findById(appointmentId);
@@ -291,12 +327,12 @@ public class AppointmentController {
 			// Configurar los campos
 			appointment.setAppointmentDate(appointmentDate);
 			appointment.setAppointmentTime(appointmentTime);
-			if (appointmentType2 != null || !appointmentType2.equals("")) {
+			if (appointmentType2 != null && !appointmentType2.trim().isEmpty()) {
 				appointment.setAppointmentType(appointmentType2);
-			}else {
+			} else {
 				appointment.setAppointmentType(appointmentType);
 			}
-			
+
 			appointment.setAppointmentComplete(appointmentComplete);
 			appointment.setEmployee(employeeService.findById(appointmentInstructor));
 
@@ -326,33 +362,33 @@ public class AppointmentController {
 				} else {
 					// Encuentra el appointment con la fecha y hora más lejana
 					Optional<Appointment> lastAppointment = appointments.stream()
-							.max(Comparator.comparing(a -> a.getAppointmentDate().toLocalDate().atTime(
+							.filter(a -> a.getAppointmentComplete().equals("Completado")
+									|| a.getAppointmentComplete().equals("Turno Pendiente."))
+							.min(Comparator.comparing(a -> a.getAppointmentDate().toLocalDate().atTime(
 									Integer.parseInt(a.getAppointmentTime().split(":")[0]),
 									Integer.parseInt(a.getAppointmentTime().split(":")[1]))));
 
 					if (lastAppointment.isPresent()) {
-
 						Appointment lastAppointmentReal = lastAppointment.get();
-
-						if (lastAppointmentReal.getAppointmentClassNumber2() != null) {
+						if (lastAppointmentReal.getAppointmentClassNumber2() != null
+								&& lastAppointmentReal.getAppointmentClassNumber2() != 0) {
 							appointment.setAppointmentClassNumber(lastAppointmentReal.getAppointmentClassNumber2() + 1);
 						} else {
-							if (lastAppointmentReal.getAppointmentComplete().equals("Inasistencia")
-									|| lastAppointmentReal.getAppointmentComplete().equals("Cancelado")) {
-								appointment.setAppointmentClassNumber(lastAppointmentReal.getAppointmentClassNumber());
-							} else {
-								appointment
-										.setAppointmentClassNumber(lastAppointmentReal.getAppointmentClassNumber() + 1);
-							}
+							appointment.setAppointmentClassNumber(lastAppointmentReal.getAppointmentClassNumber() + 1);
 						}
-
+					} else {
+						if (student.getStudentClass() == null) {
+							appointment.setAppointmentClassNumber((long) 1);
+						} else {
+							appointment.setAppointmentClassNumber(student.getStudentClass() + 1);
+						}
 					}
 				}
-
 			}
+
 // Guardar en la base de datos
 			if (appointmentTime2 != null && !appointmentTime2.isEmpty()) {
-			    appointment.setAppointmentClassNumber2(appointment.getAppointmentClassNumber() + 1);
+				appointment.setAppointmentClassNumber2(appointment.getAppointmentClassNumber() + 1);
 			}
 			appointmentService.save(appointment);
 
@@ -364,14 +400,15 @@ public class AppointmentController {
 
 		return "redirect:/student/info/" + id;
 	}
-	
+
 	@GetMapping("/ignore/appointment/{id}")
-	public String IgnoreAppointmentAlarm(Model model, @PathVariable(name = "id") Long id, RedirectAttributes redirectAttributes) {
+	public String IgnoreAppointmentAlarm(Model model, @PathVariable(name = "id") Long id,
+			RedirectAttributes redirectAttributes) {
 		Appointment appointment = appointmentService.findById(id);
 		appointment.setAppointmentInactiveInstructorAlert(true);
-		
+
 		appointmentService.save(appointment);
-		
+
 		redirectAttributes.addFlashAttribute("msj", "Alerta ocultada.");
 		redirectAttributes.addFlashAttribute("tipoMsj", "success");
 		return "redirect:/home";

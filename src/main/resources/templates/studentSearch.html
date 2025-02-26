@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="~{layouts/head}">
+</head>
+
+<body class="logo">
+	<header th:insert="~{layouts/header}"></header>
+	<div class="d-flex justify-content-center align-items-center vh-100">
+		<div class="card shadow-lg p-4 rounded" style="width: 350px;">
+			<h2 class="text-center mb-4">Buscar Alumno</h2>
+
+
+			<!-- Formulario para buscar por DNI -->
+			<form th:action="@{/studentAppointmentsView}" method="get">
+				<div class="mb-3">
+					<label for="Dni" class="form-label">Ingrese DNI (Sin puntos ni comas)</label>
+					<input type="number" id="Dni" name="Dni" class="form-control" placeholder="Ingrese DNI del alumno"
+						required min="1000000" max="99999999">
+				</div>
+				<button type="submit" class="btn btn-primary w-100">Buscar</button>
+			</form>
+		</div>
+	</div>
+</body>
+
+</html>

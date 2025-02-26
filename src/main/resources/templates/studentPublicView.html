@@ -1,0 +1,257 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+
+<!--<head th:insert="~{layouts/head}">-->
+<!--</head>-->
+
+<!--<body class="logo">-->
+<!--	<header th:insert="~{layouts/header}"></header>-->
+<!--	<div class="container">-->
+<!--		<div th:if="${not #lists.isEmpty(nextAppointments)}">-->
+<!--			<h2 style="text-align: center;"-->
+<!--							th:text="'Proximos turnos del alumno ' + ${nombre}">-->
+<!--						</h2>-->
+<!--			<table class="table">-->
+<!--				<thead>-->
+<!--					<tr>-->
+<!--						<th scope="col">Fecha del turno</th>-->
+<!--						<th scope="col">clase del turno</th>-->
+<!--						<th scope="col">Tipo de turno</th>-->
+<!--						<th scope="col">Estado del turno</th>-->
+<!--					</tr>-->
+<!--				</thead>-->
+<!--				<tbody class="table-group-divider">-->
+<!--					<tr th:each="appointment : ${nextAppointments}">-->
+<!--						<th>-->
+<!--							<div class="d-flex flex-column div-mover">-->
+<!--								<div class="d-flex flex-column div-mover">-->
+<!--									<ul class="ul-style d-flex flex-row">-->
+<!--										<li th:text="${appointment.appointmentDate != null ? #dates.format(appointment.appointmentDate, 'EEEE dd/MM/yyyy') : 'Sin turno asignado'}"-->
+<!--											class="ul-style"></li>-->
+<!--										<li th:text="${appointment.appointmentTime != null ? appointment.appointmentTime : ''}"-->
+<!--											class="ul-style time-style">-->
+<!--										</li>-->
+<!--									</ul>-->
+<!--								</div>-->
+<!--								<p style="margin-top: -15px;">-->
+<!--									 Reduce el margen superior -->
+<!--									<strong-->
+<!--										th:if="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"-->
+<!--										th:text="${appointment.appointmentComplete}"></strong>-->
+
+<!--									<strong-->
+<!--										th:unless="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"-->
+<!--										th:if="${appointment.appointmentClassNumber != null}"-->
+<!--										th:text="${'Clase: ' + appointment.appointmentClassNumber}"></strong>-->
+<!--								</p>-->
+<!--								<ul-->
+<!--									th:if="${appointment.appointmentTime2 != null and #strings.length(appointment.appointmentTime2) > 0}">-->
+<!--									<li th:text="${'Doble turno ' + appointment.appointmentTime2}"-->
+<!--										class="ul-style time-style" style="margin-left: -35px;">-->
+<!--									</li>-->
+<!--									<p style="margin-left: -30px;">-->
+<!--										<strong-->
+<!--											th:if="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"-->
+<!--											th:text="${appointment.appointmentComplete}"></strong>-->
+
+<!--										<strong-->
+<!--											th:unless="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"-->
+<!--											th:if="${appointment.appointmentClassNumber2 != null}"-->
+<!--											th:text="${'Clase: ' + appointment.appointmentClassNumber2}"></strong>-->
+<!--									</p>-->
+<!--								</ul>-->
+
+<!--							</div>-->
+<!--						</th>-->
+<!--						<td th:text="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado' -->
+<!--																										              ? appointment.appointmentComplete -->
+<!--																										              : appointment.appointmentClassNumber}"-->
+<!--							style="text-align: center; padding-right: 12%;">-->
+<!--						</td>-->
+<!--						<td th:text="${appointment.appointmentType}">-->
+<!--						</td>-->
+<!--						<td th:text="${appointment.appointmentComplete}">-->
+<!--						</td>-->
+
+<!--						</td>-->
+<!--					</tr>-->
+<!--				</tbody>-->
+<!--			</table>-->
+<!--		</div>-->
+<!--		<div th:if="${not #lists.isEmpty(pastAppointments)}">-->
+<!--			<h2 style="text-align: center;"-->
+<!--				th:text="'Turnos pasados del alumno ' + ${nombre}">-->
+<!--			</h2>-->
+
+<!--			<table class="table">-->
+<!--				<thead>-->
+<!--					<tr>-->
+<!--						<th scope="col">Fecha del turno</th>-->
+<!--						<th scope="col">clase del turno</th>-->
+<!--						<th scope="col">Tipo de turno</th>-->
+<!--						<th scope="col">Estado del turno</th>-->
+<!--					</tr>-->
+<!--				</thead>-->
+<!--				<tbody class="table-group-divider">-->
+<!--					<tr th:each="appointment : ${pastAppointments}">-->
+<!--						<th>-->
+<!--							<div class="d-flex flex-column div-mover">-->
+<!--								<div class="d-flex flex-column div-mover">-->
+<!--									<ul class="ul-style d-flex flex-row">-->
+<!--										<li th:text="${appointment.appointmentDate != null ? #dates.format(appointment.appointmentDate, 'EEEE dd/MM/yyyy') : 'Sin turno asignado'}"-->
+<!--											class="ul-style"></li>-->
+<!--										<li th:text="${appointment.appointmentTime != null ? appointment.appointmentTime : ''}"-->
+<!--											class="ul-style time-style">-->
+<!--										</li>-->
+<!--									</ul>-->
+<!--								</div>-->
+<!--								<p style="margin-top: -15px;">-->
+<!--									 Reduce el margen superior -->
+<!--									<strong-->
+<!--										th:if="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"-->
+<!--										th:text="${appointment.appointmentComplete}"></strong>-->
+
+<!--									<strong-->
+<!--										th:unless="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"-->
+<!--										th:if="${appointment.appointmentClassNumber != null}"-->
+<!--										th:text="${'Clase: ' + appointment.appointmentClassNumber}"></strong>-->
+<!--								</p>-->
+
+<!--								<ul-->
+<!--									th:if="${appointment.appointmentTime2 != null and #strings.length(appointment.appointmentTime2) > 0}">-->
+<!--									<li th:text="${'Doble turno ' + appointment.appointmentTime2}"-->
+<!--										class="ul-style time-style" style="margin-left: -35px;">-->
+<!--									</li>-->
+<!--									<p style="margin-left: -30px;">-->
+<!--										<strong-->
+<!--											th:if="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"-->
+<!--											th:text="${appointment.appointmentComplete}"></strong>-->
+
+<!--										<strong-->
+<!--											th:unless="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"-->
+<!--											th:if="${appointment.appointmentClassNumber2 != null}"-->
+<!--											th:text="${'Clase: ' + appointment.appointmentClassNumber2}"></strong>-->
+<!--									</p>-->
+<!--								</ul>-->
+
+<!--							</div>-->
+<!--						</th>-->
+<!--						<td th:text="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado' -->
+<!--																											              ? appointment.appointmentComplete -->
+<!--																											              : appointment.appointmentClassNumber}"-->
+<!--							style="text-align: center; padding-right: 12%;">-->
+<!--						</td>-->
+<!--						<td th:text="${appointment.appointmentType}">-->
+<!--						</td>-->
+<!--						<td th:text="${appointment.appointmentComplete}">-->
+<!--						</td>-->
+
+<!--						</td>-->
+<!--					</tr>-->
+<!--				</tbody>-->
+<!--			</table>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--</body>-->
+
+<!--</html>-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="~{layouts/head}"></head>
+
+<body class="logo">
+	<header th:insert="~{layouts/header}"></header>
+
+	<div class="container mt-4">
+		<!-- Sección de Próximos Turnos -->
+		<div th:if="${not #lists.isEmpty(nextAppointments)}" class="mb-5">
+			<h2 class="text-center">
+				Próximos turnos del alumno <span th:text="${nombre}"></span>
+			</h2>
+			<table class="table table-striped text-center">
+				<thead class="table-dark">
+					<tr>
+						<th>Fecha del turno</th>
+						<th>Clase</th>
+						<th>Tipo</th>
+						<th>Estado</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="appointment : ${nextAppointments}">
+						<td>
+							<span
+								th:text="${appointment.appointmentDate != null ? #dates.format(appointment.appointmentDate, 'EEEE dd/MM/yyyy') : 'Sin turno asignado'}"></span>
+							<br>
+							<span th:text="${appointment.appointmentTime != null ? appointment.appointmentTime : ''}"
+								class="text-muted"></span>
+							<br>
+							<span
+								th:if="${appointment.appointmentTime2 != null and #strings.length(appointment.appointmentTime2) > 0}"
+								th:text="'Doble turno ' + ${appointment.appointmentTime2}" class="text-muted"></span>
+						</td>
+						<td>
+							<strong
+								th:text="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado' ? appointment.appointmentComplete : 'Clase: ' + appointment.appointmentClassNumber}"></strong>
+							<br>
+
+							<br>
+							<strong
+								th:if="${appointment.appointmentClassNumber2 != null and appointment.appointmentClassNumber2 != 0}"
+								th:text="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado' ? appointment.appointmentComplete : 'Clase: ' + appointment.appointmentClassNumber2}"></strong>
+						</td>
+						<td th:text="${appointment.appointmentType}"></td>
+						<td th:text="${appointment.appointmentComplete}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- Sección de Turnos Pasados -->
+		<div th:if="${not #lists.isEmpty(pastAppointments)}">
+			<h2 class="text-center">
+				Turnos pasados del alumno <span th:text="${nombre}"></span>
+			</h2>
+			<table class="table table-striped text-center">
+				<thead class="table-dark">
+					<tr>
+						<th>Fecha del turno</th>
+						<th>Clase</th>
+						<th>Tipo</th>
+						<th>Estado</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="appointment : ${pastAppointments}">
+						<td>
+							<span
+								th:text="${appointment.appointmentDate != null ? #dates.format(appointment.appointmentDate, 'EEEE dd/MM/yyyy') : 'Sin turno asignado'}"></span>
+							<br>
+							<span th:text="${appointment.appointmentTime != null ? appointment.appointmentTime : ''}"
+								class="text-muted"></span>
+							<br>
+							<span
+								th:if="${appointment.appointmentTime2 != null and #strings.length(appointment.appointmentTime2) > 0}"
+								th:text="'Doble turno ' + ${appointment.appointmentTime2}" class="text-muted"></span>
+						</td>
+						<td>
+							<strong
+								th:text="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado' ? appointment.appointmentComplete : 'Clase: ' + appointment.appointmentClassNumber}"></strong>
+							<br>
+
+							<br>
+							<strong
+								th:if="${appointment.appointmentClassNumber2 != null and appointment.appointmentClassNumber2 != 0}"
+								th:text="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado' ? appointment.appointmentComplete : 'Clase: ' + appointment.appointmentClassNumber2}"></strong>
+						</td>
+						<td th:text="${appointment.appointmentType}"></td>
+						<td th:text="${appointment.appointmentComplete}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+
+</html>

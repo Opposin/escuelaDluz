@@ -1,5 +1,10 @@
 package com.rodriguez.escuelaDluz.controllers;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,11 +21,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.rodriguez.escuelaDluz.entities.Appointment;
 import com.rodriguez.escuelaDluz.entities.Student;
-import com.rodriguez.escuelaDluz.services.EmployeeService;
 import com.rodriguez.escuelaDluz.services.IAppointmentService;
 import com.rodriguez.escuelaDluz.services.IEmployeeService;
 import com.rodriguez.escuelaDluz.services.IStudentService;
@@ -39,6 +45,8 @@ public class StudentController {
 		this.appointmentService = appointmentService;
 		this.employeeService = employeeService;
 	}
+
+	private static final String UPLOAD_DIR = "imagenes";
 
 	@GetMapping("/student")
 	public String createStudent(Model model) {
@@ -143,6 +151,7 @@ public class StudentController {
 			return "error";
 		}
 
+		appointmentService.actualizarClasesDelStudent(student);
 		return "studentInfo"; // El nombre de la vista Thymeleaf
 	}
 
@@ -184,11 +193,12 @@ public class StudentController {
 
 	@PostMapping("/student")
 	public String saveStudent(@Valid Student student, BindingResult br, Model model,
-			RedirectAttributes redirectAttributes) {
+			@RequestParam("image") MultipartFile file, RedirectAttributes redirectAttributes) {
 
 //		System.out.println("pdf ="+ student.getStudentPdf());
 //		Long cambio;
 //		cambio = student.getStudentNonAtten();
+
 		if (student.getStudentAge() == null) {
 			student.setStudentAge((long) 18);
 		}
@@ -200,6 +210,10 @@ public class StudentController {
 		if (student.getStudentEstacionar() == null) {
 			student.setStudentEstacionar(false);
 //			System.out.println(student.getStudentEstacionar());
+		}
+
+		if (student.getStudentClass() == null) {
+			student.setStudentClass((long) 0);
 		}
 
 		if (student.getStudentGiroU() == null) {
@@ -246,9 +260,10 @@ public class StudentController {
 		if (student.getStudentGrade() == null) {
 			student.setStudentGrade((long) 0);
 		}
+
 //		System.out.println(cambio);
 		if (br.hasErrors()) {
-			System.out.println(br);
+//			System.out.println(br);
 			model.addAttribute("student", student);
 			model.addAttribute("appointments", appointmentService.findAll());
 			model.addAttribute("recepcionistas", employeeService.findRecepcionistas());
@@ -256,10 +271,54 @@ public class StudentController {
 			return "student";
 		}
 		try {
+			
 			// Lógica para guardar el estudiante
+			if (student.getId() != null) {
+				Student student2 = studentService.findById(student.getId());
+//				System.out.println(student2.getStudentAppointments());A
+				student.setAppointments(student2.getStudentAppointments());
+				student.setStudentExams(student2.getStudentExams());
+				student.setStudentPayments(student2.getStudentPayments());
+			} else {
+				Student existingStudent = studentService.searchByDNI(student.getStudentDNI());
+		        if (existingStudent != null && (student.getId() == null || !existingStudent.getId().equals(student.getId()))) {
+		            model.addAttribute("msj", "Este DNI ya está registrado, por favor use otro.");
+		            model.addAttribute("tipoMsj", "danger");
+		            model.addAttribute("titulo", "Error: DNI duplicado");
+		            model.addAttribute("student", student);
+		            model.addAttribute("appointments", appointmentService.findAll());
+		            return "student"; // Retornar al formulario con mensaje de error
+		        }
+			}
+
+//			studentService.save(student);
+			if (!file.isEmpty()) {
+				if (student.getStudentImage() != null) {
+					deleteImage(student.getStudentImage()); // Eliminar la imagen previa
+				}
+				String imageUrl = saveImage(student.getId(), file);
+				student.setStudentImage(imageUrl);
+			}
+			
+			if (student.getId() != null) {
+				Student student2 = studentService.findById(student.getId());
+//				System.out.println(student.getStudentImage());
+//				System.out.println(student2.getStudentImage());
+//				System.out.println(student2.getFirstName());
+				if (student2.getStudentImage() != null && !student2.getStudentImage().isEmpty()) {
+					if (student.getStudentImage() == null || student.getStudentImage().isEmpty()) {
+//						System.out.println(student2.getStudentImage());
+						student.setStudentImage(student2.getStudentImage());
+//						System.out.println(student.getStudentImage());
+					}
+
+				}
+			}
+
 			studentService.save(student);
 			redirectAttributes.addFlashAttribute("msj", "Estudiante guardado exitosamente.");
 			redirectAttributes.addFlashAttribute("tipoMsj", "success");
+
 			return "redirect:/student/info/" + student.getId();
 		} catch (DataIntegrityViolationException e) {
 			// Capturamos la excepción de violación de integridad de datos, como el campo
@@ -272,5 +331,34 @@ public class StudentController {
 			return "student"; // Retornamos al formulario con el mensaje de error
 		}
 
+	}
+
+	private String saveImage(Long studentId, MultipartFile file) {
+		try {
+			File directory = new File(UPLOAD_DIR);
+			if (!directory.exists()) {
+				directory.mkdirs();
+			}
+
+			String fileName = studentId + ".jpg"; // Generar nombre único basado en el ID del estudiante
+			Path filePath = Paths.get(UPLOAD_DIR, fileName);
+
+			Files.write(filePath, file.getBytes());
+
+			return "/imagenes/" + fileName; // Retornar la URL relativa para la imagen
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private void deleteImage(String imagePath) {
+		if (imagePath != null && !imagePath.isEmpty()) {
+			Path filePath = Paths.get(imagePath.replace("/", File.separator));
+			File file = filePath.toFile();
+			if (file.exists()) {
+				file.delete();
+			}
+		}
 	}
 }

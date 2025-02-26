@@ -1,97 +1,132 @@
-<!DOCTYPE html>
-<html lang="en">
-<html xmls:th="http://www.thymeleaf.org">
 
-</html>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head th:insert="~{layouts/head}"></head>
 
 <body class="logo">
-	<script>
-		function confirmarRedireccion(event) {
-			// Prevenimos la acción por defecto del enlace
-			event.preventDefault();
+    <header th:insert="~{layouts/header}"></header>
+    <script src="/js/script.js"></script>
 
-			// Obtenemos la URL generada por Thymeleaf
-			var url = event.target.getAttribute('href');
+    <script>
+        function confirmarAccion(event, mensaje) {
+            event.preventDefault();
+            var url = event.target.getAttribute('href');
+            if (confirm(mensaje)) {
+                window.location.href = url;
+            }
+        }
+    </script>
 
-			// Primera confirmación
-			var confirmacion1 = confirm("¿Seguro? Si confirmas, el alumno sera graduado.");
+    <div class="d-flex justify-content-center">
+        <div class="container-page">
+            <h2 class="py-4 text-center">Gestión de Empleados</h2>
 
-			if (confirmacion1) {
-				// Si la primera confirmación es aceptada, mostramos la segunda confirmación
-				window.location.href = url;
+            <!-- Tabla de Empleados -->
+            <div class="container mt-4">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Lista de Empleados</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Nombre/s</th>
+                                    <th>Apellido</th>
+                                    <th>DNI</th>
+                                    <th>Teléfono</th>
+                                    <th>Tipo</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="employee : ${employees}">
+                                    <td th:text="${employee.employeeFirstName}"></td>
+                                    <td th:text="${employee.employeeSecondName}"></td>
+                                    <td th:text="${employee.employeeDNI}"></td>
+                                    <td th:text="${employee.employeeCell}"></td>
+                                    <td th:text="${employee.employeeType}"></td>
+                                    <td>
+                                        <span class="badge" th:classappend="${employee.employeeActive} ? 'bg-success' : 'bg-danger'"
+                                            th:text="${employee.employeeActive ? 'Activo' : 'Inactivo'}">
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <a th:href="@{'/employee/info/' + ${employee.id}}" class="btn btn-primary btn-sm" sec:authorize="hasRole('ADMIN')">
+                                                Ver
+                                            </a>
+                                            <a th:href="@{'/employee/' + ${employee.id}}" class="btn btn-primary btn-sm"
+                                                sec:authorize="hasRole('ADMIN')">
+                                                Editar
+                                            </a>
+<!--											<p th:text="${employee.id}"></p>-->
+                                            <a th:if="${!employee.employeeActive}"
+                                                th:href="@{'/employee/activate/' + ${employee.id}}"
+                                                class="btn btn-success btn-sm"
+                                                onclick="confirmarAccion(event, '¿Seguro que deseas activar este empleado?')"
+                                                sec:authorize="hasRole('ADMIN')">
+                                                Activar
+                                            </a>
+                                            <a th:if="${employee.employeeActive}"
+                                                th:href="@{'/employee/deactivate/' + ${employee.id}}"
+                                                class="btn btn-danger btn-sm"
+                                                onclick="confirmarAccion(event, '¿Seguro que deseas desactivar este empleado?')"
+                                                sec:authorize="hasRole('ADMIN')">
+                                                Desactivar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-			}
-		}
-	</script>
-	<header th:insert="~{layouts/header}"></header>
-	<div class="d-flex justify-content-center">
-		<div class="container-page">
-			<h1 th:text="${titulo}" class="py-4 text-center"></h1>
-			<div class="mt-3">
-				<table class="table">
-					<thead>
-						<tr>
-							<th scope="col">Nombre/s</th>
-							<th scope="col">Apellido</th>
-							<th scope="col"> DNI del empleado</th>
-							<th scope="col">Telefono del empleado</th>
-							<th scope="col">Tipo de empleado</th>
-							<th scope="col">Estado del empleado</th>
-							<th scope="col">Acciones</th>
-						</tr>
-					</thead>
-					<tbody class="table-group-divider">
-						<tr th:each="employee : ${employees}">
-							<th th:text="${employee.employeeFirstName}"></th>
-							<td th:text="${employee.employeeSecondName}"></td>
-							<td th:text="${employee.employeeDNI}"></td>
-							<td th:text="${employee.employeeCell}"></td>
-							<td th:text="${employee.employeeType}"></td>
-							<td th:text="${employee.employeeActive ? 'Sí' : 'No'}" class="badge mt-2"
-								style="margin-left: 20%;"
-								th:classappend="${employee.employeeActive} ? 'bg-success' : 'bg-danger'"></td>
-							<td id="acciones">
-								<div class="d-flex flex-row div-mover">
-									<div class="ul-style d-flex flex-row">
-										<a th:href="@{'/employee/info/' + ${employee.id}}"
-											class="btn-href">
-											Ver
-										</a>
-										<a th:href="@{'/employee/' + ${employee.id}}" class="btn-href">
-											Editar
-										</a>
-										<a th:if="${!employee.employeeActive}"
-											th:href="@{'employee/activate/' + ${employee.id}}" class="btn-href"
-											onclick="confirmarRedireccion(event)">
-											Marcar como activo
-										</a>
-										<a th:if="${employee.employeeActive}"
-											th:href="@{'employee/deactivate/' + ${employee.id}}" class="btn-grd"
-											onclick="confirmarRedireccion(event)">
-											Marcar como inactivo
-										</a>
-									</div>
-								</div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
+            <!-- Tabla de Horarios -->
+            <div class="container mt-5">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-info text-white">
+                        <h4 class="mb-0">Lista de Horarios Agregados</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tipo</th>
+                                    <th>Horario</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="variable : ${variables}">
+                                    <td th:text="${variable.id}"></td>
+                                    <td th:text="${variable.variableType}"></td>
+                                    <td th:text="${variable.variableValueString}"></td>
+                                    <td>
+                                        <a th:href="@{/variables/delete/{id}(id=${variable.id})}" class="btn btn-danger btn-sm"
+                                            onclick="confirmarAccion(event, '¿Seguro que deseas eliminar este horario?')"
+											 sec:authorize="hasRole('ADMIN')">
+                                            Eliminar
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-center mt-4">
+                            <a href="/variables/form" class="btn btn-primary" sec:authorize="hasRole('ADMIN')">Agregar Nuevo Horario</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-		<!--		<nav aria-label="Page navigation example" class="mt-4">-->
-		<!--			<p th:text="${paginas}"></p>-->
-		<!--			<ul class="pagination justify-content-center">-->
-		<!--				<li class="page-item" th:each="pagina : ${paginas}"-->
-		<!--					th:classappend="${pagina == actual ? 'active' : ''}">-->
-		<!--					<a class="page-link" th:href="@{'/appointments/view?pagina=' + ${pagina-1}}"-->
-		<!--						th:text="${pagina}"></a>-->
-		<!--				</li>-->
-		<!--			</ul>-->
-		<!--		</nav>-->
-	</div>
+        </div>
+    </div>
+
 </body>
 
 </html>

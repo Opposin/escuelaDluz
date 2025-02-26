@@ -22,6 +22,7 @@
 							<div class="row">
 								<!-- Datos Personales -->
 								<div class="col-md-6">
+									<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 									<input th:field="${employee.id}" th:value="${employee.id}" type="hidden">
 									<h5 class="text-secondary">Datos Personales</h5>
 									<div class="mb-3">
@@ -116,7 +117,7 @@
 								<!-- Comentario del Estudiante -->
 								<div class="card mt-4">
 									<div class="card-header bg-warning text-dark">
-										<h5 class="mb-0" id="charCount">Comentario sobre el alumno (Máximo 500
+										<h5 class="mb-0" id="charCount">Comentario sobre el empleado (Máximo 500
 											caracteres) 0/500</h5>
 									</div>
 									<div class="card-body">
@@ -139,7 +140,26 @@
 			</div>
 		</div>
 	</div>
+	<script>
+		function updateCharCount() {
+		// Obtener el texto del textarea
+		var text = document.getElementById('StudentComment').value;
 
+		// Contar los caracteres
+		var charCount = text.length;
+
+		// Obtener el elemento del label y actualizar el texto
+		var charCountLabel = document.getElementById('charCount');
+		charCountLabel.textContent = 'Comentario sobre el alumno (Máximo 500 caracteres) ' + charCount + '/500';
+
+		// Opcional: cambiar el color del texto si se acerca al límite
+		if (charCount > 450) {
+		charCountLabel.style.color = 'red'; // Rojo cuando esté cerca del límite
+		} else {
+		charCountLabel.style.color = '#555'; // Color por defecto
+		}
+		}
+	</script>
 </body>
 
 </html>

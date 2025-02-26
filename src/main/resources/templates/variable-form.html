@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="~{layouts/head}"></head>
+
+<body>
+    <header th:insert="~{layouts/header}"></header>
+    <script src="/js/script.js"></script>
+
+    <div class="d-flex justify-content-center">
+        <div class="container-page">
+            <h2 class="py-4 text-center">Gestión de Variables</h2>
+
+            <div class="container mt-4">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Registro de Variable</h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/variables/save}" th:object="${variable}" method="post">
+                            <div class="row">
+                                <!-- Tipo de Variable -->
+                                <div class="col-md-6">
+                                    <h5 class="text-secondary">Datos de la Variable</h5>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Tipo de Variable:</label>
+                                        <select class="form-select" id="variableType" th:field="*{variableType}" required>
+                                            <option value="time" selected>Nuevo horario</option>
+                                        </select>
+                                        <div th:if="${#fields.hasErrors('variableType')}" class="text-danger">
+                                            <p th:errors="*{variableType}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Valor de la Variable -->
+                                <div class="col-md-6">
+                                    <h5 class="text-secondary">Valor de la Variable</h5>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Horario:</label>
+                                        <input type="time" class="form-control" id="variableValueString" 
+                                               th:field="*{variableValueString}" required>
+                                        <div th:if="${#fields.hasErrors('variableValueString')}" class="text-danger">
+                                            <p th:errors="*{variableValueString}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Botones de Acción -->
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-success">Guardar</button>
+                                <a href="/employees/list" class="btn btn-secondary">Cancelar</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>
+

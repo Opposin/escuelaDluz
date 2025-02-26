@@ -62,17 +62,17 @@
 										th:classappend="${employee.employeeActive} ? 'bg-success' : 'bg-danger'">
 									</span>
 								</p>
-								<a th:href="@{'/employee/' + ${employee.id}}" class="btn-href">
+								<a th:href="@{'/employee/' + ${employee.id}}" class="btn-href" sec:authorize="hasRole('ADMIN')">
 									Editar
 								</a>
 								<a th:if="${!employee.employeeActive}"
 									th:href="@{'employee/activate/' + ${employee.id}}" class="btn-href"
-									onclick="confirmarRedireccion(event)">
+									onclick="confirmarRedireccion(event)" sec:authorize="hasRole('ADMIN')">
 									Marcar como activo
 								</a>
 								<a th:if="${employee.employeeActive}"
 									th:href="@{'employee/deactivate/' + ${employee.id}}" class="btn-grd"
-									onclick="confirmarRedireccion(event)">
+									onclick="confirmarRedireccion(event)" sec:authorize="hasRole('ADMIN')">
 									Marcar como inactivo
 								</a>
 							</div>
@@ -95,6 +95,7 @@
 			</span>
 		</div>
 	</div>
+	
 </body>
 
 </html>
