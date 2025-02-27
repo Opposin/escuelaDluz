@@ -10,9 +10,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -58,8 +59,8 @@ public class Student implements Serializable {
 	@NotEmpty(message = "No debe estar vacio.")
 	private String studentRecepcionist;
 
-	@Column(name = "DNI")
-	@NotNull(message = "El DNI no debe estar vacio.")
+	@Column(name = "DNI", unique = true)
+	@NotNull(message = "El DNI no debe estar vacío.")
 	private Long studentDNI;
 
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -75,6 +76,8 @@ public class Student implements Serializable {
 	@NotNull(message = "El numero telefonico debe estar vacio.")
 	private Long studentTel;
 	
+	private String studentImage;
+	
 	private Long studentClass;
 	
 	@NotNull(message = "Se debe definir cuantas clases tendra el alumno")
@@ -86,6 +89,10 @@ public class Student implements Serializable {
 
 //	@NotNull(message = "No debe estar vacio.")
 	private Long studentNonAtten;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 	
 	private Boolean studentAlertNonActive;
 
@@ -392,6 +399,22 @@ public class Student implements Serializable {
 
 	public void setStudentExams(List<Exam> studentExams) {
 		this.studentExams = studentExams;
+	}
+
+	public String getStudentImage() {
+		return studentImage;
+	}
+
+	public void setStudentImage(String studentImage) {
+		this.studentImage = studentImage;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 	
 	

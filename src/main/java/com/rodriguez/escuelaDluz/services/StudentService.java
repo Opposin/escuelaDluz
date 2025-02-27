@@ -1,5 +1,8 @@
 package com.rodriguez.escuelaDluz.services;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -24,13 +27,13 @@ public class StudentService implements IStudentService {
 
 	@Autowired
 	private IStudentRepository studentRepository;
-	
+
 	@Autowired
 	private IExamRepository examRepository;
-	
+
 	@Autowired
 	private IPaymentRepository paymentRepository;
-	
+
 	@Autowired
 	private IAppointmentRepository appointmentRepository;
 
@@ -79,36 +82,74 @@ public class StudentService implements IStudentService {
 																									// studentInactive
 																									// == true
 						((student.getStudentAppointments().isEmpty()
-								&& student.getStudentCourseBegg().toLocalDate().isBefore(twentyDaysAgo)) 
+								&& student.getStudentCourseBegg().toLocalDate().isBefore(twentyDaysAgo))
 								|| student.getStudentAppointments().stream()
-						        .map(appointment -> appointment.getAppointmentDate().toLocalDate()) // Convertir a LocalDate
-						        .max(LocalDate::compareTo) // Obtener la última fecha de appointment
-						        .map(lastAppointmentDate -> lastAppointmentDate.isBefore(twentyDaysAgo)) // Ver si fue hace más de 20 días
-						        .orElse(false) // Si no hay fechas, retorna falso
- // Si no hay fechas, retorna falso
+										.map(appointment -> appointment.getAppointmentDate().toLocalDate()) // Convertir
+																											// a
+																											// LocalDate
+										.max(LocalDate::compareTo) // Obtener la última fecha de appointment
+										.map(lastAppointmentDate -> lastAppointmentDate.isBefore(twentyDaysAgo)) // Ver
+																													// si
+																													// fue
+																													// hace
+																													// más
+																													// de
+																													// 20
+																													// días
+										.orElse(false) // Si no hay fechas, retorna falso
+						// Si no hay fechas, retorna falso
 						)).collect(Collectors.toList());
-			
+
 		return inactiveStudents;
 	}
-	
+
+	@Override
+	public Student searchByDNI(Long DNI) {
+		return studentRepository.findBystudentDNI(DNI).orElse(null);
+	}
+
 	@Override
 	@Transactional
 	public void deleteInactiveStudents() {
-	    // Calcular la fecha de hace 6 meses
-	    LocalDate sixMonthsAgoLocalDate = LocalDate.now().minus(6, ChronoUnit.MONTHS);
-	    Date sixMonthsAgoSqlDate = Date.valueOf(sixMonthsAgoLocalDate);
+		// Calcular la fecha de hace 6 meses
+		LocalDate sixMonthsAgoLocalDate = LocalDate.now().minus(6, ChronoUnit.MONTHS);
+		Date sixMonthsAgoSqlDate = Date.valueOf(sixMonthsAgoLocalDate);
 
-	    // Buscar estudiantes inactivos
-	    List<Student> studentsToDelete = studentRepository.findInactiveStudentsOlderThan(sixMonthsAgoSqlDate);
+		// Buscar estudiantes inactivos
+		List<Student> studentsToDelete = studentRepository.findInactiveStudentsOlderThan(sixMonthsAgoSqlDate);
 
-	    for (Student student : studentsToDelete) {
-	        // Eliminar entidades relacionadas manualmente
-	        examRepository.deleteAllByStudent(student);
-	        appointmentRepository.deleteAllByStudent(student);
-	        paymentRepository.deleteAllByStudent(student);
+		for (Student student : studentsToDelete) {
+			if (student.getStudentImage() != null) {
+				deleteImage(student.getStudentImage()); // Eliminar la imagen previa
+			}
+			// Eliminar entidades relacionadas manualmente
+			examRepository.deleteAllByStudent(student);
+			appointmentRepository.deleteAllByStudent(student);
+			paymentRepository.deleteAllByStudent(student);
 
-	        // Eliminar el estudiante
-	        studentRepository.delete(student);
-	    }
+			// Eliminar el estudiante
+			studentRepository.delete(student);
+		}
 	}
+
+	private void deleteImage(String imagePath) {
+		if (imagePath != null && !imagePath.isEmpty()) {
+			// Obtener el directorio donde se ejecuta el JAR
+			String baseDir = System.getProperty("user.dir"); // Esto apunta a la carpeta donde está el ejecutable
+
+			// Construir la ruta absoluta
+			Path filePath = Paths.get(baseDir, imagePath.replace("/", File.separator));
+			File file = filePath.toFile();
+
+//	        System.out.println("Intentando eliminar: " + file.getAbsolutePath()); // Debug
+
+			if (file.exists()) {
+				boolean deleted = file.delete();
+//	            System.out.println("Archivo eliminado: " + deleted);
+			} else {
+//	            System.out.println("Archivo no encontrado: " + file.getAbsolutePath());
+			}
+		}
+	}
+
 }

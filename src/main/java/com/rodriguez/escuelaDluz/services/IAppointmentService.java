@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.rodriguez.escuelaDluz.entities.Appointment;
+import com.rodriguez.escuelaDluz.entities.Student;
 import com.rodriguez.escuelaDluz.entities.StudentAppointmentDTO;
 
 public interface IAppointmentService {
@@ -37,4 +38,6 @@ public interface IAppointmentService {
     
     public List<Appointment> getPendingAppointmentsWithInactiveEmployees();
 	
+    public void actualizarClasesDelStudent(Student student);
+    
 }

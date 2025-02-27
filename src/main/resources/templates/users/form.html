@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{layouts/head}">
+</head>
+<body class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div class="card shadow-lg p-4 rounded" style="width: 350px;">
+        <h2 class="text-center mb-4" th:text="${user.id == null ? 'Crear Usuario' : 'Editar Usuario'}"></h2>
+        
+        <form th:action="@{/users/save}" th:object="${user}" method="post">
+            <input type="hidden" th:field="*{id}"/>
+
+            <div class="mb-3">
+                <label class="form-label">Usuario</label>
+                <input type="text" th:field="*{username}" class="form-control" placeholder="Ingrese el nombre de usuario" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <input type="password" th:field="*{password}" class="form-control" placeholder="Ingrese la contraseña" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Rol</label>
+                <select th:field="*{rol}" class="form-select">
+                    <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Guardar</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="/users" class="btn btn-outline-secondary w-100">Cancelar</a>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -14,10 +14,14 @@ public interface IAppointmentRepository extends JpaRepository<Appointment, Long>
 
 	List<Appointment> findByAppointmentDate(Date sqlDate);
 
-	@Query("SELECT a FROM Appointment a WHERE " + "(a.appointmentDate < CURRENT_DATE OR "
-			+ "(a.appointmentDate = CURRENT_DATE AND a.appointmentTime < :currentTime)) AND "
-			+ "(a.appointmentComplete IS NULL OR a.appointmentComplete = '0' OR a.appointmentComplete = 'Turno pendiente.')")
-	List<Appointment> findPastAppointments(String currentTime);
+//	@Query("SELECT a FROM Appointment a WHERE " +
+//		       "(a.appointmentDate < DATE('now') OR " +
+//		       "(a.appointmentDate = DATE('now') AND a.appointmentTime < :currentTime)) " +
+//		       "AND (a.appointmentComplete IS NULL OR a.appointmentComplete = '0' OR a.appointmentComplete = 'Turno pendiente.')")
+//		List<Appointment> findPastAppointments(String currentTime);
+//
+//
+
 
 	@Query("SELECT a FROM Appointment a WHERE a.student.id = :studentId AND "
 			+ "(a.appointmentDate > :date OR (a.appointmentDate = :date AND a.appointmentTime > :time)) "

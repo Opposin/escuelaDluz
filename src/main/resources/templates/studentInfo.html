@@ -44,6 +44,11 @@
 							<!-- Datos Personales -->
 							<div class="col-md-6">
 								<h5 class="text-secondary">Datos Personales</h5>
+								<img style="width: 150px; height: 150px; border-radius: 5%;"
+									th:src="${student.studentImage != null and student.studentImage != '' ? student.studentImage : '/img/logoDluz.png'}"
+									alt="Imagen del estudiante">
+
+								</img>
 								<p><strong>Nombre/s:</strong> <span th:text="${student.firstName}"></span></p>
 								<p><strong>Apellido:</strong> <span th:text="${student.lastName}"></span></p>
 								<p><strong>DNI:</strong> <span th:text="${student.studentDNI}"></span></p>
@@ -72,6 +77,7 @@
 										th:classappend="${student.studentGraduate} ? 'bg-success' : 'bg-danger'">
 									</span>
 								</p>
+								<!--								<p th:text="${student.studentInactiveDate}"></p>-->
 								<p><strong>Recomendación:</strong> <span th:text="${student.studentRecomen}"></span></p>
 
 								<a th:href="@{'/student/' + ${student.id}}" class="btn-href" style="margin-top: 1%;">
@@ -216,6 +222,11 @@
 															<p style="margin-top: -15px;">
 																<!-- Reduce el margen superior -->
 																<strong
+																	th:if="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"
+																	th:text="${appointment.appointmentComplete}"></strong>
+
+																<strong
+																	th:unless="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"
 																	th:if="${appointment.appointmentClassNumber != null}"
 																	th:text="${'Clase: ' + appointment.appointmentClassNumber}"></strong>
 															</p>
@@ -224,10 +235,15 @@
 																th:if="${appointment.appointmentTime2 != null and #strings.length(appointment.appointmentTime2) > 0}">
 																<li th:text="${'Doble turno ' + appointment.appointmentTime2}"
 																	class="ul-style time-style"
-																	style="margin-left: -20%;">
+																	style="margin-left: -35px;">
 																</li>
-																<p style="margin-left: -17%;">
+																<p style="margin-left: -30px;">
 																	<strong
+																		th:if="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"
+																		th:text="${appointment.appointmentComplete}"></strong>
+
+																	<strong
+																		th:unless="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"
 																		th:if="${appointment.appointmentClassNumber2 != null}"
 																		th:text="${'Clase: ' + appointment.appointmentClassNumber2}"></strong>
 																</p>
@@ -235,8 +251,10 @@
 
 														</div>
 													</th>
-													<td th:text="${appointment.appointmentClassNumber}"
-														style="padding-left: 5%;">
+													<td th:text="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado' 
+																									              ? appointment.appointmentComplete 
+																									              : appointment.appointmentClassNumber}"
+														style="text-align: center; padding-right: 25px;">
 													</td>
 													<td th:text="${appointment.appointmentType}">
 													</td>
@@ -245,39 +263,38 @@
 													<td id="acciones" style="padding-left: 4%;">
 														<div class="d-flex flex-column div-mover">
 															<div class="ul-style d-flex flex-row">
-																<a th:if="${appointment.appointmentType != 'Zig Zag (conos)' and appointment.appointmentComplete == 'Turno Pendiente.'}"
-																	th:href="@{'/appointment/edit/' + ${student.id}} + '/' + ${appointment.id}"
+																<a th:href="@{'/appointment/edit/' + ${student.id}} + '/' + ${appointment.id}"
 																	class="btn-href">
 																	Editar Turno </a>
 																<div th:if="${appointment.appointmentComplete != 'Completado' 
 																								           and appointment.appointmentComplete != 'Inasistencia' 
 																								           and appointment.appointmentComplete != 'Cancelado'}">
+																	<!--																	<p-->
+																	<!--																		th:text="@{'/appointment/Complete/student/' + ${appointment.id}}">-->
+																	<!--																	</p>-->
 																	<form
-																		th:action="@{'/appointment/Complete/student/' + ${appointment.id}}"
+																		th:action="@{'/appointment/Complete/student/2/' + ${appointment.id}}"
 																		method="post" enctype="multipart/form-data">
-																		<div class="d-flex flex-row">
-																			<select id="completedType"
-																				name="completedType"
-																				class="form-control">
-																				<option th:value="Completado"
-																					selected="selected">
-																					Completado con exito</option>
+																		<div class="d-flex flex-wrap gap-2">
+																			<input type="hidden"
+																				th:value="${student.id}" id="studentId"
+																				name="studentId">
+																			<select id="completedTypeTable"
+																				name="completedTypeTable"
+																				class="form-control form-control-sm"
+																				style="max-width: 170px;">
+																				<option th:value="Completado" selected>
+																					Completado con éxito</option>
 																				<option th:value="Inasistencia">
-																					Inasistencia del alumno
-																				</option>
-																				<option th:value="Cancelado"> Cancelado
-																					por
-																					instructor
-																				</option>
-																				<input type="hidden"
-																					th:value="${student.id}"
-																					id="studentId" name="studentId">
+																					Inasistencia del alumno</option>
+																				<option th:value="Cancelado">Cancelado
+																					por instructor</option>
 																			</select>
-																			<div class="ml-7">
-																				<button type="submit"
-																					class="btn btn-outline-primary boton-submit">Completar
-																					turno</button>
-																			</div>
+																			<button type="submit"
+																				class="btn btn-outline-primary btn-sm">
+																				<i class="fas fa-check"></i> Completar
+																				turno
+																			</button>
 																		</div>
 																	</form>
 																</div>
@@ -325,7 +342,7 @@
 										</thead>
 										<tbody class="table-group-divider">
 											<tr th:each="appointment : ${pastAppointments}">
-												<th>
+												<td>
 													<div class="d-flex flex-column div-mover">
 														<div class="d-flex flex-column div-mover">
 															<ul class="ul-style d-flex flex-row">
@@ -338,6 +355,11 @@
 														</div>
 														<p style="margin-top: -15px;"><!-- Reduce el margen superior -->
 															<strong
+																th:if="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"
+																th:text="${appointment.appointmentComplete}"></strong>
+
+															<strong
+																th:unless="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"
 																th:if="${appointment.appointmentClassNumber != null}"
 																th:text="${'Clase: ' + appointment.appointmentClassNumber}"></strong>
 														</p>
@@ -345,20 +367,28 @@
 														<ul
 															th:if="${appointment.appointmentTime2 != null and #strings.length(appointment.appointmentTime2) > 0}">
 															<li th:text="${'Doble turno ' + appointment.appointmentTime2}"
-																class="ul-style time-style" style="margin-left: -20%;">
+																class="ul-style time-style" style="margin-left: -35px;">
 															</li>
-															<p style="margin-left: -17%;">
+															<p style="margin-left: -30px;">
 																<strong
+																	th:if="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"
+																	th:text="${appointment.appointmentComplete}"></strong>
+
+																<strong
+																	th:unless="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado'}"
 																	th:if="${appointment.appointmentClassNumber2 != null}"
 																	th:text="${'Clase: ' + appointment.appointmentClassNumber2}"></strong>
+
 															</p>
 														</ul>
 
 													</div>
-												</th>
-												<td th:text="${appointment.appointmentClassNumber}"
-													style="padding-left: 5%;">
 												</td>
+												<td th:text="${appointment.appointmentComplete == 'Inasistencia' or appointment.appointmentComplete == 'Cancelado' 
+												              ? appointment.appointmentComplete 
+												              : appointment.appointmentClassNumber}" style="text-align: center; padding-right: 10%;">
+												</td>
+
 												<td th:text="${appointment.appointmentType}">
 												</td>
 												<td class="hide-width" th:text="${appointment.appointmentComplete}">
@@ -366,9 +396,8 @@
 												<td id="acciones" style="padding-left: 4%;">
 													<div class="d-flex flex-column div-mover">
 														<div class="ul-style d-flex flex-row">
-															<a th:if="${appointment.appointmentType != 'Zig Zag (conos)' and appointment.appointmentComplete == 'Turno Pendiente.'}"
-																th:href="@{'/appointment/edit/' + ${student.id}} + '/' + ${appointment.id}"
-																class="btn-href">
+															<a th:href="@{'/appointment/edit/' + ${student.id}} + '/' + ${appointment.id}"
+																class="btn-href" style="max-height: 150px;">
 																Editar Turno </a>
 															<div th:if="${appointment.appointmentComplete != 'Completado' 
 																							           and appointment.appointmentComplete != 'Inasistencia' 
@@ -376,27 +405,23 @@
 																<form
 																	th:action="@{'/appointment/Complete/student/' + ${appointment.id}}"
 																	method="post" enctype="multipart/form-data">
-																	<div class="d-flex flex-row">
+																	<div class="d-flex flex-wrap gap-2">
+																		<input type="hidden" th:value="${student.id}"
+																			id="studentId" name="studentId">
 																		<select id="completedType" name="completedType"
-																			class="form-control">
-																			<option th:value="Completado"
-																				selected="selected">
-																				Completado con exito</option>
-																			<option th:value="Inasistencia">
-																				Inasistencia del alumno
-																			</option>
-																			<option th:value="Cancelado"> Cancelado por
-																				instructor
-																			</option>
-																			<input type="hidden"
-																				th:value="${student.id}" id="studentId"
-																				name="studentId">
+																			class="form-control form-control-sm"
+																			style="max-width: 170px;">
+																			<option th:value="Completado" selected>
+																				Completado con éxito</option>
+																			<option th:value="Inasistencia">Inasistencia
+																				del alumno</option>
+																			<option th:value="Cancelado">Cancelado por
+																				instructor</option>
 																		</select>
-																		<div class="ml-7">
-																			<button type="submit"
-																				class="btn btn-outline-primary boton-submit">Completar
-																				turno</button>
-																		</div>
+																		<button type="submit"
+																			class="btn btn-outline-primary btn-sm">
+																			<i class="fas fa-check"></i> Completar turno
+																		</button>
 																	</div>
 																</form>
 															</div>
@@ -480,7 +505,7 @@
 													style="padding-left: 5%;"></td>
 
 												<td> <a th:href="@{'/payment/edit/' + ${payment.id}}" class="btn-href">
-														Editar Turno </a></td>
+														Editar pago </a></td>
 											</tr>
 										</tbody>
 									</table>

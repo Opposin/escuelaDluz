@@ -65,7 +65,7 @@ public class PaymentController {
 		payment.setPaymentType(paymentType);
 		
 		paymentService.save(payment);
-		return "redirect:/home";
+		return "redirect:/student/info/" + id;
 	}
 
 	@GetMapping("/payment/edit/{id}")
@@ -102,6 +102,6 @@ public class PaymentController {
 	    payment.setPaymentType(paymentType);
 
 	    paymentService.save(payment);
-	    return "redirect:/home";
+	    return "redirect:/student/info/" + studentId;
 	}
 }
