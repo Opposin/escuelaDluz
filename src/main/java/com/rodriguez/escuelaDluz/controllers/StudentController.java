@@ -14,7 +14,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,8 +27,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.rodriguez.escuelaDluz.dao.IUserRepository;
 import com.rodriguez.escuelaDluz.entities.Appointment;
+import com.rodriguez.escuelaDluz.entities.Rol;
 import com.rodriguez.escuelaDluz.entities.Student;
+import com.rodriguez.escuelaDluz.entities.User;
 import com.rodriguez.escuelaDluz.services.IAppointmentService;
 import com.rodriguez.escuelaDluz.services.IEmployeeService;
 import com.rodriguez.escuelaDluz.services.IStudentService;
@@ -35,15 +40,20 @@ import jakarta.validation.Valid;
 
 @Controller
 public class StudentController {
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 	private IStudentService studentService;
 	private IAppointmentService appointmentService;
 	private IEmployeeService employeeService;
+	private IUserRepository userRepository;
 
 	public StudentController(IStudentService studentService, IAppointmentService appointmentService,
-			IEmployeeService employeeService) {
+			IEmployeeService employeeService, IUserRepository userRepository) {
 		this.studentService = studentService;
 		this.appointmentService = appointmentService;
 		this.employeeService = employeeService;
+		this.userRepository = userRepository;
 	}
 
 	private static final String UPLOAD_DIR = "imagenes";
@@ -191,6 +201,37 @@ public class StudentController {
 
 	}
 
+	@GetMapping("/student/generate-users")
+	public String generateStudentUsers() {
+		List<Student> students = studentService.findAll();
+
+        for (Student student : students) {
+            // Si el estudiante ya tiene usuario, saltarlo
+            if (student.getUser() != null) {
+                continue;
+            }
+
+            // Crear el usuario basado en los datos del estudiante
+            User user = new User();
+            user.setUsername(String.valueOf(student.getStudentDNI())); // Conversión de Long a String
+
+            // Crear la contraseña (Primera letra de FirstName en mayúscula + studentDNI)
+            String password = student.getFirstName().substring(0, 1).toUpperCase() + student.getStudentDNI();
+            user.setPassword(passwordEncoder.encode(password));
+
+            user.setRol(Rol.ALUMNO);
+
+            // Vincular usuario con estudiante
+            user.setStudent(student);
+            student.setUser(user);
+
+            // Guardar usuario primero para evitar problemas de persistencia
+            userRepository.save(user);
+            studentService.save(student);
+        }
+        return "redirect:/home";
+	}
+	
 	@PostMapping("/student")
 	public String saveStudent(@Valid Student student, BindingResult br, Model model,
 			@RequestParam("image") MultipartFile file, RedirectAttributes redirectAttributes) {
@@ -271,7 +312,7 @@ public class StudentController {
 			return "student";
 		}
 		try {
-			
+
 			// Lógica para guardar el estudiante
 			if (student.getId() != null) {
 				Student student2 = studentService.findById(student.getId());
@@ -281,14 +322,15 @@ public class StudentController {
 				student.setStudentPayments(student2.getStudentPayments());
 			} else {
 				Student existingStudent = studentService.searchByDNI(student.getStudentDNI());
-		        if (existingStudent != null && (student.getId() == null || !existingStudent.getId().equals(student.getId()))) {
-		            model.addAttribute("msj", "Este DNI ya está registrado, por favor use otro.");
-		            model.addAttribute("tipoMsj", "danger");
-		            model.addAttribute("titulo", "Error: DNI duplicado");
-		            model.addAttribute("student", student);
-		            model.addAttribute("appointments", appointmentService.findAll());
-		            return "student"; // Retornar al formulario con mensaje de error
-		        }
+				if (existingStudent != null
+						&& (student.getId() == null || !existingStudent.getId().equals(student.getId()))) {
+					model.addAttribute("msj", "Este DNI ya está registrado, por favor use otro.");
+					model.addAttribute("tipoMsj", "danger");
+					model.addAttribute("titulo", "Error: DNI duplicado");
+					model.addAttribute("student", student);
+					model.addAttribute("appointments", appointmentService.findAll());
+					return "student"; // Retornar al formulario con mensaje de error
+				}
 			}
 
 //			studentService.save(student);
@@ -299,7 +341,7 @@ public class StudentController {
 				String imageUrl = saveImage(student.getId(), file);
 				student.setStudentImage(imageUrl);
 			}
-			
+
 			if (student.getId() != null) {
 				Student student2 = studentService.findById(student.getId());
 //				System.out.println(student.getStudentImage());
@@ -315,7 +357,20 @@ public class StudentController {
 				}
 			}
 
+			User user = new User();
+			user.setUsername(String.valueOf(student.getStudentDNI()));
+
+			// Crear la contraseña (Primera letra de FirstName en mayúscula + studentDNI)
+			String password = student.getFirstName().substring(0, 1).toUpperCase() + student.getStudentDNI();
+			user.setPassword(passwordEncoder.encode(password));
+
+			user.setRol(Rol.ALUMNO);
+
+			// Vincular usuario con estudiante
+			user.setStudent(student);
+			student.setUser(user);
 			studentService.save(student);
+
 			redirectAttributes.addFlashAttribute("msj", "Estudiante guardado exitosamente.");
 			redirectAttributes.addFlashAttribute("tipoMsj", "success");
 

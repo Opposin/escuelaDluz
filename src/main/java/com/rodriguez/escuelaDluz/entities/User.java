@@ -21,15 +21,19 @@ public class User implements UserDetails{
 	@Id
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    private Long id;
-
+		
+		@Column(unique = true, nullable = false)
 	    private String username;
 	    private String password;
+	    
+	    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	    private Student student;
 
 	    @Enumerated(EnumType.STRING)
 	    private Rol rol; // Enum para roles (ADMIN, RECEPCIONISTA)
 	    
 	    public User() {}
-
+	    
 	    public User(String username, String password, Rol rol) {
 	        this.username = username;
 	        this.password = password;
@@ -92,4 +96,13 @@ public class User implements UserDetails{
 	    public boolean isEnabled() {
 	        return true;
 	    }
+
+		public Student getStudent() {
+			return student;
+		}
+
+		public void setStudent(Student student) {
+			this.student = student;
+		}
+	    
 }

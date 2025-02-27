@@ -7,10 +7,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.rodriguez.escuelaDluz.entities.Appointment;
@@ -30,8 +31,11 @@ public class StudentViewController {
 	}
 	
 	@GetMapping("/studentAppointmentsView")
-	public String studentView(Model model, @RequestParam String Dni, RedirectAttributes redirectAttributes) {
+	@PreAuthorize("hasRole('ALUMNO')")
+	public String studentView(Model model, RedirectAttributes redirectAttributes, Authentication authentication) {
 		
+		
+		String Dni = authentication.getName();
 		Long searchDni;
 		
 		try {
@@ -77,7 +81,7 @@ public class StudentViewController {
 		    
 //		    System.out.println(nombre);
 		    
-		    model.addAttribute("nombre", nombre);
+		    model.addAttribute("student", student);
 		    model.addAttribute("pastAppointments", pastAppointments);
 		    model.addAttribute("nextAppointments", nextAppointments);
 

@@ -55,38 +55,79 @@ public class ListController {
 		ModelAndView modelAndView = new ModelAndView();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		if (authentication != null && authentication.isAuthenticated()
-				&& authentication.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN")
-						|| role.getAuthority().equals("ROLE_RECEPCIONISTA"))) {
+//		if (authentication != null && authentication.isAuthenticated()
+//				&& authentication.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN")
+//						|| role.getAuthority().equals("ROLE_RECEPCIONISTA"))) {
+//
+//			// Crear el Pageable con la página solicitada y el tamaño
+//			Pageable pageable = PageRequest.of(pagina, size);
+//			studentService.deleteInactiveStudents();
+//			// Obtener la página de estudiantes con sus turnos
+//			Page<StudentAppointmentDTO> studentsWithAppointments = appointmentService
+//					.getStudentsWithNextAppointment(pageable);
+//
+//			List<Appointment> pastAppointments = appointmentService.getPastAppointments();
+//
+//			model.addAttribute("pastAppointments", pastAppointments);
+//			model.addAttribute("students", studentsWithAppointments.getContent());
+//			model.addAttribute("inactiveAppointments",
+//					appointmentService.getPendingAppointmentsWithInactiveEmployees());
+//			model.addAttribute("examAlerts", examService.findAlerts());
+//			model.addAttribute("inactiveStudents", studentService.setInactiveStudents());
+//			model.addAttribute("actual", pagina + 1);
+//			model.addAttribute("titulo", "Listado de Alumnos");
+//
+//			// Paginación
+//			int totalPages = studentsWithAppointments.getTotalPages();
+//			if (totalPages > 0) {
+//				List<Integer> paginas = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+//				model.addAttribute("paginas", paginas);
+//			}
+//			modelAndView.setViewName("home");
+//		} else {
+//            modelAndView.setViewName("redirect:/studentAppointmentsView"); // Redirige a la vista StudentView
+//        }
+		if (authentication != null && authentication.isAuthenticated()) {
+		    boolean isAdminOrRecepcionista = authentication.getAuthorities().stream()
+		            .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN") || role.getAuthority().equals("ROLE_RECEPCIONISTA"));
 
-			// Crear el Pageable con la página solicitada y el tamaño
-			Pageable pageable = PageRequest.of(pagina, size);
-			studentService.deleteInactiveStudents();
-			// Obtener la página de estudiantes con sus turnos
-			Page<StudentAppointmentDTO> studentsWithAppointments = appointmentService
-					.getStudentsWithNextAppointment(pageable);
+		    boolean isEstudiante = authentication.getAuthorities().stream()
+		            .anyMatch(role -> role.getAuthority().equals("ROLE_ALUMNO"));
 
-			List<Appointment> pastAppointments = appointmentService.getPastAppointments();
+		    if (isAdminOrRecepcionista) {
+		        // Crear el Pageable con la página solicitada y el tamaño
+		        Pageable pageable = PageRequest.of(pagina, size);
+		        studentService.deleteInactiveStudents();
 
-			model.addAttribute("pastAppointments", pastAppointments);
-			model.addAttribute("students", studentsWithAppointments.getContent());
-			model.addAttribute("inactiveAppointments",
-					appointmentService.getPendingAppointmentsWithInactiveEmployees());
-			model.addAttribute("examAlerts", examService.findAlerts());
-			model.addAttribute("inactiveStudents", studentService.setInactiveStudents());
-			model.addAttribute("actual", pagina + 1);
-			model.addAttribute("titulo", "Listado de Alumnos");
+		        // Obtener la página de estudiantes con sus turnos
+		        Page<StudentAppointmentDTO> studentsWithAppointments = appointmentService
+		                .getStudentsWithNextAppointment(pageable);
 
-			// Paginación
-			int totalPages = studentsWithAppointments.getTotalPages();
-			if (totalPages > 0) {
-				List<Integer> paginas = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
-				model.addAttribute("paginas", paginas);
-			}
-			modelAndView.setViewName("home");
-		} else {
-            modelAndView.setViewName("studentSearch"); // Redirige a la vista StudentView
-        }
+		        List<Appointment> pastAppointments = appointmentService.getPastAppointments();
+
+		        model.addAttribute("pastAppointments", pastAppointments);
+		        model.addAttribute("students", studentsWithAppointments.getContent());
+		        model.addAttribute("inactiveAppointments", appointmentService.getPendingAppointmentsWithInactiveEmployees());
+		        model.addAttribute("examAlerts", examService.findAlerts());
+		        model.addAttribute("inactiveStudents", studentService.setInactiveStudents());
+		        model.addAttribute("actual", pagina + 1);
+		        model.addAttribute("titulo", "Listado de Alumnos");
+
+		        // Paginación
+		        int totalPages = studentsWithAppointments.getTotalPages();
+		        if (totalPages > 0) {
+		            List<Integer> paginas = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+		            model.addAttribute("paginas", paginas);
+		        }
+
+		        modelAndView.setViewName("home");
+		    } else if (isEstudiante) {
+		        modelAndView.setViewName("redirect:/studentAppointmentsView"); // Redirige a la vista StudentView
+		    } else {
+		        modelAndView.setViewName("login"); // Redirigir a una página de error en caso de un rol no reconocido
+		    }
+		}
+
 
 		return modelAndView;
 	}

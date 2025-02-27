@@ -14,13 +14,17 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 // Permitir acceso a todos a "/" y "/studentAppointmentsView"
-                .requestMatchers("/", "/studentAppointmentsView", "/css/**", "/js/**", "/img/**", "/studentAppointmentsView", "/error").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/img/**", "/studentAppointmentsView", "/error").permitAll()
                 
                 // Acceso exclusivo para ADMIN
-                .requestMatchers("/employee/**", "/variables/**", "/users/new" , "users/edit/*", "/users/delte/*", "/users/save").hasRole("ADMIN")
+                .requestMatchers("/employee/**", "/variables/**", "/users/new" , "users/edit/*", "/users/delte/*", "/users/save", "/student/generate-users").hasRole("ADMIN")
                 
                 // Acceso para ADMIN y RECEPCIONISTA
                 .requestMatchers("/imagenes/**").hasAnyRole("ADMIN", "RECEPCIONISTA")
+                
+                .requestMatchers("/studentAppointmentsView").hasRole("ALUMNO")
+                
+                .requestMatchers("/").hasAnyRole("ADMIN", "RECEPCIONISTA", "ALUMNO")
                 
                 // Páginas accesibles por ADMIN y RECEPCIONISTA
                 .requestMatchers(

@@ -9,7 +9,7 @@ public class NavegadorAuto {
 
     @EventListener(ApplicationReadyEvent.class)
     public void abrirNavegador() {
-    	 String url = "http://localhost:8080/";
+    	 String url = "http://localhost:8080/login";
     	    abrirNavegador(url);
     }
     

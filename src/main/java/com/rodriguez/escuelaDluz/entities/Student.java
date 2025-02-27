@@ -10,9 +10,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -88,6 +89,10 @@ public class Student implements Serializable {
 
 //	@NotNull(message = "No debe estar vacio.")
 	private Long studentNonAtten;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 	
 	private Boolean studentAlertNonActive;
 
@@ -402,6 +407,14 @@ public class Student implements Serializable {
 
 	public void setStudentImage(String studentImage) {
 		this.studentImage = studentImage;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 	
 	

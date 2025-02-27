@@ -1,88 +1,132 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:insert="~{layouts/head}"></head>
 
 <body class="logo">
-    <script>
-        function confirmarRedireccion(event) {
-            // Prevenimos la acción por defecto del enlace
-            event.preventDefault();
+	<script>
+		function confirmarRedireccion(event) {
+			// Prevenimos la acción por defecto del enlace
+			event.preventDefault();
 
-            // Obtenemos la URL generada por Thymeleaf
-            var url = event.target.getAttribute('href');
+			// Obtenemos la URL generada por Thymeleaf
+			var url = event.target.getAttribute('href');
 
-            // Primera confirmación
-            var confirmacion1 = confirm("¿Seguro que deseas eliminar este usuario?");
+			// Primera confirmación
+			var confirmacion1 = confirm("¿Seguro que deseas eliminar este usuario?");
 
-            if (confirmacion1) {
-                // Si la primera confirmación es aceptada, redirigimos
-                window.location.href = url;
-            }
-        }
-    </script>
+			if (confirmacion1) {
+				// Si la primera confirmación es aceptada, redirigimos
+				window.location.href = url;
+			}
+		}
+	</script>
 
-    <header th:insert="~{layouts/header}"></header>
+	<header th:insert="~{layouts/header}"></header>
 
-    <div class="d-flex justify-content-center">
-        <div class="container-page">
-            <h1 class="py-4 text-center">Lista de Usuarios</h1>
-            <div class="container mt-4 mb-4">
+	<div class="d-flex justify-content-center">
+		<div class="container-page">
+			<h1 class="py-4 text-center">Lista de Usuarios</h1>
+			<div class="text-center mt-3" sec:authorize="hasRole('ADMIN')">
+				<a href="/users/new" class="btn btn-primary">Nuevo Usuario</a>
+				<!--                            <a href="/" class="btn btn-secondary">Volver al Inicio</a>-->
+			</div>
+			<div class="text-center mt-3" sec:authorize="hasRole('RECEPCIONISTA')">
+				<a href="/users/recepcionistNew" class="btn btn-primary">Nuevo Usuario</a>
+			</div>
+			<div class="container mt-4 mb-4">
 
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">Usuarios Registrados</h4>
-                    </div>
+				<div class="card">
+					<div class="card-header bg-primary text-white">
+						<h4 class="mb-0">Usuarios Administrativos</h4>
+					</div>
 
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Usuario</th>
-                                        <th>Rol</th>
-                                        <th class="text-center">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="user : ${users}">
-                                        <td th:text="${user.id}"></td>
-                                        <td th:text="${user.username}"></td>
-                                        <td>
-                                            <span class="badge" 
-                                                  th:classappend="${user.rol == 'ADMIN' ? 'bg-primary' : 'bg-info'}" 
-                                                  th:text="${user.rol}">
-                                            </span>
-                                        </td>
-                                        <td class="text-center">
-                                            <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-sm btn-primary"
-											sec:authorize="hasRole('ADMIN')">
-                                                Editar
-                                            </a>
-                                            <a th:href="@{/users/delete/{id}(id=${user.id})}" 
-                                               class="btn btn-sm btn-danger"
-                                               onclick="confirmarRedireccion(event)"
-											   sec:authorize="hasRole('ADMIN')">
-                                                Eliminar
-                                            </a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="text-center mt-3" sec:authorize="hasRole('ADMIN')">
-                            <a href="/users/new" class="btn btn-primary">Nuevo Usuario</a>
-<!--                            <a href="/" class="btn btn-secondary">Volver al Inicio</a>-->
-                        </div>
-						<div class="text-center mt-3" sec:authorize="hasRole('RECEPCIONISTA')">
-							<a href="/users/recepcionistNew" class="btn btn-primary">Nuevo Usuario</a>
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead class="table-dark">
+									<tr>
+										<th>ID</th>
+										<th>Usuario</th>
+										<th>Rol</th>
+										<th class="text-center">Acciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="user : ${adminAndRecepcionistaUsers}">
+										<td th:text="${user.id}"></td>
+										<td th:text="${user.username}"></td>
+										<td>
+											<span class="badge"
+												th:classappend="${user.rol == 'ADMIN' ? 'bg-primary' : 'bg-info'}"
+												th:text="${user.rol}">
+											</span>
+										</td>
+										<td class="text-center">
+											<a th:href="@{/users/edit/{id}(id=${user.id})}"
+												class="btn btn-sm btn-primary" sec:authorize="hasRole('ADMIN')">
+												Editar
+											</a>
+											<a th:href="@{/users/delete/{id}(id=${user.id})}"
+												class="btn btn-sm btn-danger" onclick="confirmarRedireccion(event)"
+												sec:authorize="hasRole('ADMIN')">
+												Eliminar
+											</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-header bg-primary text-white">
+						<h4 class="mb-0">Usuarios Alumnos</h4>
+					</div>
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead class="table-dark">
+									<tr>
+										<th>ID</th>
+										<th>Usuario</th>
+										<th>Rol</th>
+										<th class="text-center">Acciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="user : ${alumnoUsers}">
+										<td th:text="${user.id}"></td>
+										<td th:text="${user.username}"></td>
+										<td>
+											<span class="badge"
+												th:classappend="${user.rol == 'ADMIN' ? 'bg-primary' : 'bg-info'}"
+												th:text="${user.rol}">
+											</span>
+										</td>
+										<td class="text-center">
+											<a th:href="@{/users/edit/{id}(id=${user.id})}"
+												class="btn btn-sm btn-primary">
+												Editar
+											</a>
+											<a th:href="@{/users/delete/{id}(id=${user.id})}"
+												class="btn btn-sm btn-danger" onclick="confirmarRedireccion(event)"
+												sec:authorize="hasRole('ADMIN')">
+												Eliminar
+											</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 </body>
+
 </html>
