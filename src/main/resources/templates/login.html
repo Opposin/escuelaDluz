@@ -9,8 +9,20 @@
 	<body>
 		<header th:insert="~{layouts/header}"></header>
 		<div class="d-flex flex-column justify-content-center align-items-center vh-100 bg-light">
-			<h2 style="text-align: center; margin-bottom: 5%; margin-top: -250px;"> Bienvenido al sistema de administracion de la
+			<h2 style="text-align: center; margin-bottom: 2%; margin-top: -10%;"> Bienvenido al sistema de
+				administracion de la
 				autoescuela X</h2>
+
+			<h2 style="text-align: center;"> Para propocitos de esta demostracion
+				en esta base de datos con data mockup puede utilizar las siguentes credencias de inicio de session.</h2>
+			<div>
+				<h4 > Usuario Rol Admin: admin</h4>
+				<h4 > Contraseña Rol Admin: admin2477</h4>
+
+				<h4 > Usuario Rol recepcionista: recepcionista</h4>
+				<h4 > Contraseña Rol recepcionista: recepcionista123</h4>
+			</div>
+
 			<div class="card shadow-lg p-4 rounded" style="width: 350px;">
 				<h2 class="text-center mb-4">Iniciar Sesión</h2>
 				<form th:action="@{/login}" method="post">
